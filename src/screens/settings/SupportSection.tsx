@@ -3,9 +3,9 @@ import * as WebBrowser from "expo-web-browser";
 import { useState } from "react";
 import { Linking, Text } from "react-native";
 import type { Theme } from "../../design/theme";
-import { PRIVACY_URL, SOURCE_URL, SUPPORT_EMAIL, TERMS_URL } from "../../links";
-import { SupportScreen } from "../SupportScreen";
+import { PRIVACY_URL, SOURCE_URL, TERMS_URL } from "../../links";
 import { useSettings } from "../../store/settings";
+import { SupportScreen } from "../SupportScreen";
 import { Actions, Category, Hint, Section, TextButton, ToggleRow, styles } from "./controls";
 
 function openLink(url: string) {
@@ -22,16 +22,12 @@ export function SupportSection({ theme }: { theme: Theme }) {
     <Category title="Support" theme={theme}>
       <Section title="Get help" theme={theme}>
         <Hint theme={theme}>
-          Something off? Send a message from inside the app and we will write back. Your phone
-          model and app version go with it.
+          Something off? Send a message from inside the app. Your phone model and app version go
+          with it and nothing else: no email, no name. We read every message but cannot reply
+          from here.
         </Hint>
         <Actions>
           <TextButton label="Contact support" onPress={() => setFormOpen(true)} theme={theme} />
-          <TextButton
-            label="Email instead"
-            onPress={() => void Linking.openURL(`mailto:${SUPPORT_EMAIL}`)}
-            theme={theme}
-          />
         </Actions>
       </Section>
 
@@ -43,10 +39,10 @@ export function SupportSection({ theme }: { theme: Theme }) {
           theme={theme}
         />
         <Hint theme={theme}>
-          If the app crashes, a report goes to {SUPPORT_EMAIL}: what went wrong, the app
-          version, your phone model and OS version, and the app's own settings. Never your name,
-          contacts, calendar contents, or anything you typed. Apple and Google may also share
-          crash data if you opted in on your phone.
+          If the app crashes, a report goes to us: what went wrong, the app version, your phone
+          model and OS version, and the app's own settings. Never your name, contacts, calendar
+          contents, or anything you typed. Apple and Google may also share crash data if you
+          opted in on your phone.
         </Hint>
       </Section>
 

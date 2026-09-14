@@ -8,11 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		265A0372EA337C27152CA183 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FEAE442B1A96F7966F40DCC /* ExpoModulesProvider.swift */; };
-		3B1E989431FBBED75D71E78E /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 8756B222BB064B29A220C33A /* PrivacyInfo.xcprivacy */; };
-		3C35AAA9880B47DAB0DD1463 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 8756B222BB064B29A220C33A /* PrivacyInfo.xcprivacy */; };
+		1AD7C4F56EAEBD4DD36EEBD4 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E47949909D7D3224778BAAD7 /* ExpoModulesProvider.swift */; };
+		1CF77FFFC0CDD6AFB3A6C2C9 /* libPods-Touchward.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E28445E52B77D2C4E2535896 /* libPods-Touchward.a */; };
+		2EA7808D76A44FCDA727640B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 1EBD2D911A8742169E15009B /* PrivacyInfo.xcprivacy */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		574BF9AEB3687FCCE49B375A /* libPods-Touchward.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 50E9C500A71D2E399A92CF82 /* libPods-Touchward.a */; };
+		7DFDC44B86097E97FE973CD9 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 1EBD2D911A8742169E15009B /* PrivacyInfo.xcprivacy */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
 		XX1ECDC44A36499A2C9883XX /* WatchKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = XX378A422B4194AC6966BAXX /* WatchKit.framework */; };
@@ -50,13 +50,13 @@
 		13B07F961A680F5B00A75B9A /* Touchward.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; fileEncoding = 4; includeInIndex = 0; path = Touchward.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Touchward/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; name = Info.plist; path = Touchward/Info.plist; sourceTree = "<group>"; };
-		4FEAE442B1A96F7966F40DCC /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Touchward/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		50E9C500A71D2E399A92CF82 /* libPods-Touchward.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Touchward.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		8756B222BB064B29A220C33A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = PrivacyInfo.xcprivacy; path = Touchward/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		1EBD2D911A8742169E15009B /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = PrivacyInfo.xcprivacy; path = Touchward/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		358CF0C1B866153A9E473C11 /* Pods-Touchward.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Touchward.debug.xcconfig"; path = "Target Support Files/Pods-Touchward/Pods-Touchward.debug.xcconfig"; sourceTree = "<group>"; };
+		925E312A1988B30A98648D25 /* Pods-Touchward.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Touchward.release.xcconfig"; path = "Target Support Files/Pods-Touchward/Pods-Touchward.release.xcconfig"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = Touchward/SplashScreen.storyboard; sourceTree = "<group>"; };
-		B2255841402D2591FDE9C47E /* Pods-Touchward.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Touchward.debug.xcconfig"; path = "Target Support Files/Pods-Touchward/Pods-Touchward.debug.xcconfig"; sourceTree = "<group>"; };
-		B611C9285B29AF7625A467A0 /* Pods-Touchward.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Touchward.release.xcconfig"; path = "Target Support Files/Pods-Touchward/Pods-Touchward.release.xcconfig"; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
+		E28445E52B77D2C4E2535896 /* libPods-Touchward.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Touchward.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E47949909D7D3224778BAAD7 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Touchward/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = undefined; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Touchward/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* Touchward-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "Touchward-Bridging-Header.h"; path = "Touchward/Touchward-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -98,7 +98,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				574BF9AEB3687FCCE49B375A /* libPods-Touchward.a in Frameworks */,
+				1CF77FFFC0CDD6AFB3A6C2C9 /* libPods-Touchward.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -116,6 +116,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		052AAA087723B9DAAD0555A6 /* ExpoModulesProviders */ = {
+			isa = PBXGroup;
+			children = (
+				4E645DDFE7A4B94E79A1AB5A /* Touchward */,
+			);
+			name = ExpoModulesProviders;
+			sourceTree = "<group>";
+		};
 		13B07FAE1A68108700A75B9A /* Touchward */ = {
 			isa = PBXGroup;
 			children = (
@@ -125,7 +133,7 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				8756B222BB064B29A220C33A /* PrivacyInfo.xcprivacy */,
+				1EBD2D911A8742169E15009B /* PrivacyInfo.xcprivacy */,
 			);
 			name = Touchward;
 			sourceTree = "<group>";
@@ -138,9 +146,27 @@
 				XX378A422B4194AC6966BAXX /* WatchKit.framework */,
 				XX8ACBDF17A27E5D829A2CXX /* WatchConnectivity.framework */,
 				XX99DB34EAB420F9CA31AFXX /* UserNotifications.framework */,
-				50E9C500A71D2E399A92CF82 /* libPods-Touchward.a */,
+				E28445E52B77D2C4E2535896 /* libPods-Touchward.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		4E645DDFE7A4B94E79A1AB5A /* Touchward */ = {
+			isa = PBXGroup;
+			children = (
+				E47949909D7D3224778BAAD7 /* ExpoModulesProvider.swift */,
+			);
+			name = Touchward;
+			sourceTree = "<group>";
+		};
+		61F4FC643E9A0090B0EEFA63 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				358CF0C1B866153A9E473C11 /* Pods-Touchward.debug.xcconfig */,
+				925E312A1988B30A98648D25 /* Pods-Touchward.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -158,8 +184,8 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				CC840BE016EE74D7952E4FBF /* Pods */,
-				B7D4C34D5690125BD8BB2B8B /* ExpoModulesProviders */,
+				61F4FC643E9A0090B0EEFA63 /* Pods */,
+				052AAA087723B9DAAD0555A6 /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -175,22 +201,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		95789449A94CBC3D30638B77 /* Touchward */ = {
-			isa = PBXGroup;
-			children = (
-				4FEAE442B1A96F7966F40DCC /* ExpoModulesProvider.swift */,
-			);
-			name = Touchward;
-			sourceTree = "<group>";
-		};
-		B7D4C34D5690125BD8BB2B8B /* ExpoModulesProviders */ = {
-			isa = PBXGroup;
-			children = (
-				95789449A94CBC3D30638B77 /* Touchward */,
-			);
-			name = ExpoModulesProviders;
-			sourceTree = "<group>";
-		};
 		BB2F792B24A3F905000567C9 /* Supporting */ = {
 			isa = PBXGroup;
 			children = (
@@ -198,16 +208,6 @@
 			);
 			name = Supporting;
 			path = Touchward/Supporting;
-			sourceTree = "<group>";
-		};
-		CC840BE016EE74D7952E4FBF /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				B2255841402D2591FDE9C47E /* Pods-Touchward.debug.xcconfig */,
-				B611C9285B29AF7625A467A0 /* Pods-Touchward.release.xcconfig */,
-			);
-			name = Pods;
-			path = Pods;
 			sourceTree = "<group>";
 		};
 		XX3E41C1850246162C0061XX /* expo:targets */ = {
@@ -227,15 +227,15 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Touchward" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				6F59EA5394DA7814CB5F27AF /* [Expo] Configure project */,
+				94C89EDFC99140BEF9876A0D /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				559FA06EC529456B9C79D320 /* [Expo Dev Launcher] Strip Local Network Keys for Release */,
+				E16AFCA367744A659B86662C /* [Expo Dev Launcher] Strip Local Network Keys for Release */,
 				XX81D5C67C94C2E1F9007EXX /* Embed Watch Content */,
-				AE911331669921E56C497658 /* [CP] Embed Pods Frameworks */,
+				D1CC175F35711D3024E6B3F0 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -312,7 +312,7 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				3C35AAA9880B47DAB0DD1463 /* PrivacyInfo.xcprivacy in Resources */,
+				2EA7808D76A44FCDA727640B /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -320,7 +320,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3B1E989431FBBED75D71E78E /* PrivacyInfo.xcprivacy in Resources */,
+				7DFDC44B86097E97FE973CD9 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -370,48 +370,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		559FA06EC529456B9C79D320 /* [Expo Dev Launcher] Strip Local Network Keys for Release */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "[Expo Dev Launcher] Strip Local Network Keys for Release";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Strip dev-launcher-specific local network permission keys from non-Debug builds\n# This only removes _expo._tcp Bonjour services and the dev-launcher usage description.\n# Other Bonjour services and custom descriptions are preserved for production use.\n\nif [ \"$CONFIGURATION\" != \"Debug\" ]; then\n  PLIST_PATH=\"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\n  if [ -f \"$PLIST_PATH\" ]; then\n    # Check if NSBonjourServices exists\n    if /usr/libexec/PlistBuddy -c \"Print :NSBonjourServices\" \"$PLIST_PATH\" >/dev/null 2>&1; then\n      # Get the count of services\n      COUNT=$(/usr/libexec/PlistBuddy -c \"Print :NSBonjourServices\" \"$PLIST_PATH\" 2>/dev/null | grep \"^    \" | wc -l | tr -d ' ')\n\n      # Remove _expo._tcp\n      for ((i=COUNT-1; i>=0; i--)); do\n        SERVICE=$(/usr/libexec/PlistBuddy -c \"Print :NSBonjourServices:$i\" \"$PLIST_PATH\" 2>/dev/null || echo \"\")\n        if echo \"$SERVICE\" | grep -q \"_expo._tcp\"; then\n          /usr/libexec/PlistBuddy -c \"Delete :NSBonjourServices:$i\" \"$PLIST_PATH\" 2>/dev/null || true\n        fi\n      done\n\n      # If the array is now empty, remove it entirely\n      REMAINING=$(/usr/libexec/PlistBuddy -c \"Print :NSBonjourServices\" \"$PLIST_PATH\" 2>/dev/null | grep \"^    \" | wc -l | tr -d ' ')\n      if [ \"$REMAINING\" -eq \"0\" ]; then\n        /usr/libexec/PlistBuddy -c \"Delete :NSBonjourServices\" \"$PLIST_PATH\" 2>/dev/null || true\n      fi\n    fi\n\n    # Only delete the description if it matches the dev-launcher default text\n    DESC=$(/usr/libexec/PlistBuddy -c \"Print :NSLocalNetworkUsageDescription\" \"$PLIST_PATH\" 2>/dev/null || echo \"\")\n    if echo \"$DESC\" | grep -q \"Expo Dev Launcher\"; then\n      /usr/libexec/PlistBuddy -c \"Delete :NSLocalNetworkUsageDescription\" \"$PLIST_PATH\" 2>/dev/null || true\n    fi\n  fi\nfi\n";
-		};
-		6F59EA5394DA7814CB5F27AF /* [Expo] Configure project */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/.xcode.env",
-				"$(SRCROOT)/.xcode.env.local",
-				"$(SRCROOT)/Touchward/Touchward.entitlements",
-				"$(SRCROOT)/Pods/Target Support Files/Pods-Touchward/expo-configure-project.sh",
-			);
-			name = "[Expo] Configure project";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(SRCROOT)/Pods/Target Support Files/Pods-Touchward/ExpoModulesProvider.swift",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-Touchward/expo-configure-project.sh\"\n";
-		};
 		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -460,7 +418,31 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Touchward/Pods-Touchward-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		AE911331669921E56C497658 /* [CP] Embed Pods Frameworks */ = {
+		94C89EDFC99140BEF9876A0D /* [Expo] Configure project */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/.xcode.env",
+				"$(SRCROOT)/.xcode.env.local",
+				"$(SRCROOT)/Touchward/Touchward.entitlements",
+				"$(SRCROOT)/Pods/Target Support Files/Pods-Touchward/expo-configure-project.sh",
+			);
+			name = "[Expo] Configure project";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(SRCROOT)/Pods/Target Support Files/Pods-Touchward/ExpoModulesProvider.swift",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-Touchward/expo-configure-project.sh\"\n";
+		};
+		D1CC175F35711D3024E6B3F0 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -492,6 +474,24 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Touchward/Pods-Touchward-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		E16AFCA367744A659B86662C /* [Expo Dev Launcher] Strip Local Network Keys for Release */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "[Expo Dev Launcher] Strip Local Network Keys for Release";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Strip dev-launcher-specific local network permission keys from non-Debug builds\n# This only removes _expo._tcp Bonjour services and the dev-launcher usage description.\n# Other Bonjour services and custom descriptions are preserved for production use.\n\nif [ \"$CONFIGURATION\" != \"Debug\" ]; then\n  PLIST_PATH=\"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\n  if [ -f \"$PLIST_PATH\" ]; then\n    # Check if NSBonjourServices exists\n    if /usr/libexec/PlistBuddy -c \"Print :NSBonjourServices\" \"$PLIST_PATH\" >/dev/null 2>&1; then\n      # Get the count of services\n      COUNT=$(/usr/libexec/PlistBuddy -c \"Print :NSBonjourServices\" \"$PLIST_PATH\" 2>/dev/null | grep \"^    \" | wc -l | tr -d ' ')\n\n      # Remove _expo._tcp\n      for ((i=COUNT-1; i>=0; i--)); do\n        SERVICE=$(/usr/libexec/PlistBuddy -c \"Print :NSBonjourServices:$i\" \"$PLIST_PATH\" 2>/dev/null || echo \"\")\n        if echo \"$SERVICE\" | grep -q \"_expo._tcp\"; then\n          /usr/libexec/PlistBuddy -c \"Delete :NSBonjourServices:$i\" \"$PLIST_PATH\" 2>/dev/null || true\n        fi\n      done\n\n      # If the array is now empty, remove it entirely\n      REMAINING=$(/usr/libexec/PlistBuddy -c \"Print :NSBonjourServices\" \"$PLIST_PATH\" 2>/dev/null | grep \"^    \" | wc -l | tr -d ' ')\n      if [ \"$REMAINING\" -eq \"0\" ]; then\n        /usr/libexec/PlistBuddy -c \"Delete :NSBonjourServices\" \"$PLIST_PATH\" 2>/dev/null || true\n      fi\n    fi\n\n    # Only delete the description if it matches the dev-launcher default text\n    DESC=$(/usr/libexec/PlistBuddy -c \"Print :NSLocalNetworkUsageDescription\" \"$PLIST_PATH\" 2>/dev/null || echo \"\")\n    if echo \"$DESC\" | grep -q \"Expo Dev Launcher\"; then\n      /usr/libexec/PlistBuddy -c \"Delete :NSLocalNetworkUsageDescription\" \"$PLIST_PATH\" 2>/dev/null || true\n    fi\n  fi\nfi\n";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -500,7 +500,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
-				265A0372EA337C27152CA183 /* ExpoModulesProvider.swift in Sources */,
+				1AD7C4F56EAEBD4DD36EEBD4 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -524,7 +524,7 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B2255841402D2591FDE9C47E /* Pods-Touchward.debug.xcconfig */;
+			baseConfigurationReference = 358CF0C1B866153A9E473C11 /* Pods-Touchward.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -565,7 +565,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B611C9285B29AF7625A467A0 /* Pods-Touchward.release.xcconfig */;
+			baseConfigurationReference = 925E312A1988B30A98648D25 /* Pods-Touchward.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
