@@ -5,7 +5,8 @@ import { Linking, Text } from "react-native";
 import type { Theme } from "../../design/theme";
 import { PRIVACY_URL, SOURCE_URL, SUPPORT_EMAIL, TERMS_URL } from "../../links";
 import { SupportScreen } from "../SupportScreen";
-import { Actions, Category, Hint, Section, TextButton, styles } from "./controls";
+import { useSettings } from "../../store/settings";
+import { Actions, Category, Hint, Section, TextButton, ToggleRow, styles } from "./controls";
 
 function openLink(url: string) {
   WebBrowser.openBrowserAsync(url).catch(() => Linking.openURL(url));
@@ -13,6 +14,7 @@ function openLink(url: string) {
 
 export function SupportSection({ theme }: { theme: Theme }) {
   const [formOpen, setFormOpen] = useState(false);
+  const { settings, update } = useSettings();
   const version = Application.nativeApplicationVersion ?? "dev";
   const build = Application.nativeBuildVersion ?? "";
 
@@ -31,6 +33,21 @@ export function SupportSection({ theme }: { theme: Theme }) {
             theme={theme}
           />
         </Actions>
+      </Section>
+
+      <Section title="Crash reports" theme={theme}>
+        <ToggleRow
+          label="Send crash reports"
+          value={settings.crashReports}
+          onChange={(v) => update({ crashReports: v })}
+          theme={theme}
+        />
+        <Hint theme={theme}>
+          If the app crashes, a report goes to {SUPPORT_EMAIL}: what went wrong, the app
+          version, your phone model and OS version, and the app's own settings. Never your name,
+          contacts, calendar contents, or anything you typed. Apple and Google may also share
+          crash data if you opted in on your phone.
+        </Hint>
       </Section>
 
       <Section title="About" theme={theme}>

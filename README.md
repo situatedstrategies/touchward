@@ -207,6 +207,21 @@ Preview). Until it is set, the form falls back to the mail app, addressed to
 the same inbox. The About section links to `/privacy` and `/terms` on the site,
 opened in an in-app browser, and shows the version.
 
+## Crash reports
+
+Unhandled JavaScript errors are reported to the support inbox through the
+site Worker's `/api/crash` route (`src/support/crashReports.ts`). A fatal
+error is written to storage first and sent on the next launch; handled errors
+and promise rejections are sent right away. A report carries the error and
+stack, the app version, the device model and OS version, and the app's own
+look settings, never anything about the person. "Send crash reports" in
+Customize, More, Support turns it off. Native crashes are covered by Apple's
+and Google's own crash reporting when the person has opted in on their
+device; see Xcode Organizer and the Play Console. The privacy manifest
+declares crash data (not linked, not used for tracking), and the site's
+privacy policy describes it. App Store Connect's privacy questionnaire must
+say the same: Crash Data, collected, not linked to identity, app functionality.
+
 ## Pricing
 
 Touchward is a paid app (one-time purchase, 1.99) with no in-app purchases,
@@ -256,6 +271,7 @@ The bundle identifier and Android package are both
   trigger is routed into the button. `SupportScreen.tsx`: the support form.
   `settings/`: the Customize sheet, one file per category.
 - `src/links.ts`: site, support, legal, and deep link URLs.
+- `src/support/crashReports.ts`: the crash handler, queue, and sender.
 - `src/looks/looks.ts`: what a look is, the randomizer, and name suggestions.
   `src/store/looks.tsx` persists the library; `components/LookPreview.tsx`
   draws a still; `screens/SaveLookSheet.tsx` and `screens/LibraryScreen.tsx`

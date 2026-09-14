@@ -53,6 +53,8 @@ export interface Settings {
   volumeButtons: boolean;
   /** Register this device for remote push. */
   pushEnabled: boolean;
+  /** Send crash reports (error, app version, device model, OS version, settings) to support. */
+  crashReports: boolean;
 }
 
 export interface ReminderSettings {
@@ -214,4 +216,5 @@ export const DEFAULT_SETTINGS: Settings = {
   },
   volumeButtons: false,
   pushEnabled: false,
+  crashReports: true,
 };

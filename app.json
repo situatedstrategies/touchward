@@ -50,14 +50,23 @@
         "NSUserNotificationsUsageDescription": "Touchward schedules reminders and calendar nudges on this phone so you remember to tap. Notifications are created locally; nothing about them is stored by the app beyond your settings or sent anywhere.",
         "ITSAppUsesNonExemptEncryption": false,
         "NSCalendarsFullAccessUsageDescription": "Touchward reads your calendar only to schedule a nudge when each event ends. Event details are used at that moment on this phone and are never stored, copied, or transmitted by the app.",
-        "TouchwardDataAccessNote": "Touchward requests access to calendar events and notifications solely to provide its features on this device. Calendar data is read at runtime to schedule local notifications and is not retained. The only data the app stores are its own settings and the reward counter, kept locally on the device. The optional support form sends only what you type, plus your device model and app version, to the Touchward support inbox.",
+        "TouchwardDataAccessNote": "Touchward requests access to calendar events and notifications solely to provide its features on this device. Calendar data is read at runtime to schedule local notifications and is not retained. The app stores its own settings and the reward counter locally. Two things leave the device, both to the Touchward support inbox: messages you send through the support form (what you type, plus device model and app version), and, unless turned off in the app, crash reports (the error, app version, device model, OS version, and the app's settings). Neither includes personal identifiers.",
         "TouchwardEncryptionNote": "Touchward contains no custom or proprietary encryption. Network requests (the optional support form and push token registration) use HTTPS through the operating system's standard networking stack, which is exempt encryption under U.S. export rules. ITSAppUsesNonExemptEncryption is therefore false."
       },
       "buildNumber": "1",
       "privacyManifests": {
         "NSPrivacyTracking": false,
         "NSPrivacyTrackingDomains": [],
-        "NSPrivacyCollectedDataTypes": []
+        "NSPrivacyCollectedDataTypes": [
+          {
+            "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeCrashData",
+            "NSPrivacyCollectedDataTypeLinked": false,
+            "NSPrivacyCollectedDataTypeTracking": false,
+            "NSPrivacyCollectedDataTypePurposes": [
+              "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+            ]
+          }
+        ]
       },
       "appleTeamId": "4964KRMB5H"
     },

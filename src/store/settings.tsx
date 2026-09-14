@@ -11,6 +11,7 @@ import {
 } from "react";
 import { AppState } from "react-native";
 import { isHexColor } from "../design/palette";
+import { configureCrashReports } from "../support/crashReports";
 import {
   DEFAULT_SETTINGS,
   MAX_STRENGTH,
@@ -148,6 +149,7 @@ export function sanitizeSettings(raw: unknown): Settings {
     calendarNudges: sanitizeNudges(r.calendarNudges),
     volumeButtons: isBool(r.volumeButtons) ? r.volumeButtons : d.volumeButtons,
     pushEnabled: isBool(r.pushEnabled) ? r.pushEnabled : d.pushEnabled,
+    crashReports: isBool(r.crashReports) ? r.crashReports : d.crashReports,
   };
 }
 
@@ -264,6 +266,10 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     pendingSettings.current = null;
     AsyncStorage.setItem(SETTINGS_KEY, JSON.stringify(value)).catch(() => {});
   }, []);
+
+  useEffect(() => {
+    configureCrashReports(settings);
+  }, [settings]);
 
   useEffect(() => {
     if (!hydrated.current) return;
