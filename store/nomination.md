@@ -15,6 +15,12 @@ The button is the whole app. Pick a shape (the default is the wavy ring from the
 
 Reminders are local. Calendar nudges go off when a meeting ends, from the calendar already on the phone. There's an Apple Watch app with the same button, and the touchward://reward link works with the Action Button and Back Tap.
 
+## Helpful details
+
+The helpful details field is short (450 characters); this fits.
+
+No account or setup: open it and tap. Hold the button to see the timer trace its outline. Customize, then Reward and Feel, plays each haptic as you pick it (Core Haptics, 150+ presets). Random makes a new look every press. The Apple Watch app installs with the phone app and mirrors it. Calendar nudges and reminders are local notifications. Paid up front, no in-app purchases, no analytics, and the source is public on GitHub.
+
 ## Other fields
 
 - Type: New app launch. Publish date: the 1.0 release date.
