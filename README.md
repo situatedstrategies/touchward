@@ -253,6 +253,10 @@ The bundle identifier and Android package are both
   trigger is routed into the button. `SupportScreen.tsx`: the support form.
   `settings/`: the Customize sheet, one file per category.
 - `src/links.ts`: site, support, legal, and deep link URLs.
+- `src/looks/looks.ts`: what a look is, the randomizer, and name suggestions.
+  `src/store/looks.tsx` persists the library; `components/LookPreview.tsx`
+  draws a still; `screens/SaveLookSheet.tsx` and `screens/LibraryScreen.tsx`
+  are the two sheets.
 - `app.config.js`: adds `google-services.json` for Android push when present.
 - `modules/watch-sync/`: local Expo module (Swift) that mirrors settings to
   the watch and reports its rewards.
@@ -263,6 +267,14 @@ The bundle identifier and Android package are both
 - `npm start`: Expo dev server.
 - `npm run typecheck`: TypeScript.
 - `npm run format` / `npm run format:check`: Prettier.
+
+## Random, Save, Library
+
+Under the button, next to Customize: Random applies a fresh look built around
+one hue (shape, mode, ripple outline, button and ripple colors, backdrop);
+Save names the current look and keeps it; Library lists every saved look with
+a still of its button and ripple, to wear again, rename, or delete. Saved
+looks live in their own storage and survive a settings reset.
 
 ## Customize sheet
 

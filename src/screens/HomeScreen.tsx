@@ -10,10 +10,14 @@ import { syncCalendarNudges } from "../notifications/calendar";
 import { setCalendarSyncTaskEnabled } from "../notifications/calendarTask";
 import { registerForPush } from "../notifications/push";
 import { configureNotifications, syncReminders } from "../notifications/reminders";
+import { pickLook, randomLook, suggestName, type LookSettings } from "../looks/looks";
+import { useLooks } from "../store/looks";
 import { useSettings } from "../store/settings";
 import { onWatchReward, sendSettingsToWatch } from "../../modules/watch-sync";
-import { themeForBackdrop, useTheme } from "../design/theme";
+import { themeForBackdrop, useTheme, type Theme } from "../design/theme";
 import { body, bodySemibold, heading } from "../design/typography";
+import { LibraryScreen } from "./LibraryScreen";
+import { SaveLookSheet } from "./SaveLookSheet";
 import { SettingsScreen } from "./settings/SettingsScreen";
 
 /** Shortest side at or above this is laid out as a tablet. */
@@ -36,13 +40,27 @@ export function HomeScreen() {
   const systemTheme = useTheme();
   const insets = useSafeAreaInsets();
   const { width, height } = useWindowDimensions();
-  const { settings, stats, recordReward, loaded } = useSettings();
+  const { settings, update, stats, recordReward, loaded } = useSettings();
   // The neon backdrop brings its own dark theme; the settings sheet keeps the system look.
   const backdrop = loaded ? settings.backdrop : "navy";
   const neon = backdrop === "navy";
   const theme = themeForBackdrop(backdrop, systemTheme);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [saveOpen, setSaveOpen] = useState(false);
+  const [libraryOpen, setLibraryOpen] = useState(false);
+  const { looks, save } = useLooks();
   const button = useRef<RewardButtonHandle>(null);
+
+  const currentLook = pickLook(settings);
+  const applyLook = useCallback((look: LookSettings) => update(look), [update]);
+  const shuffleLook = useCallback(() => update(randomLook()), [update]);
+  const saveLook = useCallback(
+    (name: string) => {
+      save(name, pickLook(settings));
+      setSaveOpen(false);
+    },
+    [save, settings],
+  );
 
   const onReward = useCallback(() => recordReward(), [recordReward]);
 
@@ -178,23 +196,23 @@ export function HomeScreen() {
         <Text style={[styles.prompt, { color: theme.text, fontSize: 16 * scale }]}>
           {PROMPTS[settings.mode]}
         </Text>
-        <Pressable
-          onPress={() => setSettingsOpen(true)}
-          accessibilityRole="button"
-          accessibilityLabel="Open settings"
-          style={({ pressed }) => [
-            styles.settingsButton,
-            {
-              borderColor: theme.border,
-              backgroundColor: theme.surface,
-              opacity: pressed ? 0.7 : 1,
-            },
-          ]}
-        >
-          <Text style={[styles.settingsText, { color: theme.text, fontSize: 16 * scale }]}>
-            Customize
-          </Text>
-        </Pressable>
+        <View style={styles.toolbar}>
+          <Pill label="Random" onPress={shuffleLook} theme={theme} scale={scale} />
+          <Pill label="Save" onPress={() => setSaveOpen(true)} theme={theme} scale={scale} />
+          <Pill
+            label={looks.length > 0 ? `Library ${looks.length}` : "Library"}
+            onPress={() => setLibraryOpen(true)}
+            theme={theme}
+            scale={scale}
+          />
+          <Pill
+            label="Customize"
+            onPress={() => setSettingsOpen(true)}
+            theme={theme}
+            scale={scale}
+            primary
+          />
+        </View>
       </View>
 
       <SettingsScreen
@@ -202,7 +220,66 @@ export function HomeScreen() {
         onClose={() => setSettingsOpen(false)}
         theme={systemTheme}
       />
+      <SaveLookSheet
+        visible={saveOpen}
+        look={currentLook}
+        suggestedName={suggestName(currentLook, looks)}
+        theme={systemTheme}
+        onSave={saveLook}
+        onClose={() => setSaveOpen(false)}
+      />
+      <LibraryScreen
+        visible={libraryOpen}
+        current={currentLook}
+        theme={systemTheme}
+        onApply={(look) => {
+          applyLook(look);
+          setLibraryOpen(false);
+        }}
+        onClose={() => setLibraryOpen(false)}
+      />
     </View>
+  );
+}
+
+function Pill({
+  label,
+  onPress,
+  theme,
+  scale,
+  primary = false,
+}: {
+  label: string;
+  onPress: () => void;
+  theme: Theme;
+  scale: number;
+  primary?: boolean;
+}) {
+  return (
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      style={({ pressed }) => [
+        styles.pill,
+        {
+          borderColor: primary ? theme.text : theme.border,
+          backgroundColor: primary ? theme.text : theme.surface,
+          opacity: pressed ? 0.7 : 1,
+          paddingHorizontal: 14 * scale,
+          paddingVertical: 10 * scale,
+        },
+      ]}
+    >
+      <Text
+        style={[
+          styles.pillText,
+          { color: primary ? theme.background : theme.text, fontSize: 14 * scale },
+        ]}
+      >
+        {label}
+      </Text>
+    </Pressable>
   );
 }
 
@@ -218,11 +295,7 @@ const styles = StyleSheet.create({
   middle: { flex: 1, alignItems: "center", justifyContent: "center" },
   prompt: { ...body(16), marginBottom: 16, textAlign: "center" },
   bottom: { alignItems: "center" },
-  settingsButton: {
-    paddingHorizontal: 22,
-    paddingVertical: 12,
-    borderRadius: 999,
-    borderWidth: 1,
-  },
-  settingsText: bodySemibold(16),
+  toolbar: { flexDirection: "row", flexWrap: "wrap", justifyContent: "center", gap: 8 },
+  pill: { borderRadius: 999, borderWidth: 1 },
+  pillText: bodySemibold(14),
 });

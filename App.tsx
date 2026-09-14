@@ -13,6 +13,7 @@ import { isPulsarAvailable, pulsarSupportLevel } from "./src/haptics/pulsar";
 import "./src/notifications/calendarTask";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { HomeScreen } from "./src/screens/HomeScreen";
+import { LooksProvider } from "./src/store/looks";
 import { SettingsProvider } from "./src/store/settings";
 
 // Keep the splash screen up until the fonts are loaded.
@@ -45,8 +46,10 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <SettingsProvider>
-        <HomeScreen />
-        <StatusBar style="auto" />
+        <LooksProvider>
+          <HomeScreen />
+          <StatusBar style="auto" />
+        </LooksProvider>
       </SettingsProvider>
     </SafeAreaProvider>
   );
