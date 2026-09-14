@@ -210,47 +210,100 @@ The bundle identifier and Android package are both
 
 ## Project layout
 
-- `App.tsx`: providers and root screen.
-- `src/types.ts`: settings model, shape list, color swatches, defaults.
-- `src/haptics/patterns.ts`: the pattern definitions as pulses (buzz for N ms,
-  rest for M ms) and the compilers to Android vibration arrays and iOS impact
-  schedules.
-- `src/haptics/engine.ts`: plays a pattern on the current platform and cancels
-  the previous one. `playReward` prefers a Pulsar preset, then a Pulsar
-  pattern, then the built-in pulses.
-- `src/haptics/pulsar.ts`: lazy adapter for `react-native-pulsar`. Checks for
-  the native module before requiring the package so Expo Go never sees it.
-- `src/components/RewardButton.tsx`: the button, press handling, color
-  animation, and the hold timer.
-- `src/components/ShapeCore.tsx`: the button in any shape: glow, animated
-  fill, pale edge, bright rim.
-- `src/components/RippleField.tsx`: ripples in flight, one per tap, in the
-  chosen outline and color.
-- `src/components/rippleModes.ts`: ripple motion and tap haptic for each
-  reward mode. This is where the Pulsar patterns live.
-- `src/palette.ts`: the neon palette and color helpers.
-- `src/components/TimerRing.tsx`: the SVG progress ring.
-- `src/components/shapes.ts`: SVG paths for each shape.
-- `src/notifications/reminders.ts`: reminder schedule math and the
-  `expo-notifications` setup, channel, category, and scheduling.
-- `src/notifications/calendar.ts`: calendar permission, event scan, and nudge
-  scheduling. `calendarTask.ts` is the background rescan.
-- `src/notifications/push.ts`: remote push registration and token storage.
-- `src/screens/SupportScreen.tsx`: the in-app support form.
-- `src/links.ts`: site, support, privacy, and terms URLs.
+- `App.tsx`: fonts, splash screen, providers, and the root screen.
+- `src/types.ts`: the settings model, option lists, and defaults.
+- `src/store/settings.tsx`: settings and counter persistence with validation
+  of anything read back from storage.
+- `src/design/`: `palette.ts` (the neon palette, backdrop colors, color math),
+  `theme.ts` (light, dark, navy, and per backdrop themes), `typography.ts`
+  (Josefin Sans headings, Avenir Next body, Nunito Sans on Android).
+- `src/button/`: everything that draws the button. `shapes.ts` defines each
+  shape as a sampled outline with a known length; `ShapeCore.tsx` is the glowing
+  core; `RippleField.tsx` the ripples in flight; `StandingBands.tsx` the three
+  rings of Original mode; `TimerRing.tsx` the outline tracing hold timer;
+  `rewardModes.ts` the motion and haptics of each reward mode; and
+  `RewardButton.tsx` the press handling that ties them together.
+- `src/components/`: `Chip`, `ColorField` and `ColorWheel` (the color picker
+  with hex entry and saved colors), and `Backdrop`.
+- `src/haptics/`: `patterns.ts` (built in pulse patterns), `pulsar.ts` (lazy
+  Pulsar adapter), `engine.ts` (`playReward` picks a Pulsar preset, then a
+  Pulsar pattern, then built in pulses).
+- `src/notifications/`: `reminders.ts` (scheduled reminders and the shared
+  notification setup), `calendar.ts` and `calendarTask.ts` (calendar nudges
+  and their background refresh), `push.ts` (remote push registration).
+- `src/hardware/volumeButtons.ts`: volume buttons as a tap trigger.
+- `src/screens/HomeScreen.tsx`: the main screen and where every external
+  trigger is routed into the button. `SupportScreen.tsx`: the support form.
+  `settings/`: the Customize sheet, one file per category.
+- `src/links.ts`: site, support, legal, and deep link URLs.
 - `app.config.js`: adds `google-services.json` for Android push when present.
-- `src/hardware/volumeButtons.ts`: turns volume button presses into taps.
-- `src/screens/HomeScreen.tsx`: the main screen. Also where external triggers
-  (notification taps, the deep link, volume buttons) are routed into the button.
-- `src/screens/SettingsScreen.tsx`: the customization sheet.
-- `src/store/settings.tsx`: persistence and the settings context.
-- `src/typography.ts`: the font families and heading/body style helpers.
 
 ## Scripts
 
 - `npm start`: Expo dev server.
 - `npm run typecheck`: TypeScript.
 - `npm run format` / `npm run format:check`: Prettier.
+
+## Customize sheet
+
+Four tabs. Inside each, categories keep one order: the button first, then the
+ripples or the timer, then the surroundings.
+
+- Reward: Button (press style, hold timer), Shape (button, ripples), Feel (tap
+  mode, strength and Pulsar preset; timer done pattern and preset).
+- Colors: Button (resting, reward colors), Ripples (Color 1, 2, 3 or follow the
+  button), Background (navy glow, match phone, or any color). Every color has a
+  picker with a hue wheel, brightness slider, quick swatches, and a hex field,
+  plus a saved colors library per setting.
+- Notify: calendar nudges, reminders, delivery, push.
+- More: triggers, counter, support and about.
+
+## Release checklist
+
+- Bump `version` in `app.json`; `ios.buildNumber` and `android.versionCode`
+  are set there too (EAS production builds auto increment them).
+- iOS: `npx eas-cli build --profile production --platform ios` then
+  `npx eas-cli submit --platform ios`, or archive `ios/Touchward.xcworkspace`
+  in Xcode. Signing uses team 4964KRMB5H. The App Store record is Touchward
+  (bundle id `com.situatedstrategies.touchward`). App Store Connect needs the
+  privacy policy URL `https://touchward-dopamine.com/privacy` and the support
+  URL `https://touchward-dopamine.com/support`.
+- Android: `npx eas-cli build --profile production --platform android` for an
+  AAB, or `cd android && ./gradlew bundleRelease` with your upload keystore
+  configured in `android/gradle.properties`. Play Console needs the same two
+  URLs. Push on Android additionally needs `google-services.json` (see Push
+  notifications).
+- Both: the `assets/` icons are final; unused Android permissions are blocked
+  in `app.json`.
+- iOS privacy: `app.json` sets `ITSAppUsesNonExemptEncryption` to false, a
+  privacy manifest with no tracking and no collected data types, usage strings
+  that say calendar and notification access is used only to provide the
+  feature and that nothing read is stored or sent, and two plain language
+  Info.plist notes (`TouchwardDataAccessNote`, `TouchwardEncryptionNote`) that
+  document the data handling and the encryption position for reviewers.
+
+## Android: making haptics work
+
+Pulsar's Android side uses `VibrationEffect` and is already part of the
+project. To build and feel it:
+
+1. Install Android Studio with the Android SDK Platform for API 36, the build
+   tools, and a JDK 17 or newer (Android Studio's bundled JDK is fine). Point
+   `ANDROID_HOME` at the SDK, or set `sdk.dir` in `android/local.properties`.
+2. Use a real phone. Emulators have no vibrator, so Pulsar reports no support
+   and the app falls back silently. Enable USB debugging and plug it in.
+3. From the repo root: `npx expo run:android --device`. Or in Android Studio:
+   File, Open, choose the `android/` folder, let Gradle sync, pick the phone,
+   press Run. Both produce the development build with Pulsar, the volume
+   buttons, calendar access, and the dev client.
+4. After changing native dependencies or `app.json`, run
+   `npx expo prebuild --platform android --clean` before building again.
+5. What to expect: Android 8 and later plays patterns; amplitude control
+   depends on the phone (`Vibrator.hasAmplitudeControl`); Android 12 and later
+   with a capable motor reports support level 3 and plays composed patterns
+   with sharpness. Older or simpler motors get an on and off approximation. The
+   Feel tab shows a note when the phone reports limited control.
+6. Expo Go on Android does not include Pulsar; use the development build.
 
 ## Writing style
 

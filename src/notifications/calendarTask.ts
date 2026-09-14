@@ -5,8 +5,8 @@ import { syncCalendarNudges } from "./calendar";
 
 /**
  * Background refresh of the calendar nudges, so events added after the app was
- * last opened still get their nudge. The OS decides the exact timing (roughly a
- * few times a day) and only runs it in a development or store build.
+ * last opened still get their nudge. The OS decides the exact timing, roughly a
+ * few times a day, on builds that include background tasks.
  *
  * The task must be defined at module scope, which is why App.tsx imports this
  * file for its side effect.
@@ -39,6 +39,6 @@ export async function setCalendarSyncTaskEnabled(enabled: boolean): Promise<void
       await BackgroundTask.unregisterTaskAsync(CALENDAR_SYNC_TASK);
     }
   } catch {
-    // Expo Go and simulators: no background tasks. Foreground refresh still runs.
+    // No background tasks on this platform or build. The foreground refresh still runs.
   }
 }

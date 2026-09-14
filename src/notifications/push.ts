@@ -16,8 +16,8 @@ import { requestReminderPermission } from "./reminders";
  * keep a list of devices.
  *
  * A push whose data contains { reward: true } counts as a tap when opened, the
- * same as a reminder. Remote push needs a real device and a development or store
- * build: Expo Go and simulators return null.
+ * same as a reminder. Remote push needs a real device and a build with push
+ * entitlements; elsewhere registration returns null.
  */
 
 const TOKEN_KEY = "touchward.push.v1";

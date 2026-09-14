@@ -7,15 +7,15 @@ import {
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { isPulsarAvailable, pulsarSupportLevel } from "./src/haptics/pulsar";
-// Side effect import: defines the background calendar sync task at module scope.
+// Defines the background calendar sync task; it must be registered at module scope.
 import "./src/notifications/calendarTask";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { HomeScreen } from "./src/screens/HomeScreen";
 import { SettingsProvider } from "./src/store/settings";
 
-// Hold the splash screen until the fonts are in, so text never flashes in a fallback face.
+// Keep the splash screen up until the fonts are loaded.
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
 export default function App() {
@@ -31,7 +31,7 @@ export default function App() {
     if (ready) SplashScreen.hideAsync().catch(() => {});
   }, [ready]);
 
-  // One line in the dev server log that says which haptics engine this build has.
+  // Reports which haptics engine this build has, in development only.
   useEffect(() => {
     if (__DEV__) {
       console.log(

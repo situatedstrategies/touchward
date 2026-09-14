@@ -1,7 +1,6 @@
-import React from "react";
 import { Pressable, StyleSheet, Text } from "react-native";
-import type { Theme } from "../theme";
-import { bodySemibold } from "../typography";
+import type { Theme } from "../design/theme";
+import { bodySemibold } from "../design/typography";
 
 interface Props {
   label: string;

@@ -2,14 +2,13 @@ import { Platform, TurboModuleRegistry } from "react-native";
 
 /**
  * Optional richer haptics through Pulsar (react-native-pulsar by Software
- * Mansion): 150+ presets and composed patterns with amplitude and sharpness
- * envelopes, on iOS Core Haptics and Android VibrationEffect.
+ * Mansion): over 150 presets and composed patterns with amplitude and
+ * sharpness envelopes, on iOS Core Haptics and Android VibrationEffect.
  *
- * Pulsar is a native Turbo Module, so it only exists in a development or store
- * build. Expo Go does not ship it. Everything here checks for the native module
- * before requiring the package: the package calls TurboModuleRegistry.getEnforcing
- * at import time and would throw, and in development Metro reports that throw as
- * a fatal error before a try/catch around the require can see it.
+ * Pulsar is a native module, so it exists only in builds that include it. The
+ * package resolves its native module at import time and throws when it is
+ * missing, so everything here checks TurboModuleRegistry first and only then
+ * requires the package. Without it, callers fall back to expo-haptics.
  */
 
 export interface PulsarPattern {
@@ -67,7 +66,7 @@ function loadModule(): PulsarModule | null {
   return moduleCached;
 }
 
-/** True in a development or store build with Pulsar linked. False in Expo Go and on web. */
+/** True when the Pulsar native module is part of this build. Always false on web. */
 export function isPulsarAvailable(): boolean {
   return native() !== null;
 }

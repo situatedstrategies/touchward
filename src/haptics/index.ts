@@ -1,15 +1,7 @@
 import { PATTERNS, type Pattern } from "./patterns";
 import type { PatternId } from "../types";
 
-export {
-  playPattern,
-  playPatternById,
-  playPulses,
-  playReward,
-  stopHaptics,
-  tick,
-  type RewardHaptic,
-} from "./engine";
+export { playPattern, playReward, stopHaptics, tick, type RewardHaptic } from "./engine";
 export {
   isPulsarAvailable,
   playPulsarPreset,

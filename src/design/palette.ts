@@ -52,9 +52,6 @@ export function isDarkColor(hex: string): boolean {
   return luminance(hex) < 0.35;
 }
 
-/** Default ripple colors, cycled one per tap: pink, cyan, violet, like the icon's bands. */
-export const DEFAULT_RIPPLE_COLORS = [NEON.pink, NEON.cyan, NEON.violet];
-
 /** "#RRGGBB" mixed toward white by `amount` (0 to 1). Non-hex input passes through. */
 export function lighten(hex: string, amount: number): string {
   const rgb = parseHex(hex);
@@ -103,4 +100,69 @@ function parseHex(hex: string): [number, number, number] | null {
       .join("");
   const n = parseInt(h, 16);
   return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+
+/** True for "#RRGGBB" or "#RGB" (case insensitive). */
+export function isHexColor(value: string): boolean {
+  return /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(value.trim());
+}
+
+/** Any accepted hex form to upper case "#RRGGBB". Returns null for anything else. */
+export function normalizeHex(value: string): string | null {
+  const v = value.trim().replace(/^([0-9a-f]{3}|[0-9a-f]{6})$/i, "#$1");
+  const rgb = parseHex(v);
+  if (!rgb) return null;
+  return rgbToHex(rgb[0], rgb[1], rgb[2]);
+}
+
+export function rgbToHex(r: number, g: number, b: number): string {
+  const c = (n: number) =>
+    Math.round(Math.min(255, Math.max(0, n)))
+      .toString(16)
+      .padStart(2, "0");
+  return `#${c(r)}${c(g)}${c(b)}`.toUpperCase();
+}
+
+export interface Hsv {
+  /** 0 to 360. */
+  h: number;
+  /** 0 to 1. */
+  s: number;
+  /** 0 to 1. */
+  v: number;
+}
+
+export function hexToHsv(hex: string): Hsv {
+  const rgb = parseHex(hex) ?? [0, 0, 0];
+  const r = rgb[0] / 255;
+  const g = rgb[1] / 255;
+  const b = rgb[2] / 255;
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const delta = max - min;
+  let h = 0;
+  if (delta > 0) {
+    if (max === r) h = ((g - b) / delta) % 6;
+    else if (max === g) h = (b - r) / delta + 2;
+    else h = (r - g) / delta + 4;
+    h *= 60;
+    if (h < 0) h += 360;
+  }
+  return { h, s: max === 0 ? 0 : delta / max, v: max };
+}
+
+export function hsvToHex({ h, s, v }: Hsv): string {
+  const c = v * s;
+  const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+  const m = v - c;
+  let r = 0;
+  let g = 0;
+  let b = 0;
+  if (h < 60) [r, g, b] = [c, x, 0];
+  else if (h < 120) [r, g, b] = [x, c, 0];
+  else if (h < 180) [r, g, b] = [0, c, x];
+  else if (h < 240) [r, g, b] = [0, x, c];
+  else if (h < 300) [r, g, b] = [x, 0, c];
+  else [r, g, b] = [c, 0, x];
+  return rgbToHex((r + m) * 255, (g + m) * 255, (b + m) * 255);
 }

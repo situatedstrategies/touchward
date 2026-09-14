@@ -1,9 +1,9 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { Animated, Easing, StyleSheet, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
-import { lighten } from "../palette";
+import { lighten } from "../design/palette";
 import type { Shape } from "../types";
-import type { RippleModeSpec } from "./rippleModes";
+import type { RippleModeSpec } from "./rewardModes";
 import { GLOW_BOX_RATIO, GLOW_VIEWBOX, ripplePath, type RippleShape } from "./shapes";
 
 /** One ripple in flight. `id` is unique per emission; `color` is the band color. */

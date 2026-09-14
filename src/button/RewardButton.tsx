@@ -1,18 +1,20 @@
-import React, {
+import {
   useCallback,
   useEffect,
   useImperativeHandle,
   useMemo,
   useRef,
   useState,
+  type MutableRefObject,
+  type Ref,
 } from "react";
 import { Animated, Easing, Pressable, StyleSheet, View } from "react-native";
 import { playReward, stopHaptics, tick } from "../haptics/engine";
 import { getPattern } from "../haptics/patterns";
-import { colorVariants, lighten, withAlpha } from "../palette";
+import { colorVariants, lighten, withAlpha } from "../design/palette";
 import type { Settings } from "../types";
 import { RippleField, type ActiveRipple } from "./RippleField";
-import { RIPPLE_MODES } from "./rippleModes";
+import { REWARD_MODE_SPECS } from "./rewardModes";
 import { ShapeCore } from "./ShapeCore";
 import { StandingBands } from "./StandingBands";
 import { TimerRing } from "./TimerRing";
@@ -34,17 +36,16 @@ export interface RewardButtonHandle {
 interface Props {
   settings: Settings;
   size: number;
-  /** Kept for callers; the timer track now tints from the button color. */
-  ringTrackColor?: string;
   onReward: (kind: "tap" | "hold") => void;
-  ref?: React.Ref<RewardButtonHandle>;
+  ref?: Ref<RewardButtonHandle>;
 }
 
 /**
- * The button. Any shape gets the same treatment: a glowing core that changes
- * color on each reward, and one ripple per tap in that shape (or the wavy or
- * round outline) radiating outward in the next ripple color. The reward mode
- * sets how the ripple moves and what the tap feels like.
+ * The button. Every shape gets the same treatment: a glowing core that changes
+ * color on each reward, ripples in that shape (or the wavy or round outline)
+ * radiating outward in the ripple colors, and in Original mode three standing
+ * rings that a wave rolls through. The reward mode sets how the ripples move
+ * and what the tap feels like.
  */
 export function RewardButton({ settings, size, onReward, ref }: Props) {
   const {
@@ -55,9 +56,10 @@ export function RewardButton({ settings, size, onReward, ref }: Props) {
     idleColor,
     tapColors,
     rippleColors,
+    rippleFollowButton,
     rippleShape,
   } = settings;
-  const rewardMode = RIPPLE_MODES[settings.rewardMode] ?? RIPPLE_MODES.original;
+  const rewardMode = REWARD_MODE_SPECS[settings.rewardMode] ?? REWARD_MODE_SPECS.original;
   const bands = rewardMode.kind === "bands";
 
   const scale = useRef(new Animated.Value(1)).current;
@@ -76,7 +78,7 @@ export function RewardButton({ settings, size, onReward, ref }: Props) {
   const holdDone = useRef(false);
   const ringAnim = useRef<Animated.CompositeAnimation | null>(null);
   const returnTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const burstTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const burstTimers = useRef(new Set<ReturnType<typeof setTimeout>>());
   const [holding, setHolding] = useState(false);
 
   // Ripples in flight. Each removes itself when its animation finishes.
@@ -99,6 +101,7 @@ export function RewardButton({ settings, size, onReward, ref }: Props) {
     () => () => {
       if (returnTimer.current) clearTimeout(returnTimer.current);
       for (const t of burstTimers.current) clearTimeout(t);
+      burstTimers.current.clear();
       stopHaptics();
     },
     [],
@@ -122,7 +125,7 @@ export function RewardButton({ settings, size, onReward, ref }: Props) {
 
   /** Next entry of a color list, in order or shuffled, never repeating the last pick. */
   const pickNext = useCallback(
-    (list: string[], index: React.MutableRefObject<number>): string | null => {
+    (list: string[], index: MutableRefObject<number>): string | null => {
       if (list.length === 0) return null;
       if (settings.randomColors) {
         if (list.length === 1) return list[0];
@@ -158,11 +161,10 @@ export function RewardButton({ settings, size, onReward, ref }: Props) {
   );
 
   /**
-   * Original mode: run one wave outward through the standing bands.
-   * Ripple modes: one tap, one ripple (Double and Wave send a short burst).
-   * Colors: with several ripple colors chosen, each ripple takes the next one.
-   * With one color (or none, which means the button's color), a burst uses
-   * tints of that color so the cascade still reads as layers.
+   * Every reward sends ripples out: one per tap, or a short burst in the Double
+   * and Wave modes. In Original mode a wave also rolls through the standing
+   * rings. Ripples take Color 1, 2, 3 in turn; when they follow the button, or
+   * all three slots hold the same color, a burst uses tints of that one color.
    */
   const emitRipples = useCallback(
     (kind: "tap" | "hold", buttonColor: string) => {
@@ -175,19 +177,17 @@ export function RewardButton({ settings, size, onReward, ref }: Props) {
           easing: Easing.out(Easing.cubic),
           useNativeDriver: true,
         }).start();
-        return;
       }
       const spec =
         kind === "hold" ? { ...rewardMode, spread: rewardMode.spread * 1.25 } : rewardMode;
-      const first = pickNext(rippleColors, rippleColorIndex) ?? buttonColor;
-      const single = rippleColors.length <= 1;
-      const tints = single ? colorVariants(first, spec.count) : [];
+      const palette = rippleFollowButton ? [] : rippleColors;
+      const single = palette.length === 0 || palette.every((c) => c === palette[0]);
+      const first = single
+        ? (palette[0] ?? buttonColor)
+        : (pickNext(palette, rippleColorIndex) ?? buttonColor);
+      const tints = single ? colorVariants(first, Math.max(spec.count, 1)) : [];
       const colorAt = (i: number) =>
-        i === 0
-          ? first
-          : single
-            ? tints[i]
-            : (pickNext(rippleColors, rippleColorIndex) ?? first);
+        i === 0 ? first : single ? tints[i] : (pickNext(palette, rippleColorIndex) ?? first);
       const push = (i: number) => {
         const color = colorAt(i);
         setRipples((list) => {
@@ -197,17 +197,22 @@ export function RewardButton({ settings, size, onReward, ref }: Props) {
       };
       push(0);
       for (let i = 1; i < spec.count; i++) {
-        burstTimers.current.push(setTimeout(() => push(i), i * spec.gap));
+        const timer = setTimeout(() => {
+          burstTimers.current.delete(timer);
+          push(i);
+        }, i * spec.gap);
+        burstTimers.current.add(timer);
       }
     },
-    [bands, pulse, pickNext, rippleColors, rewardMode],
+    [bands, pulse, pickNext, rippleColors, rippleFollowButton, rewardMode],
   );
 
-  // Colors for the three standing bands: the ripple colors in turn, or tints of one.
+  // The three standing rings: Color 1, 2, 3, or tints of one color.
   const bandColors = useMemo(() => {
-    const base = rippleColors[0] ?? toColor;
-    return rippleColors.length > 1 ? rippleColors : colorVariants(base, 3);
-  }, [rippleColors, toColor]);
+    if (rippleFollowButton) return colorVariants(toColor, 3);
+    const same = rippleColors.every((c) => c === rippleColors[0]);
+    return same ? colorVariants(rippleColors[0] ?? toColor, 3) : rippleColors;
+  }, [rippleColors, rippleFollowButton, toColor]);
 
   const reward = useCallback(
     (kind: "tap" | "hold") => {

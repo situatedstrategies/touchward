@@ -1,9 +1,9 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { Animated, StyleSheet, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
-import { lighten } from "../palette";
+import { lighten } from "../design/palette";
 import type { Shape } from "../types";
-import type { RippleModeSpec } from "./rippleModes";
+import type { RippleModeSpec } from "./rewardModes";
 import { GLOW_BOX_RATIO, GLOW_VIEWBOX, ripplePath, type RippleShape } from "./shapes";
 
 /** Band scale relative to the core box, inner to outer, and when its part of the wave starts. */
@@ -85,12 +85,12 @@ function Band({
         {
           scale: local.interpolate({
             inputRange: [0, 0.45, 1],
-            outputRange: [scale, scale * mode.spread, scale],
+            outputRange: [scale, scale * (mode.swell ?? 1.07), scale],
           }),
         },
       ],
     };
-  }, [pulse, start, scale, mode.spread]);
+  }, [pulse, start, scale, mode.swell]);
 
   const w = mode.width / scale; // Keep the drawn band about the same thickness at every ring.
   return (

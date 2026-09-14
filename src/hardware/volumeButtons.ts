@@ -3,13 +3,13 @@ import { NativeModules, Platform } from "react-native";
 /**
  * Turns the physical volume buttons into a tap trigger while the app is open.
  *
- * How: pin the media volume at a working level, listen for any change (a volume
- * button press moves it), fire the callback, and put the volume back. The
- * original level is restored when the listener stops.
+ * The media volume is parked at a working level, any change (a button press
+ * moves it) fires the callback, and the volume is put back. The original level
+ * is restored when the listener stops.
  *
- * Needs a development build or store build. Expo Go does not ship the native
- * module, so `isVolumeButtonSupportAvailable()` returns false there and the
- * setting is shown as unavailable instead of crashing.
+ * react-native-volume-manager is a native module. Builds without it report
+ * `isVolumeButtonSupportAvailable()` as false and the setting shows as
+ * unavailable.
  */
 
 type VolumeManagerModule = typeof import("react-native-volume-manager");
@@ -17,11 +17,8 @@ type VolumeManagerModule = typeof import("react-native-volume-manager");
 let cached: VolumeManagerModule | null | undefined;
 
 /**
- * True when the native side of react-native-volume-manager is present in this
- * binary. Checked before the JS package is required: the package builds a
- * NativeEventEmitter at import time and throws when the native module is
- * missing, and in development Metro reports that throw as a fatal error (a red
- * screen in Expo Go) before a try/catch around the require can see it.
+ * Whether the native module is present. Checked before requiring the package,
+ * which builds a NativeEventEmitter at import time and throws without it.
  */
 function nativeModulePresent(): boolean {
   try {

@@ -27,7 +27,7 @@
       [
         "expo-calendar",
         {
-          "calendarPermission": "Touchward reads your calendar so it can nudge you to tap right after an event ends. Nothing is written or uploaded."
+          "calendarPermission": "Touchward reads your calendar only to schedule a nudge when each event ends. Event details are used at that moment on this phone and are never stored, copied, or transmitted by the app."
         }
       ],
       "expo-background-task"
@@ -39,7 +39,17 @@
         "com.apple.developer.usernotifications.time-sensitive": true
       },
       "infoPlist": {
-        "NSUserNotificationsUsageDescription": "Touchward sends the reminders you schedule so you remember to tap."
+        "NSUserNotificationsUsageDescription": "Touchward schedules reminders and calendar nudges on this phone so you remember to tap. Notifications are created locally; nothing about them is stored by the app beyond your settings or sent anywhere.",
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSCalendarsFullAccessUsageDescription": "Touchward reads your calendar only to schedule a nudge when each event ends. Event details are used at that moment on this phone and are never stored, copied, or transmitted by the app.",
+        "TouchwardDataAccessNote": "Touchward requests access to calendar events and notifications solely to provide its features on this device. Calendar data is read at runtime to schedule local notifications and is not retained. The only data the app stores are its own settings and the reward counter, kept locally on the device. The optional support form sends only what you type, plus your device model and app version, to the Touchward support inbox.",
+        "TouchwardEncryptionNote": "Touchward contains no custom or proprietary encryption. Network requests (the optional support form and push token registration) use HTTPS through the operating system's standard networking stack, which is exempt encryption under U.S. export rules. ITSAppUsesNonExemptEncryption is therefore false."
+      },
+      "buildNumber": "1",
+      "privacyManifests": {
+        "NSPrivacyTracking": false,
+        "NSPrivacyTrackingDomains": [],
+        "NSPrivacyCollectedDataTypes": []
       }
     },
     "android": {
@@ -51,7 +61,13 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "versionCode": 1,
+      "blockedPermissions": [
+        "android.permission.WRITE_CALENDAR",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -61,6 +77,9 @@
         "projectId": "1f908ad7-e217-4c8b-b542-8b1f8328fe3d"
       }
     },
-    "owner": "omaas"
+    "owner": "omaas",
+    "description": "A sensory reward button: tap it when you did the thing.",
+    "primaryColor": "#2C66FF",
+    "platforms": ["ios", "android"]
   }
 }

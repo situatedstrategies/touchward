@@ -1,14 +1,12 @@
 import * as Haptics from "expo-haptics";
 import { Platform, Vibration } from "react-native";
 import {
-  getPattern,
   toAndroidPattern,
   toImpactSchedule,
   type Intensity,
   type Pattern,
   type Pulse,
 } from "./patterns";
-import type { PatternId } from "../types";
 import {
   isPulsarAvailable,
   playPulsarPattern,
@@ -38,8 +36,7 @@ export function playPattern(pattern: Pattern): Playback {
   return playPulses(pattern.pulses);
 }
 
-/** Play a bare list of pulses, for haptics that are not one of the named patterns. */
-export function playPulses(pulses: Pulse[]): Playback {
+function playPulses(pulses: Pulse[]): Playback {
   current?.cancel();
 
   if (Platform.OS === "android") {
@@ -65,10 +62,6 @@ export function playPulses(pulses: Pulse[]): Playback {
   return current;
 }
 
-export function playPatternById(id: PatternId): Playback {
-  return playPattern(getPattern(id));
-}
-
 export interface RewardHaptic {
   /** A Pulsar preset name chosen in settings. Wins when Pulsar is available. */
   preset?: string | null;
@@ -76,7 +69,7 @@ export interface RewardHaptic {
   pattern?: PulsarPattern;
   /** Scales the composed pattern's amplitudes, 0 to 1. */
   strength?: number;
-  /** What plays everywhere else: Expo Go, web, or a build without Pulsar. */
+  /** What plays when Pulsar is not available: built in pulses through expo-haptics. */
   pulses: Pulse[];
 }
 

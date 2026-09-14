@@ -44,6 +44,8 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSMinimumSystemVersion</key>
 	<string>12.0</string>
 	<key>LSRequiresIPhoneOS</key>
@@ -60,9 +62,9 @@
 		<string>_expo._tcp</string>
 	</array>
 	<key>NSCalendarsFullAccessUsageDescription</key>
-	<string>Touchward reads your calendar so it can nudge you to tap right after an event ends. Nothing is written or uploaded.</string>
+	<string>Touchward reads your calendar only to schedule a nudge when each event ends. Event details are used at that moment on this phone and are never stored, copied, or transmitted by the app.</string>
 	<key>NSCalendarsUsageDescription</key>
-	<string>Touchward reads your calendar so it can nudge you to tap right after an event ends. Nothing is written or uploaded.</string>
+	<string>Touchward reads your calendar only to schedule a nudge when each event ends. Event details are used at that moment on this phone and are never stored, copied, or transmitted by the app.</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Expo Dev Launcher uses the local network to discover and connect to development servers running on your computer.</string>
 	<key>NSRemindersFullAccessUsageDescription</key>
@@ -70,11 +72,15 @@
 	<key>NSRemindersUsageDescription</key>
 	<string>Allow $(PRODUCT_NAME) to access your reminders</string>
 	<key>NSUserNotificationsUsageDescription</key>
-	<string>Touchward sends the reminders you schedule so you remember to tap.</string>
+	<string>Touchward schedules reminders and calendar nudges on this phone so you remember to tap. Notifications are created locally; nothing about them is stored by the app beyond your settings or sent anywhere.</string>
 	<key>RCTMetroPort</key>
 	<string>$(RCT_METRO_PORT)</string>
 	<key>RCTNewArchEnabled</key>
 	<true/>
+	<key>TouchwardDataAccessNote</key>
+	<string>Touchward requests access to calendar events and notifications solely to provide its features on this device. Calendar data is read at runtime to schedule local notifications and is not retained. The only data the app stores are its own settings and the reward counter, kept locally on the device. The optional support form sends only what you type, plus your device model and app version, to the Touchward support inbox.</string>
+	<key>TouchwardEncryptionNote</key>
+	<string>Touchward contains no custom or proprietary encryption. Network requests (the optional support form and push token registration) use HTTPS through the operating system's standard networking stack, which is exempt encryption under U.S. export rules. ITSAppUsesNonExemptEncryption is therefore false.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

@@ -3,8 +3,8 @@ import type { PulsarPattern } from "../haptics/pulsar";
 import type { RewardMode } from "../types";
 
 /**
- * How each reward mode shapes the ripple a tap sends out, and what it plays.
- * The labels and descriptions live in REWARD_MODES in types.ts.
+ * How each reward mode looks and feels. Labels and descriptions live in
+ * REWARD_MODES in types.ts; this file holds the motion and the haptics.
  */
 export interface RippleModeSpec {
   /**
@@ -19,15 +19,17 @@ export interface RippleModeSpec {
   count: number;
   /** Gap between ripples in a burst, in ms. */
   gap: number;
-  /** ripple: how far it travels, as a multiple of the core. bands: peak swell of a band. */
+  /** How far a ripple travels, as a multiple of the core. */
   spread: number;
+  /** bands only: peak scale of a standing ring as the wave passes. */
+  swell?: number;
   /** Band thickness in path units (the shape lives in a 100 unit box). */
   width: number;
-  /** The tap haptic for this mode on Expo Go and builds without Pulsar. */
+  /** The tap haptic when Pulsar is not available: built in pulses through expo-haptics. */
   pulses: Pulse[];
   /**
-   * The tap haptic on a build with Pulsar: amplitude is 0 to 1, frequency is
-   * sharpness (low is a round thud, high is a crisp click).
+   * The tap haptic through Pulsar. amplitude is 0 to 1; frequency is sharpness,
+   * 0 to 1, where low is a round thud and high is a crisp click.
    */
   pulsar: PulsarPattern;
 }
@@ -38,14 +40,15 @@ function repeat(pulse: Pulse, times: number): Pulse[] {
   return Array.from({ length: times }, () => ({ ...pulse }));
 }
 
-export const RIPPLE_MODES: Record<RewardMode, RippleModeSpec> = {
+export const REWARD_MODE_SPECS: Record<RewardMode, RippleModeSpec> = {
   original: {
     kind: "bands",
-    duration: 900,
+    duration: 1100,
     count: 1,
     gap: 0,
-    spread: 1.07,
+    spread: 2.8,
     width: 4.5,
+    swell: 1.07,
     pulses: [{ ms: 40, gap: 0, intensity: "medium" }],
     pulsar: {
       discretePattern: [{ time: 0, amplitude: 0.8, frequency: 0.5 }],

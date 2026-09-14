@@ -1,27 +1,19 @@
 import * as Linking from "expo-linking";
 import * as Notifications from "expo-notifications";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AppState, Pressable, StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Svg, {
-  Circle,
-  Defs,
-  LinearGradient,
-  RadialGradient,
-  Rect,
-  Stop,
-} from "react-native-svg";
-import { RewardButton, type RewardButtonHandle } from "../components/RewardButton";
-import { NEON } from "../palette";
+import { RewardButton, type RewardButtonHandle } from "../button/RewardButton";
+import { NavyBackdrop } from "../components/Backdrop";
 import { startVolumeButtonListener } from "../hardware/volumeButtons";
 import { syncCalendarNudges } from "../notifications/calendar";
 import { setCalendarSyncTaskEnabled } from "../notifications/calendarTask";
 import { registerForPush } from "../notifications/push";
 import { configureNotifications, syncReminders } from "../notifications/reminders";
 import { useSettings } from "../store/settings";
-import { themeForBackdrop, useTheme } from "../theme";
-import { body, bodySemibold, heading } from "../typography";
-import { SettingsScreen } from "./SettingsScreen";
+import { themeForBackdrop, useTheme } from "../design/theme";
+import { body, bodySemibold, heading } from "../design/typography";
+import { SettingsScreen } from "./settings/SettingsScreen";
 
 const PROMPTS = {
   both: "Did the thing? Tap it. Or hold it.",
@@ -146,13 +138,7 @@ export function HomeScreen() {
 
       <View style={styles.middle}>
         {loaded && (
-          <RewardButton
-            ref={button}
-            settings={settings}
-            size={size}
-            ringTrackColor={theme.ringTrack}
-            onReward={onReward}
-          />
+          <RewardButton ref={button} settings={settings} size={size} onReward={onReward} />
         )}
         <Text style={[styles.prompt, { color: theme.muted }]}>{PROMPTS[settings.mode]}</Text>
       </View>
@@ -181,26 +167,6 @@ export function HomeScreen() {
         theme={systemTheme}
       />
     </View>
-  );
-}
-
-/** Top to bottom navy fade with a soft blue glow behind the button, like the icon. */
-function NavyBackdrop() {
-  return (
-    <Svg style={StyleSheet.absoluteFill} pointerEvents="none">
-      <Defs>
-        <LinearGradient id="navy" x1="0" y1="0" x2="0" y2="1">
-          <Stop offset="0" stopColor={NEON.backgroundTop} />
-          <Stop offset="1" stopColor={NEON.backgroundBottom} />
-        </LinearGradient>
-        <RadialGradient id="centerGlow" cx="50%" cy="50%" r="50%">
-          <Stop offset="0" stopColor={NEON.centerGlow} stopOpacity={0.45} />
-          <Stop offset="1" stopColor={NEON.centerGlow} stopOpacity={0} />
-        </RadialGradient>
-      </Defs>
-      <Rect width="100%" height="100%" fill="url(#navy)" />
-      <Circle cx="50%" cy="48%" r="42%" fill="url(#centerGlow)" />
-    </Svg>
   );
 }
 

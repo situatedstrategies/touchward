@@ -1,6 +1,6 @@
 import * as Application from "expo-application";
 import * as Device from "expo-device";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   KeyboardAvoidingView,
   Linking,
@@ -16,8 +16,8 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Chip } from "../components/Chip";
 import { SUPPORT_API, SUPPORT_EMAIL } from "../links";
-import type { Theme } from "../theme";
-import { body, bodySemibold, heading } from "../typography";
+import type { Theme } from "../design/theme";
+import { body, bodySemibold, heading } from "../design/typography";
 
 /**
  * In-app support form. Posts the same JSON the website's form sends to the
@@ -247,7 +247,7 @@ export function SupportScreen({ visible, onClose, theme }: Props) {
   );
 }
 
-function Label({ children, theme }: { children: React.ReactNode; theme: Theme }) {
+function Label({ children, theme }: { children: ReactNode; theme: Theme }) {
   return <Text style={[styles.label, { color: theme.muted }]}>{children}</Text>;
 }
 

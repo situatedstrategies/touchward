@@ -3,7 +3,7 @@ export type Shape =
 
 export type PatternId = "short" | "long" | "staccato" | "heartbeat" | "ramp" | "purr";
 
-/** One pick that sets both the ripple motion and the tap haptic, for every shape. */
+/** What a tap looks and feels like: the ripple motion and the haptic together. */
 export type RewardMode = "original" | "pulse" | "soft" | "spark" | "deep" | "double" | "wave";
 
 /**
@@ -18,17 +18,15 @@ export interface Settings {
   shape: Shape;
   /** The visual and haptic character of a tap. */
   rewardMode: RewardMode;
-  /** Pulsar preset name that replaces the tap haptic. Null means use the pattern or mode. Needs a dev build. */
+  /** Pulsar preset that replaces the tap haptic; null plays the reward mode's own. */
   tapPreset: string | null;
-  /** Pulsar preset name that replaces the timer-done haptic. Null means use the pattern. Needs a dev build. */
+  /** Pulsar preset that replaces the timer done haptic; null plays holdPattern. */
   holdPreset: string | null;
   /** How hard Pulsar plays the reward mode patterns, 0 to 1. */
   hapticStrength: number;
-  /** Legacy: the pre-modes tap pattern. Kept so old settings still parse; taps now follow rewardMode. */
-  tapPattern: PatternId;
-  /** Pattern played back at you when the hold timer completes. */
+  /** Built in pattern played when the hold timer completes. */
   holdPattern: PatternId;
-  /** Length of the circular hold timer, in seconds. */
+  /** Length of the hold timer, in seconds. */
   holdSeconds: number;
   /** Color of the button at rest. */
   idleColor: string;
@@ -38,8 +36,12 @@ export interface Settings {
   randomColors: boolean;
   /** Snap back to the idle color after a moment instead of staying. */
   returnToIdle: boolean;
-  /** Colors the ripples cycle through, one per tap. Empty means follow the button color. */
+  /** Color 1, 2, and 3: the three rings in Original mode, and the colors ripples cycle through. */
   rippleColors: string[];
+  /** Ignore rippleColors and draw ripples and rings in tints of the button's color. */
+  rippleFollowButton: boolean;
+  /** Saved colors per setting, keyed by ColorLibraryKey, newest first. */
+  colorLibraries: Partial<Record<ColorLibraryKey, string[]>>;
   /** Outline used for ripples: the button's shape, the icon's wavy ring, or a circle. */
   rippleShape: "match" | "wavy" | "round";
   /** Behind the button: "navy" (the icon's gradient and glow), "system" (phone light or dark), or a hex color. */
@@ -47,9 +49,9 @@ export interface Settings {
   reminders: ReminderSettings;
   /** Nudge to tap shortly after each calendar event ends. */
   calendarNudges: CalendarNudgeSettings;
-  /** Pressing a volume button while the app is open counts as a tap. Needs a dev build. */
+  /** Pressing a volume button while the app is open counts as a tap. */
   volumeButtons: boolean;
-  /** Register this device for remote push. Needs a real device and a dev or store build. */
+  /** Register this device for remote push. */
   pushEnabled: boolean;
 }
 
@@ -118,7 +120,7 @@ export const REWARD_MODES: {
   },
 ];
 
-/** Every RewardMode id, for validating stored settings. */
+/** Id lists used to validate stored settings. */
 export const REWARD_MODE_IDS: RewardMode[] = REWARD_MODES.map((m) => m.id);
 export const PATTERN_IDS: PatternId[] = [
   "short",
@@ -128,6 +130,13 @@ export const PATTERN_IDS: PatternId[] = [
   "ramp",
   "purr",
 ];
+
+/** Each color setting keeps its own saved colors. */
+export type ColorLibraryKey = "idleColor" | "tapColors" | "rippleColors" | "backdrop";
+export const COLOR_LIBRARY_LIMIT = 24;
+
+/** How many ripple color slots there are: one per ring in Original mode. */
+export const RIPPLE_COLOR_SLOTS = 3;
 
 export const HOLD_PRESETS = [3, 5, 10, 15, 30, 60];
 
@@ -172,7 +181,6 @@ export const DEFAULT_SETTINGS: Settings = {
   tapPreset: null,
   holdPreset: null,
   hapticStrength: 0.8,
-  tapPattern: "short",
   holdPattern: "heartbeat",
   holdSeconds: 5,
   idleColor: "#2C66FF",
@@ -180,6 +188,8 @@ export const DEFAULT_SETTINGS: Settings = {
   randomColors: false,
   returnToIdle: false,
   rippleColors: ["#E6A9FF", "#8DEDFF", "#BBA4FF"],
+  rippleFollowButton: false,
+  colorLibraries: {},
   rippleShape: "match",
   backdrop: "navy",
   reminders: {

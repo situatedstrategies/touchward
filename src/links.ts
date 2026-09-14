@@ -7,3 +7,5 @@ export const SUPPORT_EMAIL = "support@touchward-dopamine.com";
 /** The site's Cloudflare Pages Function that emails the support inbox through Resend. */
 export const SUPPORT_API = `${SITE_URL}/api/support`;
 export const SOURCE_URL = "https://github.com/situatedstrategies/touchward";
+/** Opening this link fires a tap. Wire it to a shortcut, the Action Button, or a remapper. */
+export const REWARD_LINK = "touchward://reward";

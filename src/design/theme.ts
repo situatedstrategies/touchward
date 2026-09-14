@@ -34,8 +34,8 @@ const dark: Theme = {
   ringTrack: "#27272A",
 };
 
-/** Used on the home screen while the ripples shape is selected: the icon's deep navy. */
-export const RIPPLE_THEME: Theme = {
+/** The home screen theme for the navy backdrop: the icon's deep ground. */
+export const NAVY_THEME: Theme = {
   dark: true,
   background: "#081B4E",
   surface: "#12276A",
@@ -52,7 +52,7 @@ export const RIPPLE_THEME: Theme = {
  * dark or light theme with that color as the ground.
  */
 export function themeForBackdrop(backdrop: string, system: Theme): Theme {
-  if (backdrop === "navy") return RIPPLE_THEME;
+  if (backdrop === "navy") return NAVY_THEME;
   if (backdrop === "system" || !backdrop.startsWith("#")) return system;
   if (isDarkColor(backdrop)) {
     return {

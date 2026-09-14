@@ -1,4 +1,3 @@
-import React from "react";
 import { Animated } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import type { Shape } from "../types";
