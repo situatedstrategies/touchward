@@ -32,7 +32,7 @@ import {
   type ReminderSettings,
 } from "../types";
 
-export const REWARD_LINK = "dopamine://reward";
+export const REWARD_LINK = "touchward://reward";
 
 interface Props {
   visible: boolean;
@@ -265,7 +265,7 @@ export function SettingsScreen({ visible, onClose, theme }: Props) {
             />
             {permissionDenied && (
               <Hint theme={theme}>
-                Notifications are turned off for Dopamine in your phone settings. Turn them on
+                Notifications are turned off for Touchward in your phone settings. Turn them on
                 there, then flip this switch again.
               </Hint>
             )}
@@ -330,14 +330,14 @@ export function SettingsScreen({ visible, onClose, theme }: Props) {
             />
             <Hint theme={theme}>
               {volumeSupported
-                ? "While Dopamine is open, either volume button counts as a tap. Your volume is parked at half and put back when you leave."
+                ? "While Touchward is open, either volume button counts as a tap. Your volume is parked at half and put back when you leave."
                 : "Not available in Expo Go. Install a development build or the store version to use the volume buttons."}
             </Hint>
             <Text style={[styles.subLabel, { color: theme.muted }]}>
               Action Button, Back Tap, Quick Tap
             </Text>
             <Hint theme={theme}>
-              Make a shortcut that opens this link and Dopamine will tap for you the moment it
+              Make a shortcut that opens this link and Touchward will tap for you the moment it
               opens:
             </Hint>
             <Text

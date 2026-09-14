@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "Dopamine",
-    "slug": "dopamine-app",
+    "name": "Touchward",
+    "slug": "touchward-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "scheme": "dopamine",
+    "scheme": "touchward",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/splash-icon.png",
@@ -23,16 +23,16 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.situatedstrategies.dopamine",
+      "bundleIdentifier": "com.situatedstrategies.touchward",
       "entitlements": {
         "com.apple.developer.usernotifications.time-sensitive": true
       },
       "infoPlist": {
-        "NSUserNotificationsUsageDescription": "Dopamine sends the reminders you schedule so you remember to tap."
+        "NSUserNotificationsUsageDescription": "Touchward sends the reminders you schedule so you remember to tap."
       }
     },
     "android": {
-      "package": "com.situatedstrategies.dopamine",
+      "package": "com.situatedstrategies.touchward",
       "permissions": ["android.permission.VIBRATE", "android.permission.POST_NOTIFICATIONS"],
       "adaptiveIcon": {
         "backgroundColor": "#0B0B0F",

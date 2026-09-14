@@ -3,3 +3,5 @@ node_modules
 dist
 assets
 package-lock.json
+# The marketing site is hand-formatted, like the Have Another Cherry site.
+site/

@@ -16,7 +16,7 @@ const PROMPTS = {
   hold: "Did the thing? Hold it.",
 };
 
-/** Opening dopamine://reward (or any link with ?reward=1) fires a tap on arrival. */
+/** Opening touchward://reward (or any link with ?reward=1) fires a tap on arrival. */
 function linkAsksForReward(url: string): boolean {
   const parsed = Linking.parse(url);
   const path = (parsed.path ?? parsed.hostname ?? "").replace(/^\/+|\/+$/g, "");
@@ -103,7 +103,7 @@ export function HomeScreen() {
       ]}
     >
       <View style={styles.top}>
-        <Text style={[styles.brand, { color: theme.text }]}>Dopamine</Text>
+        <Text style={[styles.brand, { color: theme.text }]}>Touchward</Text>
         <Text style={[styles.count, { color: theme.muted }]}>{stats.rewardsToday} today</Text>
       </View>
 

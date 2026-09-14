@@ -10,8 +10,8 @@ import React, {
 } from "react";
 import { DEFAULT_SETTINGS, type Settings } from "../types";
 
-const SETTINGS_KEY = "dopamine.settings.v1";
-const STATS_KEY = "dopamine.stats.v1";
+const SETTINGS_KEY = "touchward.settings.v1";
+const STATS_KEY = "touchward.stats.v1";
 
 interface Stats {
   /** ISO date (YYYY-MM-DD) the counter belongs to. */

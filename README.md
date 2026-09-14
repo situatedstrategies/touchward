@@ -1,4 +1,4 @@
-# Dopamine
+# Touchward
 
 A sensory reward button for iOS and Android, built by Situated Strategies.
 
@@ -26,7 +26,7 @@ hold it down, watch the ring close, and get a bigger buzz when the timer is up.
   break through Focus modes.
 - Side buttons: while the app is open, either volume button counts as a tap
   (opt in). For a one-gesture trigger from anywhere, the link
-  `dopamine://reward` fires a tap when it opens the app, so it can be wired to
+  `touchward://reward` fires a tap when it opens the app, so it can be wired to
   the iPhone Action Button or Back Tap through Shortcuts, or to Quick Tap or a
   button remapper on Android.
 - A small counter of rewards today and all time. Everything is stored on the
@@ -82,7 +82,7 @@ eas build --platform android
 ```
 
 The bundle identifier and Android package are both
-`com.situatedstrategies.dopamine` (see `app.json`).
+`com.situatedstrategies.touchward` (see `app.json`).
 
 ## Project layout
 

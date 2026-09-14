@@ -26,7 +26,7 @@ Shared files: `styles.css` (design system, dark ground with the icon's blue and 
 
 1. **App Store link.** `index.html` links to `https://apps.apple.com/app/touchward/id0000000000`.
    Replace the id with the real one from App Store Connect once the app is listed. The
-   Google Play link already uses the package id `com.situatedstrategies.dopamine` from
+   Google Play link already uses the package id `com.situatedstrategies.touchward` from
    `app.json`, so it works as soon as the listing is live.
 2. **The real icon.** `assets/icon.svg` is a hand-drawn rendition of the app icon, and the
    PNGs next to it were rendered from it. Drop the real icon PNG over `assets/icon.png`
