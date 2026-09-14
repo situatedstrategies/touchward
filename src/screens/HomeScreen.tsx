@@ -15,6 +15,9 @@ import { themeForBackdrop, useTheme } from "../design/theme";
 import { body, bodySemibold, heading } from "../design/typography";
 import { SettingsScreen } from "./settings/SettingsScreen";
 
+/** Shortest side at or above this is laid out as a tablet. */
+const TABLET_MIN_SIDE = 700;
+
 const PROMPTS = {
   both: "Did the thing? Tap it. Or hold it.",
   tap: "Did the thing? Tap it.",
@@ -117,7 +120,10 @@ export function HomeScreen() {
     };
   }, [loaded, settings.volumeButtons, triggerTap]);
 
-  const size = Math.round(Math.min(width * 0.62, height * 0.34, 300));
+  // Tablets get a larger button and type; the layout otherwise stays the same.
+  const tablet = Math.min(width, height) >= TABLET_MIN_SIDE;
+  const size = Math.round(Math.min(width * 0.62, height * 0.34, tablet ? 520 : 300));
+  const scale = tablet ? 1.4 : 1;
 
   return (
     <View
@@ -125,15 +131,20 @@ export function HomeScreen() {
         styles.container,
         {
           backgroundColor: theme.background,
-          paddingTop: insets.top + 16,
-          paddingBottom: insets.bottom + 16,
+          paddingTop: insets.top + 16 * scale,
+          paddingBottom: insets.bottom + 16 * scale,
+          paddingHorizontal: 24 * scale,
         },
       ]}
     >
       {neon && <NavyBackdrop />}
       <View style={styles.top}>
-        <Text style={[styles.brand, { color: theme.text }]}>Touchward</Text>
-        <Text style={[styles.count, { color: theme.muted }]}>{stats.rewardsToday} today</Text>
+        <Text style={[styles.brand, { color: theme.text, fontSize: 24 * scale }]}>
+          Touchward
+        </Text>
+        <Text style={[styles.count, { color: theme.muted, fontSize: 15 * scale }]}>
+          {stats.rewardsToday} today
+        </Text>
       </View>
 
       <View style={styles.middle}>
@@ -143,7 +154,9 @@ export function HomeScreen() {
       </View>
 
       <View style={styles.bottom}>
-        <Text style={[styles.prompt, { color: theme.text }]}>{PROMPTS[settings.mode]}</Text>
+        <Text style={[styles.prompt, { color: theme.text, fontSize: 16 * scale }]}>
+          {PROMPTS[settings.mode]}
+        </Text>
         <Pressable
           onPress={() => setSettingsOpen(true)}
           accessibilityRole="button"
@@ -157,7 +170,9 @@ export function HomeScreen() {
             },
           ]}
         >
-          <Text style={[styles.settingsText, { color: theme.text }]}>Customize</Text>
+          <Text style={[styles.settingsText, { color: theme.text, fontSize: 16 * scale }]}>
+            Customize
+          </Text>
         </Pressable>
       </View>
 
@@ -171,7 +186,7 @@ export function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, paddingHorizontal: 24 },
+  container: { flex: 1 },
   top: {
     flexDirection: "row",
     alignItems: "baseline",

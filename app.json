@@ -19,9 +19,15 @@
         "expo-splash-screen",
         {
           "image": "./assets/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#0B0B0F"
+          "resizeMode": "cover",
+          "backgroundColor": "#051C55",
+          "enableFullScreenImage_legacy": true,
+          "android": {
+            "image": "./assets/splash-icon-android.png",
+            "imageWidth": 240,
+            "resizeMode": "contain",
+            "backgroundColor": "#051C55"
+          }
         }
       ],
       [
@@ -54,9 +60,12 @@
     },
     "android": {
       "package": "com.situatedstrategies.touchward",
-      "permissions": ["android.permission.VIBRATE", "android.permission.POST_NOTIFICATIONS"],
+      "permissions": [
+        "android.permission.VIBRATE",
+        "android.permission.POST_NOTIFICATIONS"
+      ],
       "adaptiveIcon": {
-        "backgroundColor": "#0B0B0F",
+        "backgroundColor": "#051C55",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
@@ -80,6 +89,9 @@
     "owner": "omaas",
     "description": "A sensory reward button: tap it when you did the thing.",
     "primaryColor": "#2C66FF",
-    "platforms": ["ios", "android"]
+    "platforms": [
+      "ios",
+      "android"
+    ]
   }
 }
