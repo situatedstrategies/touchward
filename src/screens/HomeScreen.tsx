@@ -14,11 +14,15 @@ import { pickLook, randomLook, suggestName, type LookSettings } from "../looks/l
 import { useLooks } from "../store/looks";
 import { useSettings } from "../store/settings";
 import { onWatchReward, sendSettingsToWatch } from "../../modules/watch-sync";
-import { themeForBackdrop, useTheme, type Theme } from "../design/theme";
+import { themeForBackdrop, useTheme } from "../design/theme";
 import { body, bodySemibold, heading } from "../design/typography";
 import { LibraryScreen } from "./LibraryScreen";
 import { SaveLookSheet } from "./SaveLookSheet";
 import { SettingsScreen } from "./settings/SettingsScreen";
+
+/** The bottom row buttons are always off white with dark text. */
+const PILL_BACKGROUND = "#F4F4F5";
+const PILL_TEXT = "#18181B";
 
 /** Shortest side at or above this is laid out as a tablet. */
 const TABLET_MIN_SIDE = 700;
@@ -197,21 +201,14 @@ export function HomeScreen() {
           {PROMPTS[settings.mode]}
         </Text>
         <View style={styles.toolbar}>
-          <Pill label="Random" onPress={shuffleLook} theme={theme} scale={scale} />
-          <Pill label="Save" onPress={() => setSaveOpen(true)} theme={theme} scale={scale} />
+          <Pill label="Random" onPress={shuffleLook} scale={scale} />
+          <Pill label="Save" onPress={() => setSaveOpen(true)} scale={scale} />
           <Pill
             label={looks.length > 0 ? `Library ${looks.length}` : "Library"}
             onPress={() => setLibraryOpen(true)}
-            theme={theme}
             scale={scale}
           />
-          <Pill
-            label="Customize"
-            onPress={() => setSettingsOpen(true)}
-            theme={theme}
-            scale={scale}
-            primary
-          />
+          <Pill label="Customize" onPress={() => setSettingsOpen(true)} scale={scale} />
         </View>
       </View>
 
@@ -242,18 +239,15 @@ export function HomeScreen() {
   );
 }
 
+/** The bottom row buttons: always off white, whatever the backdrop. */
 function Pill({
   label,
   onPress,
-  theme,
   scale,
-  primary = false,
 }: {
   label: string;
   onPress: () => void;
-  theme: Theme;
   scale: number;
-  primary?: boolean;
 }) {
   return (
     <Pressable
@@ -263,22 +257,13 @@ function Pill({
       style={({ pressed }) => [
         styles.pill,
         {
-          borderColor: primary ? theme.text : theme.border,
-          backgroundColor: primary ? theme.text : theme.surface,
           opacity: pressed ? 0.7 : 1,
           paddingHorizontal: 14 * scale,
           paddingVertical: 10 * scale,
         },
       ]}
     >
-      <Text
-        style={[
-          styles.pillText,
-          { color: primary ? theme.background : theme.text, fontSize: 14 * scale },
-        ]}
-      >
-        {label}
-      </Text>
+      <Text style={[styles.pillText, { fontSize: 14 * scale }]}>{label}</Text>
     </Pressable>
   );
 }
@@ -296,6 +281,11 @@ const styles = StyleSheet.create({
   prompt: { ...body(16), marginBottom: 16, textAlign: "center" },
   bottom: { alignItems: "center" },
   toolbar: { flexDirection: "row", flexWrap: "wrap", justifyContent: "center", gap: 8 },
-  pill: { borderRadius: 999, borderWidth: 1 },
-  pillText: bodySemibold(14),
+  pill: {
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: "rgba(0, 0, 0, 0.08)",
+    backgroundColor: PILL_BACKGROUND,
+  },
+  pillText: { ...bodySemibold(14), color: PILL_TEXT },
 });

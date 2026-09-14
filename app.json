@@ -37,7 +37,8 @@
         }
       ],
       "expo-background-task",
-      "@bacons/apple-targets"
+      "@bacons/apple-targets",
+      "./plugins/withQuietPods.js"
     ],
     "ios": {
       "supportsTablet": true,
