@@ -13,6 +13,7 @@ enum Outline {
     case "star": return star(5, 0.48, 0.24)
     case "heart": return heart()
     case "blob": return polar { a in 0.42 + 0.04 * sin(3 * a + 0.6) + 0.03 * sin(5 * a + 2.1) }
+    case "ripples": return wavy
     default: return superellipse(0.47, 2)
     }
   }

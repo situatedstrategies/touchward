@@ -1,4 +1,5 @@
-export type Shape = "circle" | "squircle" | "square" | "hexagon" | "star" | "heart" | "blob";
+export type Shape =
+  "circle" | "ripples" | "squircle" | "square" | "hexagon" | "star" | "heart" | "blob";
 
 export type PatternId = "short" | "long" | "staccato" | "heartbeat" | "ramp" | "purr";
 
@@ -80,6 +81,7 @@ export const REMINDER_INTERVALS = [1, 2, 3, 4, 6];
 
 export const SHAPES: { id: Shape; label: string }[] = [
   { id: "circle", label: "Circle" },
+  { id: "ripples", label: "Ripple" },
   { id: "squircle", label: "Squircle" },
   { id: "square", label: "Square" },
   { id: "hexagon", label: "Hexagon" },
