@@ -1,4 +1,5 @@
 import { useColorScheme } from "react-native";
+import { isDarkColor } from "./palette";
 
 export interface Theme {
   dark: boolean;
@@ -44,6 +45,32 @@ export const RIPPLE_THEME: Theme = {
   accent: "#8FE9FF",
   ringTrack: "rgba(255, 255, 255, 0.14)",
 };
+
+/**
+ * The theme to draw the home screen with for a backdrop setting: the navy
+ * theme for "navy", the phone's theme for "system", and for a solid color a
+ * dark or light theme with that color as the ground.
+ */
+export function themeForBackdrop(backdrop: string, system: Theme): Theme {
+  if (backdrop === "navy") return RIPPLE_THEME;
+  if (backdrop === "system" || !backdrop.startsWith("#")) return system;
+  if (isDarkColor(backdrop)) {
+    return {
+      ...dark,
+      background: backdrop,
+      surface: "rgba(255, 255, 255, 0.10)",
+      border: "rgba(255, 255, 255, 0.28)",
+      ringTrack: "rgba(255, 255, 255, 0.16)",
+    };
+  }
+  return {
+    ...light,
+    background: backdrop,
+    surface: "rgba(255, 255, 255, 0.55)",
+    border: "rgba(0, 0, 0, 0.18)",
+    ringTrack: "rgba(0, 0, 0, 0.10)",
+  };
+}
 
 export function useTheme(): Theme {
   return useColorScheme() === "dark" ? dark : light;

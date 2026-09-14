@@ -3,18 +3,26 @@ import type { PulsarPattern } from "../haptics/pulsar";
 import type { RewardMode } from "../types";
 
 /**
- * How each reward mode moves the ripple bands and what it plays on a tap.
+ * How each reward mode shapes the ripple a tap sends out, and what it plays.
  * The labels and descriptions live in REWARD_MODES in types.ts.
  */
 export interface RippleModeSpec {
-  /** One outward wave through all three bands, in ms. */
+  /**
+   * bands: three standing rings around the core, and a tap sends a wave of
+   * brightness and swell outward through them (the original look).
+   * ripple: nothing at rest, and a tap emits ripples that travel out and fade.
+   */
+  kind: "bands" | "ripple";
+  /** How long one ripple (or one wave through the bands) takes, in ms. */
   duration: number;
-  /** Gap between one band starting and the next, in ms. */
-  stagger: number;
-  /** Peak scale of a band as the wave passes. */
-  swell: number;
-  /** How many waves a single reward sends out. */
-  repeats: number;
+  /** How many ripples one tap emits. */
+  count: number;
+  /** Gap between ripples in a burst, in ms. */
+  gap: number;
+  /** ripple: how far it travels, as a multiple of the core. bands: peak swell of a band. */
+  spread: number;
+  /** Band thickness in path units (the shape lives in a 100 unit box). */
+  width: number;
   /** The tap haptic for this mode on Expo Go and builds without Pulsar. */
   pulses: Pulse[];
   /**
@@ -31,11 +39,26 @@ function repeat(pulse: Pulse, times: number): Pulse[] {
 }
 
 export const RIPPLE_MODES: Record<RewardMode, RippleModeSpec> = {
+  original: {
+    kind: "bands",
+    duration: 900,
+    count: 1,
+    gap: 0,
+    spread: 1.07,
+    width: 4.5,
+    pulses: [{ ms: 40, gap: 0, intensity: "medium" }],
+    pulsar: {
+      discretePattern: [{ time: 0, amplitude: 0.8, frequency: 0.5 }],
+      continuousPattern: noRumble,
+    },
+  },
   soft: {
-    duration: 1500,
-    stagger: 170,
-    swell: 1.09,
-    repeats: 1,
+    kind: "ripple",
+    duration: 1600,
+    count: 1,
+    gap: 0,
+    spread: 2.6,
+    width: 5,
     pulses: [{ ms: 40, gap: 0, intensity: "soft" }],
     // A rounded swell rather than a tap.
     pulsar: {
@@ -54,10 +77,12 @@ export const RIPPLE_MODES: Record<RewardMode, RippleModeSpec> = {
     },
   },
   pulse: {
-    duration: 900,
-    stagger: 90,
-    swell: 1.07,
-    repeats: 1,
+    kind: "ripple",
+    duration: 1000,
+    count: 1,
+    gap: 0,
+    spread: 2.2,
+    width: 4,
     pulses: [{ ms: 40, gap: 0, intensity: "medium" }],
     pulsar: {
       discretePattern: [{ time: 0, amplitude: 0.8, frequency: 0.5 }],
@@ -65,10 +90,12 @@ export const RIPPLE_MODES: Record<RewardMode, RippleModeSpec> = {
     },
   },
   spark: {
-    duration: 450,
-    stagger: 35,
-    swell: 1.04,
-    repeats: 1,
+    kind: "ripple",
+    duration: 550,
+    count: 1,
+    gap: 0,
+    spread: 1.7,
+    width: 3,
     pulses: [{ ms: 30, gap: 0, intensity: "light" }],
     pulsar: {
       discretePattern: [{ time: 0, amplitude: 0.6, frequency: 0.95 }],
@@ -76,10 +103,12 @@ export const RIPPLE_MODES: Record<RewardMode, RippleModeSpec> = {
     },
   },
   deep: {
-    duration: 1700,
-    stagger: 240,
-    swell: 1.13,
-    repeats: 1,
+    kind: "ripple",
+    duration: 1900,
+    count: 1,
+    gap: 0,
+    spread: 3,
+    width: 6,
     pulses: [{ ms: 45, gap: 0, intensity: "heavy" }],
     // A hard hit that decays into a low rumble.
     pulsar: {
@@ -97,10 +126,12 @@ export const RIPPLE_MODES: Record<RewardMode, RippleModeSpec> = {
     },
   },
   double: {
-    duration: 650,
-    stagger: 70,
-    swell: 1.07,
-    repeats: 2,
+    kind: "ripple",
+    duration: 900,
+    count: 2,
+    gap: 170,
+    spread: 2.2,
+    width: 4,
     pulses: [
       { ms: 40, gap: 150, intensity: "medium" },
       { ms: 40, gap: 0, intensity: "medium" },
@@ -114,10 +145,12 @@ export const RIPPLE_MODES: Record<RewardMode, RippleModeSpec> = {
     },
   },
   wave: {
-    duration: 550,
-    stagger: 60,
-    swell: 1.06,
-    repeats: 3,
+    kind: "ripple",
+    duration: 850,
+    count: 3,
+    gap: 130,
+    spread: 2.4,
+    width: 3.5,
     pulses: repeat({ ms: 30, gap: 85, intensity: "light" }, 4),
     // Four light taps that rise and fall, like the bands lighting up in turn.
     pulsar: {

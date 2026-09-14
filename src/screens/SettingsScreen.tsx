@@ -38,6 +38,7 @@ import {
   type CalendarChoice,
 } from "../notifications/calendar";
 import { PRIVACY_URL, SOURCE_URL, SUPPORT_EMAIL, TERMS_URL } from "../links";
+import { BACKDROP_COLORS } from "../palette";
 import {
   clearPushRegistration,
   getStoredPushRegistration,
@@ -59,6 +60,7 @@ import {
   HOLD_PRESETS,
   NUDGE_DELAYS,
   REMINDER_INTERVALS,
+  RIPPLE_SHAPES,
   SHAPES,
   STRENGTHS,
   SWATCHES,
@@ -197,12 +199,20 @@ export function SettingsScreen({ visible, onClose, theme }: Props) {
     });
   };
 
+  const toggleRippleColor = (color: string) => {
+    const has = settings.rippleColors.includes(color);
+    update({
+      rippleColors: has
+        ? settings.rippleColors.filter((c) => c !== color)
+        : [...settings.rippleColors, color],
+    });
+  };
+
   const choosePattern = (key: "tapPattern" | "holdPattern", id: PatternId) => {
     update({ [key]: id });
     playPattern(PATTERNS_BY_ID[id]);
   };
 
-  const isRipples = settings.shape === "ripples";
   const rewardMode = REWARD_MODES.find((m) => m.id === settings.rewardMode) ?? REWARD_MODES[1];
 
   const chooseRewardMode = (id: RewardMode) => {
@@ -223,8 +233,10 @@ export function SettingsScreen({ visible, onClose, theme }: Props) {
   const choosePreset = (key: "tapPreset" | "holdPreset", name: string | null) => {
     update({ [key]: name });
     if (name) playPulsarPreset(name);
-    else if (key === "tapPreset") playPulses(PATTERNS_BY_ID[settings.tapPattern].pulses);
-    else playPulses(PATTERNS_BY_ID[settings.holdPattern].pulses);
+    else if (key === "tapPreset") {
+      const m = RIPPLE_MODES[settings.rewardMode] ?? RIPPLE_MODES.pulse;
+      playReward({ pattern: m.pulsar, strength: settings.hapticStrength, pulses: m.pulses });
+    } else playPulses(PATTERNS_BY_ID[settings.holdPattern].pulses);
   };
 
   const stepHold = (delta: number) => {
@@ -284,75 +296,44 @@ export function SettingsScreen({ visible, onClose, theme }: Props) {
                 />
               ))}
             </Row>
-            {isRipples && (
-              <Hint theme={theme}>
-                Ripples has its own blue and violet palette. The color choices below apply to
-                the other shapes.
-              </Hint>
-            )}
           </Section>
 
-          {isRipples && (
-            <Section title="Reward mode" theme={theme}>
-              <Row>
-                {REWARD_MODES.map((m) => (
-                  <Chip
-                    key={m.id}
-                    label={m.label}
-                    selected={settings.rewardMode === m.id}
-                    onPress={() => chooseRewardMode(m.id)}
-                    theme={theme}
-                  />
-                ))}
-              </Row>
-              <Hint theme={theme}>
-                {rewardMode.visual}, {rewardMode.haptic}. Sets what a tap looks and feels like.
-                Picking one plays it.
-              </Hint>
-            </Section>
-          )}
-
-          {!isRipples && (
-            <Section title="Tap haptic" theme={theme}>
-              <Row>
-                {Object.values(PATTERNS_BY_ID).map((p) => (
-                  <Chip
-                    key={p.id}
-                    label={p.label}
-                    selected={settings.tapPattern === p.id}
-                    onPress={() => choosePattern("tapPattern", p.id)}
-                    theme={theme}
-                  />
-                ))}
-              </Row>
-              <Hint theme={theme}>
-                {PATTERNS_BY_ID[settings.tapPattern].description} Picking one plays it.
-              </Hint>
-            </Section>
-          )}
+          <Section title="Reward mode" theme={theme}>
+            <Row>
+              {REWARD_MODES.map((m) => (
+                <Chip
+                  key={m.id}
+                  label={m.label}
+                  selected={settings.rewardMode === m.id}
+                  onPress={() => chooseRewardMode(m.id)}
+                  theme={theme}
+                />
+              ))}
+            </Row>
+            <Hint theme={theme}>
+              {rewardMode.visual}, {rewardMode.haptic}. Sets what a tap looks and feels like.
+              Picking one plays it.
+            </Hint>
+          </Section>
 
           <Section title="Pulsar haptics" theme={theme}>
             {pulsar ? (
               <>
-                {isRipples && (
-                  <>
-                    <Row>
-                      {STRENGTHS.map((s) => (
-                        <Chip
-                          key={s.value}
-                          label={s.label}
-                          selected={Math.abs(settings.hapticStrength - s.value) < 0.01}
-                          onPress={() => chooseStrength(s.value)}
-                          theme={theme}
-                        />
-                      ))}
-                    </Row>
-                    <Hint theme={theme}>
-                      How hard the reward modes hit. Pulsar plays them with real amplitude and
-                      sharpness on this device.
-                    </Hint>
-                  </>
-                )}
+                <Row>
+                  {STRENGTHS.map((s) => (
+                    <Chip
+                      key={s.value}
+                      label={s.label}
+                      selected={Math.abs(settings.hapticStrength - s.value) < 0.01}
+                      onPress={() => chooseStrength(s.value)}
+                      theme={theme}
+                    />
+                  ))}
+                </Row>
+                <Hint theme={theme}>
+                  How hard a tap hits. Pulsar plays the reward modes with real amplitude and
+                  sharpness on this device.
+                </Hint>
                 <SubTitle theme={theme}>Tap preset</SubTitle>
                 <PresetPicker
                   value={settings.tapPreset}
@@ -361,12 +342,8 @@ export function SettingsScreen({ visible, onClose, theme }: Props) {
                 />
                 <Hint theme={theme}>
                   {settings.tapPreset
-                    ? `Every tap plays "${presetLabel(settings.tapPreset)}" instead of the ${
-                        isRipples ? "reward mode" : "tap haptic"
-                      }.`
-                    : `Pick one of Pulsar's ${pulsarPresetNames().length} presets to replace the ${
-                        isRipples ? "reward mode's" : "tap"
-                      } haptic. Picking one plays it.`}
+                    ? `Every tap plays "${presetLabel(settings.tapPreset)}" instead of the reward mode.`
+                    : `Pick one of Pulsar's ${pulsarPresetNames().length} presets to replace the reward mode's haptic. Picking one plays it.`}
                 </Hint>
                 {settings.mode !== "tap" && (
                   <>
@@ -485,6 +462,77 @@ export function SettingsScreen({ visible, onClose, theme }: Props) {
               onChange={(v) => update({ returnToIdle: v })}
               theme={theme}
             />
+          </Section>
+
+          <Section title="Ripples" theme={theme}>
+            <Hint theme={theme}>
+              Every tap sends one ripple out from the button. Choose its outline and the colors
+              it cycles through, one per tap.
+            </Hint>
+            <Text style={[styles.subLabel, { color: theme.muted }]}>Outline</Text>
+            <Row>
+              {RIPPLE_SHAPES.map((r) => (
+                <Chip
+                  key={r.id}
+                  label={r.label}
+                  selected={settings.rippleShape === r.id}
+                  onPress={() => update({ rippleShape: r.id })}
+                  theme={theme}
+                />
+              ))}
+            </Row>
+            <Text style={[styles.subLabel, { color: theme.muted }]}>Ripple colors</Text>
+            <Row>
+              {SWATCHES.map((c) => (
+                <Swatch
+                  key={c}
+                  color={c}
+                  selected={settings.rippleColors.includes(c)}
+                  onPress={() => toggleRippleColor(c)}
+                  theme={theme}
+                />
+              ))}
+            </Row>
+            <Hint theme={theme}>
+              {settings.rippleColors.length === 0
+                ? "No ripple colors picked, so each ripple takes the button's new color."
+                : `Ripples cycle through ${settings.rippleColors.length} ${settings.rippleColors.length === 1 ? "color" : "colors"}${settings.randomColors ? ", shuffled" : ", in order"}. Clear them all to make ripples follow the button color.`}
+            </Hint>
+          </Section>
+
+          <Section title="Background" theme={theme}>
+            <Row>
+              <Chip
+                label="Navy glow"
+                selected={settings.backdrop === "navy"}
+                onPress={() => update({ backdrop: "navy" })}
+                theme={theme}
+              />
+              <Chip
+                label="Match phone"
+                selected={settings.backdrop === "system"}
+                onPress={() => update({ backdrop: "system" })}
+                theme={theme}
+              />
+            </Row>
+            <Row>
+              {BACKDROP_COLORS.map((c) => (
+                <Swatch
+                  key={c.hex}
+                  color={c.hex}
+                  selected={settings.backdrop === c.hex}
+                  onPress={() => update({ backdrop: c.hex })}
+                  theme={theme}
+                />
+              ))}
+            </Row>
+            <Hint theme={theme}>
+              {settings.backdrop === "navy"
+                ? "The icon's deep navy with a soft glow behind the button."
+                : settings.backdrop === "system"
+                  ? "Follows your phone's light or dark setting."
+                  : `${BACKDROP_COLORS.find((c) => c.hex === settings.backdrop)?.name ?? "Custom color"}. Text switches to stay readable on it.`}
+            </Hint>
           </Section>
 
           <Section title="After calendar events" theme={theme}>

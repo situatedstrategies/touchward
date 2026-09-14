@@ -1,10 +1,14 @@
 import React from "react";
 import { Animated } from "react-native";
-import Svg, { Circle } from "react-native-svg";
+import Svg, { Path } from "react-native-svg";
+import type { Shape } from "../types";
+import { SHAPE_LENGTHS, SHAPE_PATHS, SHAPE_VIEWBOX } from "./shapes";
 
-const AnimatedCircle = Animated.createAnimatedComponent(Circle);
+const AnimatedPath = Animated.createAnimatedComponent(Path);
 
 interface Props {
+  /** The outline to trace: the same shape as the button, drawn a step larger. */
+  shape: Shape;
   size: number;
   strokeWidth: number;
   /** 0 to 1. */
@@ -14,39 +18,32 @@ interface Props {
 }
 
 /**
- * A circular progress ring that fills clockwise from 12 o'clock.
- * Driven by an Animated.Value so the parent controls timing.
+ * The hold timer: the button's own outline, filling clockwise from 12 o'clock
+ * as you hold. Driven by an Animated.Value so the parent controls timing.
  */
-export function TimerRing({ size, strokeWidth, progress, color, trackColor }: Props) {
-  const radius = (size - strokeWidth) / 2;
-  const circumference = 2 * Math.PI * radius;
+export function TimerRing({ shape, size, strokeWidth, progress, color, trackColor }: Props) {
+  const d = SHAPE_PATHS[shape];
+  const total = SHAPE_LENGTHS[shape];
+  // Stroke width is given in pixels; the path lives in a 100 unit box.
+  const w = (strokeWidth * 100) / size;
   const dashOffset = progress.interpolate({
     inputRange: [0, 1],
-    outputRange: [circumference, 0],
+    outputRange: [total, 0],
     extrapolate: "clamp",
   });
 
   return (
-    <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-      <Circle
-        cx={size / 2}
-        cy={size / 2}
-        r={radius}
-        stroke={trackColor}
-        strokeWidth={strokeWidth}
-        fill="none"
-      />
-      <AnimatedCircle
-        cx={size / 2}
-        cy={size / 2}
-        r={radius}
+    <Svg width={size} height={size} viewBox={SHAPE_VIEWBOX}>
+      <Path d={d} stroke={trackColor} strokeWidth={w} fill="none" strokeLinejoin="round" />
+      <AnimatedPath
+        d={d}
         stroke={color}
-        strokeWidth={strokeWidth}
+        strokeWidth={w}
         strokeLinecap="round"
+        strokeLinejoin="round"
         fill="none"
-        strokeDasharray={`${circumference} ${circumference}`}
+        strokeDasharray={`${total} ${total}`}
         strokeDashoffset={dashOffset}
-        transform={`rotate(-90 ${size / 2} ${size / 2})`}
       />
     </Svg>
   );

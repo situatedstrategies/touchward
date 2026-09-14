@@ -3,8 +3,8 @@ export type Shape =
 
 export type PatternId = "short" | "long" | "staccato" | "heartbeat" | "ramp" | "purr";
 
-/** For the ripples shape: one pick that sets both the ripple motion and the tap haptic. */
-export type RewardMode = "soft" | "pulse" | "spark" | "deep" | "double" | "wave";
+/** One pick that sets both the ripple motion and the tap haptic, for every shape. */
+export type RewardMode = "original" | "pulse" | "soft" | "spark" | "deep" | "double" | "wave";
 
 /**
  * tap: a press plays the tap pattern and changes color.
@@ -16,7 +16,7 @@ export type Mode = "tap" | "hold" | "both";
 export interface Settings {
   mode: Mode;
   shape: Shape;
-  /** Ripples only: the visual and haptic character of a tap. */
+  /** The visual and haptic character of a tap. */
   rewardMode: RewardMode;
   /** Pulsar preset name that replaces the tap haptic. Null means use the pattern or mode. Needs a dev build. */
   tapPreset: string | null;
@@ -24,7 +24,7 @@ export interface Settings {
   holdPreset: string | null;
   /** How hard Pulsar plays the reward mode patterns, 0 to 1. */
   hapticStrength: number;
-  /** Pattern played on a quick tap. */
+  /** Legacy: the pre-modes tap pattern. Kept so old settings still parse; taps now follow rewardMode. */
   tapPattern: PatternId;
   /** Pattern played back at you when the hold timer completes. */
   holdPattern: PatternId;
@@ -38,6 +38,12 @@ export interface Settings {
   randomColors: boolean;
   /** Snap back to the idle color after a moment instead of staying. */
   returnToIdle: boolean;
+  /** Colors the ripples cycle through, one per tap. Empty means follow the button color. */
+  rippleColors: string[];
+  /** Outline used for ripples: the button's shape, the icon's wavy ring, or a circle. */
+  rippleShape: "match" | "wavy" | "round";
+  /** Behind the button: "navy" (the icon's gradient and glow), "system" (phone light or dark), or a hex color. */
+  backdrop: string;
   reminders: ReminderSettings;
   /** Nudge to tap shortly after each calendar event ends. */
   calendarNudges: CalendarNudgeSettings;
@@ -79,7 +85,7 @@ export const SHAPES: { id: Shape; label: string }[] = [
   { id: "star", label: "Star" },
   { id: "heart", label: "Heart" },
   { id: "blob", label: "Blob" },
-  { id: "ripples", label: "Ripples" },
+  { id: "ripples", label: "Wavy" },
 ];
 
 export const REWARD_MODES: {
@@ -88,8 +94,19 @@ export const REWARD_MODES: {
   visual: string;
   haptic: string;
 }[] = [
+  {
+    id: "original",
+    label: "Original",
+    visual: "Three standing rings, a wave rolls outward",
+    haptic: "one medium impact",
+  },
+  {
+    id: "pulse",
+    label: "Ripple",
+    visual: "One ripple radiates out",
+    haptic: "one medium impact",
+  },
   { id: "soft", label: "Soft", visual: "Slow, wide ripples", haptic: "one soft impact" },
-  { id: "pulse", label: "Pulse", visual: "A medium ripple", haptic: "one medium impact" },
   { id: "spark", label: "Spark", visual: "Fast, tight ripples", haptic: "one light impact" },
   { id: "deep", label: "Deep", visual: "Large, slow waves", haptic: "one heavy impact" },
   { id: "double", label: "Double", visual: "Two ripple waves", haptic: "two impacts" },
@@ -120,7 +137,18 @@ export const STRENGTHS: { value: number; label: string }[] = [
   { value: 1, label: "Full" },
 ];
 
+export const RIPPLE_SHAPES: { id: "match" | "wavy" | "round"; label: string }[] = [
+  { id: "match", label: "Match the button" },
+  { id: "wavy", label: "Wavy rings" },
+  { id: "round", label: "Circles" },
+];
+
 export const SWATCHES = [
+  "#2C66FF", // icon blue
+  "#5FC4FF", // icon sky
+  "#8DEDFF", // neon cyan
+  "#BBA4FF", // neon violet
+  "#E6A9FF", // neon pink
   "#C41200", // cherry
   "#F97316", // orange
   "#FACC15", // yellow
@@ -140,17 +168,20 @@ export const SWATCHES = [
 export const DEFAULT_SETTINGS: Settings = {
   mode: "both",
   shape: "ripples",
-  rewardMode: "pulse",
+  rewardMode: "original",
   tapPreset: null,
   holdPreset: null,
   hapticStrength: 0.8,
   tapPattern: "short",
   holdPattern: "heartbeat",
   holdSeconds: 5,
-  idleColor: "#C41200",
-  tapColors: ["#F97316", "#FACC15", "#22C55E", "#0EA5E9", "#8B5CF6", "#EC4899"],
+  idleColor: "#2C66FF",
+  tapColors: ["#2C66FF", "#5FC4FF", "#8B5CF6", "#EC4899"],
   randomColors: false,
   returnToIdle: false,
+  rippleColors: ["#E6A9FF", "#8DEDFF", "#BBA4FF"],
+  rippleShape: "match",
+  backdrop: "navy",
   reminders: {
     enabled: false,
     everyHours: 2,

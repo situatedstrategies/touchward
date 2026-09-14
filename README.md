@@ -7,13 +7,19 @@ hold it down, watch the ring close, and get a bigger buzz when the timer is up.
 
 ## What it does
 
-- One big button in the shape you choose. Ripples is the default: a glowing
-  core inside three wavy neon bands on deep navy, matching the app icon, and
-  every reward sends a wave of light outward through the bands. The other
-  shapes are circle, squircle, square, hexagon, star, heart, and blob.
-- Reward modes for ripples: Soft, Pulse, Spark, Deep, Double, and Wave. Each
-  one sets both the ripple motion and the tap haptic, from one soft impact
-  with slow wide ripples to repeated light impacts with cascading ripples.
+- One big button in the shape you choose: wavy (the icon's ring, the
+  default), circle, squircle, square, hexagon, star, heart, or blob. Every
+  shape is drawn the same way: a glowing core with a pale edge and bright rim,
+  on a deep navy backdrop with a soft center glow (switchable).
+- One tap, one ripple. Each tap sends an outline of the button's shape (or a
+  wavy ring, or a circle) radiating outward and fading, in the next ripple
+  color: pink, cyan, violet by default, so the multicolor look builds tap by
+  tap. Pick any set of ripple colors, or none to follow the button color.
+- Reward modes: Original (the default: three standing rings in the ripple
+  colors, and each tap rolls a wave outward through them), Ripple (one ripple
+  per tap), then Soft, Spark, Deep, Double, and Wave. Each sets how the ripple
+  moves and what the tap feels like, for every shape. Cascades and rings drawn
+  from a single color use paler and deeper tints of it.
 - Pulsar haptics (development and store builds): the reward modes play as
   composed patterns with real amplitude and sharpness, there is a strength
   setting, and any tap or timer-done haptic can be swapped for one of Pulsar's
@@ -152,6 +158,25 @@ Reminders are local and need no server. Remote push is wired up too:
   list. A push whose data includes `{ "reward": true }` counts as a tap when
   opened.
 
+## Designing haptics with Pulsar
+
+Haptics play through Pulsar in development and store builds (the app logs
+`[haptics] pulsar available, support level N` at startup in development; level
+3 means full amplitude and sharpness control). Three places to shape them:
+
+1. In the app: Settings, Reward mode picks the tap pattern; Pulsar haptics,
+   strength scales it; the preset pickers swap the tap or timer done haptic
+   for any of Pulsar's 151 presets, and picking one plays it.
+2. In code: `src/components/rippleModes.ts`, the `pulsar` field of each mode.
+   `discretePattern` is a list of taps: `time` in ms, `amplitude` 0 to 1,
+   `frequency` 0 to 1 (sharpness: low is a round thud, high is a crisp click).
+   `continuousPattern` is a rumble: `amplitude` and `frequency` envelopes as
+   `{ time, value }` points. Edit, save, and the dev build hot reloads.
+3. To audition: install the Pulsar companion app (App Store, "Haptics Presets:
+   Pulsar") to feel every preset by name, then type that name into the preset
+   filter in Settings. The pattern format is documented at
+   docs.swmansion.com/pulsar/sdk/react-native.
+
 ## Support, privacy, and terms
 
 Settings has a Support section with an in-app form. It posts the same JSON as
@@ -197,10 +222,13 @@ The bundle identifier and Android package are both
   the native module before requiring the package so Expo Go never sees it.
 - `src/components/RewardButton.tsx`: the button, press handling, color
   animation, and the hold timer.
-- `src/components/Ripples.tsx`: the ripples figure (wavy SVG bands and the
-  gradient core) and its outward wave animation.
-- `src/components/rippleModes.ts`: timing, swell, and tap haptic for each
-  reward mode.
+- `src/components/ShapeCore.tsx`: the button in any shape: glow, animated
+  fill, pale edge, bright rim.
+- `src/components/RippleField.tsx`: ripples in flight, one per tap, in the
+  chosen outline and color.
+- `src/components/rippleModes.ts`: ripple motion and tap haptic for each
+  reward mode. This is where the Pulsar patterns live.
+- `src/palette.ts`: the neon palette and color helpers.
 - `src/components/TimerRing.tsx`: the SVG progress ring.
 - `src/components/shapes.ts`: SVG paths for each shape.
 - `src/notifications/reminders.ts`: reminder schedule math and the

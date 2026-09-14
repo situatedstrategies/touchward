@@ -1,56 +1,142 @@
 import type { Shape } from "../types";
 
-/** All paths live in a 100 x 100 box with a 2 unit margin. */
+/**
+ * Every shape is a closed polyline in a 100 x 100 box, sampled densely enough
+ * to read as a smooth curve. Working from points (not SVG arcs and curves)
+ * means one path can drive the button, the ripples, and the hold timer, and
+ * the timer can trace the outline because the path length is known.
+ *
+ * All outlines start at 12 o'clock and run clockwise, so a timer that fills
+ * along the path starts at the top for every shape.
+ */
 const SIZE = 100;
 const CENTER = SIZE / 2;
+const STEPS = 180;
 
-function polygon(sides: number, radius: number, rotation = -Math.PI / 2): string {
-  const points: string[] = [];
-  for (let i = 0; i < sides; i++) {
-    const a = rotation + (i * 2 * Math.PI) / sides;
-    points.push(`${CENTER + radius * Math.cos(a)},${CENTER + radius * Math.sin(a)}`);
+type Point = [number, number];
+
+/** Sample a polar function r(angle) into points, starting at the top, clockwise. */
+function polar(radius: (angle: number) => number): Point[] {
+  const pts: Point[] = [];
+  for (let i = 0; i < STEPS; i++) {
+    const a = -Math.PI / 2 + (i / STEPS) * Math.PI * 2;
+    const r = radius(a);
+    pts.push([CENTER + r * Math.cos(a), CENTER + r * Math.sin(a)]);
   }
-  return `M${points.join(" L")} Z`;
+  return pts;
 }
 
-function star(points: number, outer: number, inner: number): string {
-  const parts: string[] = [];
+/** Superellipse |x/a|^n + |y/a|^n = 1: n = 2 is a circle, 4 a squircle, 10 a rounded square. */
+function superellipse(a: number, n: number): Point[] {
+  return polar((angle) => {
+    const c = Math.abs(Math.cos(angle));
+    const s = Math.abs(Math.sin(angle));
+    return a / Math.pow(Math.pow(c, n) + Math.pow(s, n), 1 / n);
+  });
+}
+
+function polygon(sides: number, radius: number): Point[] {
+  const pts: Point[] = [];
+  for (let i = 0; i < sides; i++) {
+    const a = -Math.PI / 2 + (i * 2 * Math.PI) / sides;
+    pts.push([CENTER + radius * Math.cos(a), CENTER + radius * Math.sin(a)]);
+  }
+  return pts;
+}
+
+function star(points: number, outer: number, inner: number): Point[] {
+  const pts: Point[] = [];
   for (let i = 0; i < points * 2; i++) {
     const r = i % 2 === 0 ? outer : inner;
     const a = -Math.PI / 2 + (i * Math.PI) / points;
-    parts.push(`${CENTER + r * Math.cos(a)},${CENTER + r * Math.sin(a)}`);
+    pts.push([CENTER + r * Math.cos(a), CENTER + r * Math.sin(a)]);
   }
-  return `M${parts.join(" L")} Z`;
+  return pts;
 }
 
-function roundedSquare(radius: number): string {
-  const m = 4;
-  const s = SIZE - m * 2;
-  const r = radius;
-  return [
-    `M${m + r},${m}`,
-    `H${m + s - r}`,
-    `A${r},${r} 0 0 1 ${m + s},${m + r}`,
-    `V${m + s - r}`,
-    `A${r},${r} 0 0 1 ${m + s - r},${m + s}`,
-    `H${m + r}`,
-    `A${r},${r} 0 0 1 ${m},${m + s - r}`,
-    `V${m + r}`,
-    `A${r},${r} 0 0 1 ${m + r},${m}`,
-    "Z",
-  ].join(" ");
+/** The classic parametric heart, scaled to the box, top notch at 12 o'clock. */
+function heart(): Point[] {
+  const raw: Point[] = [];
+  for (let i = 0; i < STEPS; i++) {
+    const t = (i / STEPS) * Math.PI * 2;
+    const x = 16 * Math.pow(Math.sin(t), 3);
+    const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+    raw.push([x, y]);
+  }
+  // Fit to the box with a small margin.
+  const xs = raw.map((p) => p[0]);
+  const ys = raw.map((p) => p[1]);
+  const w = Math.max(...xs) - Math.min(...xs);
+  const h = Math.max(...ys) - Math.min(...ys);
+  const k = 94 / Math.max(w, h);
+  const cx = (Math.max(...xs) + Math.min(...xs)) / 2;
+  const cy = (Math.max(...ys) + Math.min(...ys)) / 2;
+  const pts = raw.map<Point>(([x, y]) => [CENTER + (x - cx) * k, CENTER + (y - cy) * k]);
+  // t = 0 is the top notch; the parametric heart runs counterclockwise in screen
+  // space, so reverse it to run clockwise like the other shapes.
+  return [pts[0], ...pts.slice(1).reverse()];
 }
 
-export const SHAPE_PATHS: Record<Shape, string> = {
-  circle: "M50,2 A48,48 0 1,1 50,98 A48,48 0 1,1 50,2 Z",
-  squircle: "M50,3 C82,3 97,18 97,50 C97,82 82,97 50,97 C18,97 3,82 3,50 C3,18 18,3 50,3 Z",
-  square: roundedSquare(14),
+/** The icon's wavy ring: a circle whose radius rises and falls `waves` times. */
+export function wavyCircle(
+  radius: number,
+  waves: number,
+  amplitude: number,
+  phase = 0.4,
+): Point[] {
+  return polar((a) => radius + amplitude * Math.sin(waves * a + phase));
+}
+
+function toPath(pts: Point[]): string {
+  return `${pts.map(([x, y], i) => `${i === 0 ? "M" : "L"}${x.toFixed(2)},${y.toFixed(2)}`).join(" ")} Z`;
+}
+
+function length(pts: Point[]): number {
+  let total = 0;
+  for (let i = 0; i < pts.length; i++) {
+    const [x1, y1] = pts[i];
+    const [x2, y2] = pts[(i + 1) % pts.length];
+    total += Math.hypot(x2 - x1, y2 - y1);
+  }
+  return total;
+}
+
+export const SHAPE_POINTS: Record<Shape, Point[]> = {
+  circle: superellipse(47, 2),
+  squircle: superellipse(47, 4),
+  square: superellipse(46, 10),
   hexagon: polygon(6, 47),
   star: star(5, 48, 24),
-  heart:
-    "M50,92 C22,68 4,52 4,32 C4,18 15,7 28,7 C38,7 46,13 50,21 C54,13 62,7 72,7 C85,7 96,18 96,32 C96,52 78,68 50,92 Z",
-  blob: "M52,4 C72,2 92,18 94,40 C96,62 84,90 60,95 C36,100 8,84 5,58 C2,34 30,6 52,4 Z",
-  ripples: "M50,2 A48,48 0 1,1 50,98 A48,48 0 1,1 50,2 Z",
+  heart: heart(),
+  blob: polar((a) => 42 + 4 * Math.sin(3 * a + 0.6) + 3 * Math.sin(5 * a + 2.1)),
+  ripples: wavyCircle(45, 8, 3),
 };
 
+export const SHAPE_PATHS: Record<Shape, string> = Object.fromEntries(
+  (Object.keys(SHAPE_POINTS) as Shape[]).map((k) => [k, toPath(SHAPE_POINTS[k])]),
+) as Record<Shape, string>;
+
+/** Outline length in box units, for tracing the outline with a dash. */
+export const SHAPE_LENGTHS: Record<Shape, number> = Object.fromEntries(
+  (Object.keys(SHAPE_POINTS) as Shape[]).map((k) => [k, length(SHAPE_POINTS[k])]),
+) as Record<Shape, number>;
+
+/** How a ripple is outlined: the button's own shape, the icon's wavy ring, or a plain circle. */
+export type RippleShape = "match" | "wavy" | "round";
+
+export function ripplePath(shape: Shape, rippleShape: RippleShape): string {
+  if (rippleShape === "wavy") return SHAPE_PATHS.ripples;
+  if (rippleShape === "round") return SHAPE_PATHS.circle;
+  return SHAPE_PATHS[shape];
+}
+
 export const SHAPE_VIEWBOX = `0 0 ${SIZE} ${SIZE}`;
+/** Margin around the 100 box so glow copies and ripples are not clipped. */
+export const GLOW_MARGIN = 30;
+export const GLOW_VIEWBOX = `${-GLOW_MARGIN} ${-GLOW_MARGIN} ${SIZE + GLOW_MARGIN * 2} ${SIZE + GLOW_MARGIN * 2}`;
+/** Multiply a button size by this to get the glow box size. */
+export const GLOW_BOX_RATIO = (SIZE + GLOW_MARGIN * 2) / SIZE;
+/** SVG transform that scales a path about the center of the 100 box. */
+export function scaleAboutCenter(scale: number): string {
+  return `translate(${CENTER} ${CENTER}) scale(${scale}) translate(${-CENTER} ${-CENTER})`;
+}

@@ -12,14 +12,14 @@ import Svg, {
   Stop,
 } from "react-native-svg";
 import { RewardButton, type RewardButtonHandle } from "../components/RewardButton";
-import { RIPPLE_PALETTE } from "../components/Ripples";
+import { NEON } from "../palette";
 import { startVolumeButtonListener } from "../hardware/volumeButtons";
 import { syncCalendarNudges } from "../notifications/calendar";
 import { setCalendarSyncTaskEnabled } from "../notifications/calendarTask";
 import { registerForPush } from "../notifications/push";
 import { configureNotifications, syncReminders } from "../notifications/reminders";
 import { useSettings } from "../store/settings";
-import { RIPPLE_THEME, useTheme } from "../theme";
+import { themeForBackdrop, useTheme } from "../theme";
 import { body, bodySemibold, heading } from "../typography";
 import { SettingsScreen } from "./SettingsScreen";
 
@@ -41,9 +41,10 @@ export function HomeScreen() {
   const insets = useSafeAreaInsets();
   const { width, height } = useWindowDimensions();
   const { settings, stats, recordReward, loaded } = useSettings();
-  // Ripples brings its own deep navy backdrop; the settings sheet keeps the system look.
-  const isRipples = loaded && settings.shape === "ripples";
-  const theme = isRipples ? RIPPLE_THEME : systemTheme;
+  // The neon backdrop brings its own dark theme; the settings sheet keeps the system look.
+  const backdrop = loaded ? settings.backdrop : "navy";
+  const neon = backdrop === "navy";
+  const theme = themeForBackdrop(backdrop, systemTheme);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const button = useRef<RewardButtonHandle>(null);
 
@@ -137,7 +138,7 @@ export function HomeScreen() {
         },
       ]}
     >
-      {isRipples && <NavyBackdrop />}
+      {neon && <NavyBackdrop />}
       <View style={styles.top}>
         <Text style={[styles.brand, { color: theme.text }]}>Touchward</Text>
         <Text style={[styles.count, { color: theme.muted }]}>{stats.rewardsToday} today</Text>
@@ -189,12 +190,12 @@ function NavyBackdrop() {
     <Svg style={StyleSheet.absoluteFill} pointerEvents="none">
       <Defs>
         <LinearGradient id="navy" x1="0" y1="0" x2="0" y2="1">
-          <Stop offset="0" stopColor={RIPPLE_PALETTE.backgroundTop} />
-          <Stop offset="1" stopColor={RIPPLE_PALETTE.backgroundBottom} />
+          <Stop offset="0" stopColor={NEON.backgroundTop} />
+          <Stop offset="1" stopColor={NEON.backgroundBottom} />
         </LinearGradient>
         <RadialGradient id="centerGlow" cx="50%" cy="50%" r="50%">
-          <Stop offset="0" stopColor={RIPPLE_PALETTE.centerGlow} stopOpacity={0.45} />
-          <Stop offset="1" stopColor={RIPPLE_PALETTE.centerGlow} stopOpacity={0} />
+          <Stop offset="0" stopColor={NEON.centerGlow} stopOpacity={0.45} />
+          <Stop offset="1" stopColor={NEON.centerGlow} stopOpacity={0} />
         </RadialGradient>
       </Defs>
       <Rect width="100%" height="100%" fill="url(#navy)" />

@@ -77,6 +77,16 @@ function mergeSettings(raw: string | null): Settings {
     }
     if (typeof merged.tapPreset !== "string") merged.tapPreset = null;
     if (typeof merged.holdPreset !== "string") merged.holdPreset = null;
+    if (!Array.isArray(merged.rippleColors))
+      merged.rippleColors = DEFAULT_SETTINGS.rippleColors;
+    if (!["match", "wavy", "round"].includes(merged.rippleShape)) {
+      merged.rippleShape = DEFAULT_SETTINGS.rippleShape;
+    }
+    if (typeof merged.backdrop !== "string" || merged.backdrop.length === 0) {
+      // Older builds stored a boolean neonBackdrop.
+      const legacy = (parsed as { neonBackdrop?: unknown }).neonBackdrop;
+      merged.backdrop = legacy === false ? "system" : DEFAULT_SETTINGS.backdrop;
+    }
     // Enum fields: anything unknown (an old value, a typo in a backup) falls back to the default.
     if (!SHAPES.some((s) => s.id === merged.shape)) merged.shape = DEFAULT_SETTINGS.shape;
     if (!REWARD_MODE_IDS.includes(merged.rewardMode)) {
