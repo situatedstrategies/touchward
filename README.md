@@ -16,6 +16,11 @@ hold it down, watch the ring close, and get a bigger buzz when the timer is up.
   default), the button's own shape, or a circle radiating outward and fading, in the next ripple
   color: pink, cyan, violet by default, so the multicolor look builds tap by
   tap. Pick any set of ripple colors, or none to follow the button color.
+- Ripple feel, for every mode: each ripple travels out, holds where it lands
+  for a linger you choose (fade right away, short, long, longest), then fades,
+  so a few taps in a row build layered rings. You also set how many rings can
+  be on screen at once (1 to 5; the oldest makes room) and the ring thickness
+  (thin, normal, thick), which applies to the Original rings as well.
 - Reward modes: Original (the default: three standing rings in the ripple
   colors, and each tap rolls a wave outward through them), Ripple (one ripple
   per tap), then Soft, Spark, Deep, Double, and Wave. Each sets how the ripple

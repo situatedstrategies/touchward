@@ -6,6 +6,7 @@ import { ShapeCore } from "../button/ShapeCore";
 import { GLOW_BOX_RATIO, GLOW_VIEWBOX, ripplePath } from "../button/shapes";
 import { NEON, colorVariants, isHexColor, lighten } from "../design/palette";
 import type { LookSettings } from "../looks/looks";
+import { RIPPLE_WIDTHS } from "../types";
 
 interface Props {
   look: LookSettings;
@@ -27,6 +28,7 @@ export function LookPreview({ look, size }: Props) {
     return v.interpolate({ inputRange: [0, 1], outputRange: [look.idleColor, look.idleColor] });
   }, [look.idleColor]);
   const outline = ripplePath(look.shape, look.rippleShape);
+  const widthFactor = RIPPLE_WIDTHS.find((w) => w.id === look.rippleWidth)?.factor ?? 1;
   const rippleColors = look.rippleFollowButton
     ? colorVariants(look.idleColor, 3)
     : look.rippleColors.every((c) => c === look.rippleColors[0])
@@ -67,9 +69,15 @@ export function LookPreview({ look, size }: Props) {
     <View style={[styles.frame, { width: size, height: size, backgroundColor: background }]}>
       {bands
         ? [1.7 / 0.9, 2.4 / 0.9, 3.2 / 0.9].map((s, i) =>
-            ring(s, rippleColors[i], (spec.bandWidth ?? 18) / s, `band${i}`, 0.9),
+            ring(
+              s,
+              rippleColors[i],
+              ((spec.bandWidth ?? 18) * widthFactor) / s,
+              `band${i}`,
+              0.9,
+            ),
           )
-        : ring(1.75, rippleColors[0], spec.width, "ripple", 0.85)}
+        : ring(1.75, rippleColors[0], spec.width * widthFactor, "ripple", 0.85)}
       <ShapeCore shape={look.shape} size={core} fill={fill} />
     </View>
   );

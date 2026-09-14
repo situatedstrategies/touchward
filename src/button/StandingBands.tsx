@@ -28,6 +28,8 @@ interface Props {
   /** One color per band, inner to outer. */
   colors: string[];
   mode: RippleModeSpec;
+  /** Multiplier on the ring thickness. */
+  widthFactor: number;
 }
 
 /**
@@ -35,7 +37,15 @@ interface Props {
  * outline and the ripple colors. At rest they glow softly. On each reward a
  * wave of brightness and a slight swell runs outward through them.
  */
-export function StandingBands({ shape, rippleShape, size, pulse, colors, mode }: Props) {
+export function StandingBands({
+  shape,
+  rippleShape,
+  size,
+  pulse,
+  colors,
+  mode,
+  widthFactor,
+}: Props) {
   const box = Math.ceil(size * GLOW_BOX_RATIO);
   const d = useMemo(() => ripplePath(shape, rippleShape), [shape, rippleShape]);
   return (
@@ -50,6 +60,7 @@ export function StandingBands({ shape, rippleShape, size, pulse, colors, mode }:
           color={colors[i % colors.length]}
           pulse={pulse}
           mode={mode}
+          widthFactor={widthFactor}
         />
       ))}
     </View>
@@ -64,6 +75,7 @@ function Band({
   color,
   pulse,
   mode,
+  widthFactor,
 }: {
   box: number;
   d: string;
@@ -72,6 +84,7 @@ function Band({
   color: string;
   pulse: Animated.Value;
   mode: RippleModeSpec;
+  widthFactor: number;
 }) {
   const style = useMemo(() => {
     // Each band runs its own 0 to 1 inside the shared pulse, offset by its start.
@@ -97,7 +110,7 @@ function Band({
     };
   }, [pulse, start, scale, mode.swell]);
 
-  const w = (mode.bandWidth ?? mode.width) / scale; // Keep the drawn band about the same thickness at every ring.
+  const w = ((mode.bandWidth ?? mode.width) * widthFactor) / scale;
   return (
     <Animated.View style={[styles.band, { width: box, height: box }, style]}>
       <Svg width={box} height={box} viewBox={GLOW_VIEWBOX}>

@@ -11,7 +11,17 @@ import {
 } from "react";
 import { isHexColor } from "../design/palette";
 import { LOOK_KEYS, type LookSettings, type SavedLook } from "../looks/looks";
-import { DEFAULT_SETTINGS, MAX_STRENGTH, REWARD_MODES, RIPPLE_SHAPES, SHAPES } from "../types";
+import {
+  DEFAULT_SETTINGS,
+  MAX_STRENGTH,
+  REWARD_MODES,
+  RIPPLE_LINGERS,
+  RIPPLE_MAX_MAX,
+  RIPPLE_MAX_MIN,
+  RIPPLE_SHAPES,
+  RIPPLE_WIDTHS,
+  SHAPES,
+} from "../types";
 
 const LOOKS_KEY = "touchward.looks.v1";
 const LIBRARY_LIMIT = 60;
@@ -46,6 +56,13 @@ function sanitizeLook(raw: unknown): LookSettings | null {
     shape,
     rewardMode,
     rippleShape,
+    rippleLinger: RIPPLE_LINGERS.some((l) => l.value === r.rippleLinger)
+      ? (r.rippleLinger as number)
+      : d.rippleLinger,
+    rippleMax: isNum(r.rippleMax)
+      ? Math.min(RIPPLE_MAX_MAX, Math.max(RIPPLE_MAX_MIN, Math.round(r.rippleMax)))
+      : d.rippleMax,
+    rippleWidth: RIPPLE_WIDTHS.find((w) => w.id === r.rippleWidth)?.id ?? d.rippleWidth,
     idleColor: isStr(r.idleColor) && isHexColor(r.idleColor) ? r.idleColor : d.idleColor,
     tapColors: tapColors && tapColors.length > 0 ? tapColors : d.tapColors,
     randomColors: isBool(r.randomColors) ? r.randomColors : d.randomColors,

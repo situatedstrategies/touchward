@@ -44,6 +44,12 @@ export interface Settings {
   colorLibraries: Partial<Record<ColorLibraryKey, string[]>>;
   /** Outline used for ripples: the button's shape, the icon's wavy ring, or a circle. */
   rippleShape: "match" | "wavy" | "round";
+  /** How long a ripple holds at the end of its travel before fading, in ms. */
+  rippleLinger: number;
+  /** How many ripples can be on screen at once, 1 to 5. Older ones make room. */
+  rippleMax: number;
+  /** Thickness of ripples and of the Original rings. */
+  rippleWidth: "thin" | "normal" | "thick";
   /** Behind the button: "navy" (the icon's gradient and glow), "system" (phone light or dark), or a hex color. */
   backdrop: string;
   reminders: ReminderSettings;
@@ -156,6 +162,24 @@ export const STRENGTHS: { value: number; label: string }[] = [
 ];
 export const MAX_STRENGTH = 2;
 
+export const RIPPLE_LINGERS: { value: number; label: string }[] = [
+  { value: 0, label: "Fade right away" },
+  { value: 600, label: "Short" },
+  { value: 1500, label: "Long" },
+  { value: 3000, label: "Longest" },
+];
+export const RIPPLE_MAX_MIN = 1;
+export const RIPPLE_MAX_MAX = 5;
+export const RIPPLE_WIDTHS: {
+  id: "thin" | "normal" | "thick";
+  label: string;
+  factor: number;
+}[] = [
+  { id: "thin", label: "Thin", factor: 0.6 },
+  { id: "normal", label: "Normal", factor: 1 },
+  { id: "thick", label: "Thick", factor: 1.6 },
+];
+
 export const RIPPLE_SHAPES: { id: "match" | "wavy" | "round"; label: string }[] = [
   { id: "match", label: "Match the button" },
   { id: "wavy", label: "Wavy rings" },
@@ -201,6 +225,9 @@ export const DEFAULT_SETTINGS: Settings = {
   rippleFollowButton: false,
   colorLibraries: {},
   rippleShape: "wavy",
+  rippleLinger: 600,
+  rippleMax: 3,
+  rippleWidth: "normal",
   backdrop: "navy",
   reminders: {
     enabled: false,

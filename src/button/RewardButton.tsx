@@ -12,7 +12,7 @@ import { Animated, Easing, Pressable, StyleSheet, View } from "react-native";
 import { playReward, stopHaptics, tick } from "../haptics/engine";
 import { getPattern } from "../haptics/patterns";
 import { colorVariants, lighten, withAlpha } from "../design/palette";
-import type { Settings } from "../types";
+import { RIPPLE_WIDTHS, type Settings } from "../types";
 import { RippleField, type ActiveRipple } from "./RippleField";
 import { REWARD_MODE_SPECS } from "./rewardModes";
 import { ShapeCore } from "./ShapeCore";
@@ -23,8 +23,6 @@ import { TimerRing } from "./TimerRing";
 const TAP_THRESHOLD_MS = 250;
 /** How long a color stays before snapping back when returnToIdle is on. */
 const RETURN_DELAY_MS = 900;
-/** Ripples still travelling at once. Older ones are dropped first. */
-const MAX_RIPPLES = 12;
 /** In the Original mode the core is smaller so its three rings have room. */
 const BANDS_CORE_RATIO = 0.4;
 
@@ -58,7 +56,11 @@ export function RewardButton({ settings, size, onReward, ref }: Props) {
     rippleColors,
     rippleFollowButton,
     rippleShape,
+    rippleLinger,
+    rippleMax,
+    rippleWidth,
   } = settings;
+  const widthFactor = RIPPLE_WIDTHS.find((w) => w.id === rippleWidth)?.factor ?? 1;
   const rewardMode = REWARD_MODE_SPECS[settings.rewardMode] ?? REWARD_MODE_SPECS.original;
   const bands = rewardMode.kind === "bands";
 
@@ -191,8 +193,18 @@ export function RewardButton({ settings, size, onReward, ref }: Props) {
       const push = (i: number) => {
         const color = colorAt(i);
         setRipples((list) => {
-          const next = [...list, { id: nextRippleId.current++, color, mode: spec }];
-          return next.length > MAX_RIPPLES ? next.slice(next.length - MAX_RIPPLES) : next;
+          const next = [
+            ...list,
+            {
+              id: nextRippleId.current++,
+              color,
+              mode: spec,
+              linger: rippleLinger,
+              widthFactor,
+            },
+          ];
+          // Older rings make room once the limit is reached.
+          return next.length > rippleMax ? next.slice(next.length - rippleMax) : next;
         });
       };
       push(0);
@@ -204,7 +216,17 @@ export function RewardButton({ settings, size, onReward, ref }: Props) {
         burstTimers.current.add(timer);
       }
     },
-    [bands, pulse, pickNext, rippleColors, rippleFollowButton, rewardMode],
+    [
+      bands,
+      pulse,
+      pickNext,
+      rippleColors,
+      rippleFollowButton,
+      rewardMode,
+      rippleLinger,
+      rippleMax,
+      widthFactor,
+    ],
   );
 
   // The three standing rings: Color 1, 2, 3, or tints of one color.
@@ -361,6 +383,7 @@ export function RewardButton({ settings, size, onReward, ref }: Props) {
             pulse={pulse}
             colors={bandColors}
             mode={rewardMode}
+            widthFactor={widthFactor}
           />
         ) : (
           <RippleField

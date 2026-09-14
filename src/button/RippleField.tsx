@@ -11,6 +11,10 @@ export interface ActiveRipple {
   id: number;
   color: string;
   mode: RippleModeSpec;
+  /** Milliseconds the ripple holds at full travel before fading. */
+  linger: number;
+  /** Multiplier on the mode's band width. */
+  widthFactor: number;
 }
 
 interface Props {
@@ -53,43 +57,55 @@ function Ripple({
   onDone: (id: number) => void;
 }) {
   const progress = useRef(new Animated.Value(0)).current;
-  const { mode, color, id } = ripple;
+  const { mode, color, id, linger, widthFactor } = ripple;
+  // Travel, hold, fade: progress runs 0 to 1 over all three.
+  const fade = Math.max(250, mode.duration * 0.4);
+  const total = mode.duration + linger + fade;
+  const travelEnd = mode.duration / total;
+  const holdEnd = (mode.duration + linger) / total;
 
   useEffect(() => {
     const anim = Animated.timing(progress, {
       toValue: 1,
-      duration: mode.duration,
-      easing: Easing.out(Easing.cubic),
+      duration: total,
+      easing: Easing.linear,
       useNativeDriver: true,
     });
     anim.start(({ finished }) => {
       if (finished) onDone(id);
     });
     return () => anim.stop();
-  }, [progress, mode.duration, id, onDone]);
+  }, [progress, total, id, onDone]);
 
   const style = useMemo(
     () => ({
       opacity: progress.interpolate({
-        inputRange: [0, 0.12, 0.6, 1],
-        outputRange: [0, 0.95, 0.55, 0],
+        inputRange: [0, travelEnd * 0.12, travelEnd, holdEnd, 1],
+        outputRange: [0, 0.95, 0.7, 0.6, 0],
       }),
       transform: [
         {
-          // Start just outside the core's edge and travel out.
+          // Start just outside the core's edge, ease out to full travel, then hold.
           scale: progress.interpolate({
-            inputRange: [0, 1],
-            outputRange: [1.04, mode.spread],
+            inputRange: [0, travelEnd * 0.25, travelEnd * 0.5, travelEnd * 0.75, travelEnd, 1],
+            outputRange: [
+              1.04,
+              1.04 + (mode.spread - 1.04) * 0.58,
+              1.04 + (mode.spread - 1.04) * 0.875,
+              1.04 + (mode.spread - 1.04) * 0.984,
+              mode.spread,
+              mode.spread,
+            ],
           }),
         },
       ],
     }),
-    [progress, mode.spread],
+    [progress, mode.spread, travelEnd, holdEnd],
   );
 
   const inner = color;
   const outer = lighten(color, 0.45);
-  const w = mode.width;
+  const w = mode.width * widthFactor;
 
   return (
     <Animated.View style={[styles.ripple, { width: box, height: box }, style]}>

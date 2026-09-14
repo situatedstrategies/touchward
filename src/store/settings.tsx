@@ -18,7 +18,11 @@ import {
   PATTERN_IDS,
   REWARD_MODE_IDS,
   RIPPLE_COLOR_SLOTS,
+  RIPPLE_LINGERS,
+  RIPPLE_MAX_MAX,
+  RIPPLE_MAX_MIN,
   RIPPLE_SHAPES,
+  RIPPLE_WIDTHS,
   SHAPES,
   COLOR_LIBRARY_LIMIT,
   type CalendarNudgeSettings,
@@ -144,6 +148,18 @@ export function sanitizeSettings(raw: unknown): Settings {
       : isStrArray(r.rippleColors) && r.rippleColors.length === 0,
     colorLibraries: sanitizeLibraries(r.colorLibraries),
     rippleShape: oneOf(r.rippleShape, rippleShapeIds) ? r.rippleShape : d.rippleShape,
+    rippleLinger: RIPPLE_LINGERS.some((l) => l.value === r.rippleLinger)
+      ? (r.rippleLinger as number)
+      : d.rippleLinger,
+    rippleMax: isNum(r.rippleMax)
+      ? Math.min(RIPPLE_MAX_MAX, Math.max(RIPPLE_MAX_MIN, Math.round(r.rippleMax)))
+      : d.rippleMax,
+    rippleWidth: oneOf(
+      r.rippleWidth,
+      RIPPLE_WIDTHS.map((w) => w.id),
+    )
+      ? r.rippleWidth
+      : d.rippleWidth,
     backdrop,
     reminders: sanitizeReminders(r.reminders),
     calendarNudges: sanitizeNudges(r.calendarNudges),
