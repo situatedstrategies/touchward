@@ -1,0 +1,11 @@
+{
+  // Cloudflare Pages project config for the Touchward marketing site.
+  // Static site, no build step. The output directory IS this folder.
+  //
+  // Deploy from this folder with:  npx wrangler pages deploy
+  // Must match the Cloudflare Pages project name, or `wrangler pages deploy`
+  // will create a second project instead of updating the live one.
+  "name": "touchward-site",
+  "compatibility_date": "2025-08-14",
+  "pages_build_output_dir": "."
+}

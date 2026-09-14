@@ -104,6 +104,8 @@ The bundle identifier and Android package are both
   (notification taps, the deep link, volume buttons) are routed into the button.
 - `src/screens/SettingsScreen.tsx`: the customization sheet.
 - `src/store/settings.tsx`: persistence and the settings context.
+- `site/`: the marketing site (touchward-dopamine.com), a two-page static site
+  for Cloudflare Pages with its own README.
 
 ## Scripts
 

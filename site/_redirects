@@ -1,0 +1,7 @@
+# Cloudflare Pages redirects
+# https://developers.cloudflare.com/pages/configuration/redirects/
+
+# The app stores ask for a privacy policy URL and a support URL. Both live on
+# the one support page, so these short paths are what goes in the store forms.
+/privacy   /support#privacy   301
+/terms     /support#terms     301
