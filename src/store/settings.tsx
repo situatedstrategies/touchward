@@ -13,6 +13,7 @@ import { AppState } from "react-native";
 import { isHexColor } from "../design/palette";
 import {
   DEFAULT_SETTINGS,
+  MAX_STRENGTH,
   PATTERN_IDS,
   REWARD_MODE_IDS,
   RIPPLE_COLOR_SLOTS,
@@ -127,7 +128,7 @@ export function sanitizeSettings(raw: unknown): Settings {
     tapPreset: isStr(r.tapPreset) ? r.tapPreset : null,
     holdPreset: isStr(r.holdPreset) ? r.holdPreset : null,
     hapticStrength: isNum(r.hapticStrength)
-      ? Math.min(1, Math.max(0, r.hapticStrength))
+      ? Math.min(MAX_STRENGTH, Math.max(0, r.hapticStrength))
       : d.hapticStrength,
     holdPattern: oneOf(r.holdPattern, PATTERN_IDS) ? r.holdPattern : d.holdPattern,
     holdSeconds: isNum(r.holdSeconds) && r.holdSeconds >= 1 ? r.holdSeconds : d.holdSeconds,

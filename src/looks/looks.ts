@@ -1,10 +1,10 @@
-import { BACKDROP_COLORS, hsvToHex } from "../design/palette";
+import { BACKDROP_COLORS, rgbToHex } from "../design/palette";
 import {
   REWARD_MODES,
   RIPPLE_COLOR_SLOTS,
   RIPPLE_SHAPES,
   SHAPES,
-  SWATCHES,
+  STRENGTHS,
   type Settings,
 } from "../types";
 
@@ -51,68 +51,47 @@ function pickOrdered(look: LookSettings): unknown[] {
 const rand = (n: number) => Math.floor(Math.random() * n);
 const chance = (p: number) => Math.random() < p;
 const pickOne = <T>(list: readonly T[]): T => list[rand(list.length)];
-const wrapHue = (h: number) => ((h % 360) + 360) % 360;
 
-/** A vivid color near a hue. */
-function vivid(hue: number): string {
-  return hsvToHex({
-    h: wrapHue(hue),
-    s: 0.65 + Math.random() * 0.35,
-    v: 0.85 + Math.random() * 0.15,
-  });
+/** Any color at all: each channel drawn uniformly from 0 to 255. */
+function randomHex(): string {
+  return rgbToHex(rand(256), rand(256), rand(256));
 }
 
-/** A pale, luminous color near a hue, like the icon's rings. */
-function pale(hue: number): string {
-  return hsvToHex({
-    h: wrapHue(hue),
-    s: 0.3 + Math.random() * 0.3,
-    v: 0.95 + Math.random() * 0.05,
-  });
-}
+const MAX_TAP_COLORS = 6;
+const MAX_ATTEMPTS = 6;
 
 /**
- * A fresh look. Colors are built around one base hue so the result reads as a
- * palette rather than noise: the button cycles through related hues and the
- * ripples take pale neighbors of the same family.
+ * A truly random look. Every field is drawn independently from the app's own
+ * option lists (shapes, modes, ripple outlines, backdrops, strengths) and
+ * every color from the full hex space, so no two presses share a palette. The
+ * result is checked against the current look and redrawn if it matches.
  */
-export function randomLook(): LookSettings {
-  const base = Math.random() * 360;
-  const schemes = [
-    [0, 30, 60],
-    [0, 120, 240],
-    [0, 150, 210],
-    [0, 40, 180],
-    [0, 90],
-  ];
-  const offsets = pickOne(schemes);
-  const tapColors = offsets.map((o) => (chance(0.3) ? pickOne(SWATCHES) : vivid(base + o)));
-  const rippleColors = Array.from({ length: RIPPLE_COLOR_SLOTS }, (_, i) =>
-    pale(base + [0, 35, -35][i % 3] + (chance(0.5) ? 180 : 0)),
-  );
-
-  let backdrop: string;
-  const roll = Math.random();
-  if (roll < 0.5) backdrop = "navy";
-  else if (roll < 0.65) backdrop = "system";
-  else if (roll < 0.85) backdrop = pickOne(BACKDROP_COLORS).hex;
-  else backdrop = hsvToHex({ h: wrapHue(base + 180), s: 0.7, v: 0.16 + Math.random() * 0.14 });
-
-  const rippleShapeRoll = Math.random();
-  return {
-    shape: pickOne(SHAPES).id,
-    rewardMode: pickOne(REWARD_MODES).id,
-    rippleShape:
-      rippleShapeRoll < 0.4 ? "match" : rippleShapeRoll < 0.8 ? "wavy" : RIPPLE_SHAPES[2].id,
-    idleColor: chance(0.5) ? vivid(base) : tapColors[0],
-    tapColors,
-    randomColors: chance(0.3),
-    returnToIdle: chance(0.25),
-    rippleColors,
-    rippleFollowButton: chance(0.2),
-    backdrop,
-    hapticStrength: pickOne([0.45, 0.8, 1]),
-  };
+export function randomLook(current?: LookSettings): LookSettings {
+  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+    const backdropRoll = rand(4);
+    const look: LookSettings = {
+      shape: pickOne(SHAPES).id,
+      rewardMode: pickOne(REWARD_MODES).id,
+      rippleShape: pickOne(RIPPLE_SHAPES).id,
+      idleColor: randomHex(),
+      tapColors: Array.from({ length: 1 + rand(MAX_TAP_COLORS) }, randomHex),
+      randomColors: chance(0.5),
+      returnToIdle: chance(0.5),
+      rippleColors: Array.from({ length: RIPPLE_COLOR_SLOTS }, randomHex),
+      rippleFollowButton: chance(0.25),
+      backdrop:
+        backdropRoll === 0
+          ? "navy"
+          : backdropRoll === 1
+            ? "system"
+            : backdropRoll === 2
+              ? pickOne(BACKDROP_COLORS).hex
+              : randomHex(),
+      hapticStrength: pickOne(STRENGTHS).value,
+    };
+    if (!current || !sameLook(look, current)) return look;
+  }
+  return randomLook();
 }
 
 /** A default name for a new saved look: the shape and the mode, numbered if taken. */

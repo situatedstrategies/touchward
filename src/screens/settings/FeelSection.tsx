@@ -76,6 +76,10 @@ export function FeelSection({ theme }: { theme: Theme }) {
         {pulsar && (
           <>
             <SubLabel theme={theme}>Strength</SubLabel>
+            <Hint theme={theme}>
+              Full is the motor's ceiling. Hard and Max add energy on top: every tap at full
+              amplitude, echo taps a few milliseconds behind, and a low rumble underneath.
+            </Hint>
             <Row>
               {STRENGTHS.map((s) => (
                 <Chip

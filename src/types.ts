@@ -22,7 +22,7 @@ export interface Settings {
   tapPreset: string | null;
   /** Pulsar preset that replaces the timer done haptic; null plays holdPattern. */
   holdPreset: string | null;
-  /** How hard Pulsar plays the reward mode patterns, 0 to 1. */
+  /** How hard a tap hits, 0 to MAX_STRENGTH. Above 1 adds echoes and rumble. */
   hapticStrength: number;
   /** Built in pattern played when the hold timer completes. */
   holdPattern: PatternId;
@@ -140,11 +140,19 @@ export const RIPPLE_COLOR_SLOTS = 3;
 
 export const HOLD_PRESETS = [3, 5, 10, 15, 30, 60];
 
+/**
+ * Tap strength. Up to 1 scales the pattern's amplitude. Above 1 the motor is
+ * already at its ceiling, so Hard and Max add energy instead: every tap at full
+ * amplitude, echo taps a few milliseconds behind, and a low rumble underneath.
+ */
 export const STRENGTHS: { value: number; label: string }[] = [
   { value: 0.45, label: "Gentle" },
   { value: 0.8, label: "Normal" },
   { value: 1, label: "Full" },
+  { value: 1.5, label: "Hard" },
+  { value: 2, label: "Max" },
 ];
+export const MAX_STRENGTH = 2;
 
 export const RIPPLE_SHAPES: { id: "match" | "wavy" | "round"; label: string }[] = [
   { id: "match", label: "Match the button" },

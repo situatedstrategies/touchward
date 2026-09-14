@@ -119,13 +119,15 @@ export function playPulsarPreset(name: string): boolean {
 }
 
 /**
- * Play a composed pattern once. `strength` scales every amplitude (0 to 1).
- * The parsed pattern is released after it has had time to finish.
+ * Play a composed pattern once. `strength` up to 1 scales every amplitude;
+ * above 1 the pattern is amplified instead (see amplifyPattern). The parsed
+ * pattern is released after it has had time to finish.
  */
 export function playPulsarPattern(pattern: PulsarPattern, strength = 1): boolean {
   const n = native();
   if (!n) return false;
-  const scaled = scalePattern(pattern, strength);
+  const scaled =
+    strength > 1 ? amplifyPattern(pattern, strength) : scalePattern(pattern, strength);
   try {
     const id = n.PatternComposer_parsePattern(scaled);
     if (id < 0) return false;
@@ -173,6 +175,46 @@ function scalePattern(p: PulsarPattern, strength: number): PulsarPattern {
       frequency: p.continuousPattern.frequency,
     },
   };
+}
+
+/**
+ * More felt energy once amplitude is already at the ceiling: every tap goes to
+ * full amplitude and gains echo taps 20 ms apart (one for Hard, two for Max),
+ * and a short low rumble runs under the whole pattern. Existing rumble is
+ * raised to full.
+ */
+function amplifyPattern(p: PulsarPattern, strength: number): PulsarPattern {
+  const echoes = strength >= 2 ? 2 : 1;
+  const taps = p.discretePattern.flatMap((d) => {
+    const out = [{ ...d, amplitude: 1 }];
+    for (let i = 1; i <= echoes; i++) {
+      out.push({
+        time: d.time + i * 20,
+        amplitude: 1,
+        frequency: Math.min(1, d.frequency + 0.1 * i),
+      });
+    }
+    return out;
+  });
+  const end = patternLength(p);
+  const rumbleLength = strength >= 2 ? 260 : 140;
+  const existing = p.continuousPattern.amplitude.map((a) => ({
+    ...a,
+    value: a.value > 0 ? 1 : 0,
+  }));
+  const rumbleStart = existing.length ? end : 0;
+  const amplitude = [
+    ...existing,
+    { time: rumbleStart, value: 1 },
+    { time: rumbleStart + rumbleLength, value: 1 },
+    { time: rumbleStart + rumbleLength + 60, value: 0 },
+  ];
+  const frequency = [
+    ...p.continuousPattern.frequency,
+    { time: rumbleStart, value: 0.35 },
+    { time: rumbleStart + rumbleLength + 60, value: 0.2 },
+  ];
+  return { discretePattern: taps, continuousPattern: { amplitude, frequency } };
 }
 
 function patternLength(p: PulsarPattern): number {

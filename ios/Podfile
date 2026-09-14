@@ -64,7 +64,7 @@ target 'Touchward' do
         bc.build_settings['GCC_WARN_INHIBIT_ALL_WARNINGS'] = 'YES'
         bc.build_settings['SWIFT_SUPPRESS_WARNINGS'] = 'YES'
         bc.build_settings['CLANG_WARN_DOCUMENTATION_COMMENTS'] = 'NO'
-        bc.build_settings['SWIFT_ACTIVE_COMPILATION_CONDITIONS'] ||= '$(inherited)'
+        bc.build_settings['OTHER_SWIFT_FLAGS'] = '$(inherited) -Xcc -Wno-nullability-completeness'
       end
     end
     installer.pods_project.build_configurations.each do |bc|

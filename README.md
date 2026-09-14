@@ -181,9 +181,12 @@ Haptics play through Pulsar in development and store builds (the app logs
 `[haptics] pulsar available, support level N` at startup in development; level
 3 means full amplitude and sharpness control). Three places to shape them:
 
-1. In the app: Settings, Reward mode picks the tap pattern; Pulsar haptics,
-   strength scales it; the preset pickers swap the tap or timer done haptic
-   for any of Pulsar's 151 presets, and picking one plays it.
+1. In the app: Customize, Reward, Feel. The tap mode picks the pattern;
+   Strength has five levels. Gentle, Normal, and Full scale amplitude. Hard and
+   Max go past the motor's ceiling by adding energy: every tap at full
+   amplitude, echo taps 20 ms apart, and a low rumble underneath (without
+   Pulsar they play heavy double or triple impacts). The preset pickers swap the
+   tap or timer done haptic for any of Pulsar's 151 presets.
 2. In code: `src/components/rippleModes.ts`, the `pulsar` field of each mode.
    `discretePattern` is a list of taps: `time` in ms, `amplitude` 0 to 1,
    `frequency` 0 to 1 (sharpness: low is a round thud, high is a crisp click).
@@ -270,8 +273,9 @@ The bundle identifier and Android package are both
 
 ## Random, Save, Library
 
-Under the button, next to Customize: Random applies a fresh look built around
-one hue (shape, mode, ripple outline, button and ripple colors, backdrop);
+Under the button, next to Customize: Random draws a completely new look on
+every press, each field from the app's own option lists and every color from
+the full hex space, never repeating the current one;
 Save names the current look and keeps it; Library lists every saved look with
 a still of its button and ripple, to wear again, rename, or delete. Saved
 looks live in their own storage and survive a settings reset.

@@ -25,7 +25,7 @@ module.exports = function withQuietPods(config) {
         bc.build_settings['GCC_WARN_INHIBIT_ALL_WARNINGS'] = 'YES'
         bc.build_settings['SWIFT_SUPPRESS_WARNINGS'] = 'YES'
         bc.build_settings['CLANG_WARN_DOCUMENTATION_COMMENTS'] = 'NO'
-        bc.build_settings['SWIFT_ACTIVE_COMPILATION_CONDITIONS'] ||= '$(inherited)'
+        bc.build_settings['OTHER_SWIFT_FLAGS'] = '$(inherited) -Xcc -Wno-nullability-completeness'
       end
     end
     installer.pods_project.build_configurations.each do |bc|
@@ -62,6 +62,18 @@ function withAppTargetFlags(config) {
       if (!settings.PRODUCT_BUNDLE_IDENTIFIER) continue;
       if (String(settings.SDKROOT || "").includes("watchos")) continue;
       settings.WARNING_CFLAGS = '"-Wno-nullability-completeness"';
+      const swiftFlags = settings.OTHER_SWIFT_FLAGS;
+      const swiftExtra = "-Xcc -Wno-nullability-completeness";
+      if (typeof swiftFlags === "string") {
+        if (!swiftFlags.includes(swiftExtra)) {
+          settings.OTHER_SWIFT_FLAGS = `${swiftFlags.replace(/"$/, "")} ${swiftExtra}"`.replace(
+            /^([^"])/,
+            '"$1',
+          );
+        }
+      } else {
+        settings.OTHER_SWIFT_FLAGS = `"$(inherited) ${swiftExtra}"`;
+      }
       const ldflags = settings.OTHER_LDFLAGS;
       const extra = '"-Wl,-no_warn_duplicate_libraries"';
       if (Array.isArray(ldflags)) {

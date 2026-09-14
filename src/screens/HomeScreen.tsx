@@ -57,7 +57,10 @@ export function HomeScreen() {
 
   const currentLook = pickLook(settings);
   const applyLook = useCallback((look: LookSettings) => update(look), [update]);
-  const shuffleLook = useCallback(() => update(randomLook()), [update]);
+  const shuffleLook = useCallback(
+    () => update(randomLook(pickLook(settings))),
+    [update, settings],
+  );
   const saveLook = useCallback(
     (name: string) => {
       save(name, pickLook(settings));

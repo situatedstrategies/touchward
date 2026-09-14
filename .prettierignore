@@ -3,6 +3,7 @@ node_modules
 dist
 assets
 package-lock.json
-# Generated native projects keep their own formatting.
+# Generated native projects and asset catalogs keep their own formatting.
 ios
 android
+targets/**/*.xcassets

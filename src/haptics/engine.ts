@@ -78,18 +78,30 @@ export interface RewardHaptic {
  * then a Pulsar pattern, then the built-in pulses through expo-haptics.
  */
 export function playReward(h: RewardHaptic): Playback {
+  const strength = h.strength ?? 1;
   if (isPulsarAvailable()) {
     current?.cancel();
     stopPulsar();
     const played =
       (h.preset ? playPulsarPreset(h.preset) : false) ||
-      (h.pattern ? playPulsarPattern(h.pattern, h.strength ?? 1) : false);
+      (h.pattern ? playPulsarPattern(h.pattern, strength) : false);
     if (played) {
       current = { cancel: stopPulsar };
       return current;
     }
   }
-  return playPulses(h.pulses);
+  return playPulses(strength > 1 ? harden(h.pulses, strength) : h.pulses);
+}
+
+/** Without Pulsar: heavy impacts, and each pulse doubled (Hard) or tripled (Max). */
+function harden(pulses: Pulse[], strength: number): Pulse[] {
+  const copies = strength >= 2 ? 3 : 2;
+  return pulses.flatMap((p) => {
+    const hit: Pulse = { ms: Math.max(p.ms, 45), gap: 55, intensity: "heavy" };
+    const out = Array.from({ length: copies }, () => ({ ...hit }));
+    out[out.length - 1] = { ...hit, gap: p.gap };
+    return out;
+  });
 }
 
 /** A barely-there tick, used for "that did nothing" feedback like an early release. */

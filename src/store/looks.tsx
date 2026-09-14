@@ -11,7 +11,7 @@ import {
 } from "react";
 import { isHexColor } from "../design/palette";
 import { LOOK_KEYS, type LookSettings, type SavedLook } from "../looks/looks";
-import { DEFAULT_SETTINGS, REWARD_MODES, RIPPLE_SHAPES, SHAPES } from "../types";
+import { DEFAULT_SETTINGS, MAX_STRENGTH, REWARD_MODES, RIPPLE_SHAPES, SHAPES } from "../types";
 
 const LOOKS_KEY = "touchward.looks.v1";
 const LIBRARY_LIMIT = 60;
@@ -53,7 +53,9 @@ function sanitizeLook(raw: unknown): LookSettings | null {
     rippleColors: rippleColors && rippleColors.length === 3 ? rippleColors : d.rippleColors,
     rippleFollowButton: isBool(r.rippleFollowButton) ? r.rippleFollowButton : false,
     backdrop: isStr(r.backdrop) && r.backdrop.length > 0 ? r.backdrop : d.backdrop,
-    hapticStrength: isNum(r.hapticStrength) ? Math.min(1, Math.max(0, r.hapticStrength)) : 0.8,
+    hapticStrength: isNum(r.hapticStrength)
+      ? Math.min(MAX_STRENGTH, Math.max(0, r.hapticStrength))
+      : 0.8,
   };
 }
 
