@@ -8,7 +8,13 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { DEFAULT_SETTINGS, type Settings } from "../types";
+import {
+  DEFAULT_SETTINGS,
+  REWARD_MODE_IDS,
+  PATTERN_IDS,
+  SHAPES,
+  type Settings,
+} from "../types";
 
 const SETTINGS_KEY = "touchward.settings.v1";
 const STATS_KEY = "touchward.stats.v1";
@@ -56,12 +62,43 @@ function mergeSettings(raw: string | null): Settings {
       merged.holdSeconds = DEFAULT_SETTINGS.holdSeconds;
     }
     merged.reminders = { ...DEFAULT_SETTINGS.reminders, ...(parsed.reminders ?? {}) };
+    merged.calendarNudges = {
+      ...DEFAULT_SETTINGS.calendarNudges,
+      ...(parsed.calendarNudges ?? {}),
+    };
+    if (
+      merged.calendarNudges.calendarIds !== null &&
+      !Array.isArray(merged.calendarNudges.calendarIds)
+    ) {
+      merged.calendarNudges.calendarIds = null;
+    }
     if (!Number.isFinite(merged.hapticStrength)) {
       merged.hapticStrength = DEFAULT_SETTINGS.hapticStrength;
     }
     if (typeof merged.tapPreset !== "string") merged.tapPreset = null;
     if (typeof merged.holdPreset !== "string") merged.holdPreset = null;
+    // Enum fields: anything unknown (an old value, a typo in a backup) falls back to the default.
+    if (!SHAPES.some((s) => s.id === merged.shape)) merged.shape = DEFAULT_SETTINGS.shape;
+    if (!REWARD_MODE_IDS.includes(merged.rewardMode)) {
+      merged.rewardMode = DEFAULT_SETTINGS.rewardMode;
+    }
+    if (!["tap", "hold", "both"].includes(merged.mode)) merged.mode = DEFAULT_SETTINGS.mode;
+    if (!PATTERN_IDS.includes(merged.tapPattern))
+      merged.tapPattern = DEFAULT_SETTINGS.tapPattern;
+    if (!PATTERN_IDS.includes(merged.holdPattern))
+      merged.holdPattern = DEFAULT_SETTINGS.holdPattern;
     return merged;
+  } catch {
+    return DEFAULT_SETTINGS;
+  }
+}
+
+/** Settings as stored, for code that runs outside React (the background calendar sync). */
+export async function loadSettings(): Promise<Settings> {
+  try {
+    let raw = await AsyncStorage.getItem(SETTINGS_KEY);
+    if (raw === null) raw = await AsyncStorage.getItem(LEGACY_SETTINGS_KEY);
+    return mergeSettings(raw);
   } catch {
     return DEFAULT_SETTINGS;
   }

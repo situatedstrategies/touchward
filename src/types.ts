@@ -39,8 +39,12 @@ export interface Settings {
   /** Snap back to the idle color after a moment instead of staying. */
   returnToIdle: boolean;
   reminders: ReminderSettings;
+  /** Nudge to tap shortly after each calendar event ends. */
+  calendarNudges: CalendarNudgeSettings;
   /** Pressing a volume button while the app is open counts as a tap. Needs a dev build. */
   volumeButtons: boolean;
+  /** Register this device for remote push. Needs a real device and a dev or store build. */
+  pushEnabled: boolean;
 }
 
 export interface ReminderSettings {
@@ -54,6 +58,16 @@ export interface ReminderSettings {
   /** iOS: deliver as a time-sensitive notification that breaks through Focus. */
   timeSensitive: boolean;
 }
+
+export interface CalendarNudgeSettings {
+  enabled: boolean;
+  /** Minutes after an event's end time to nudge. */
+  minutesAfter: number;
+  /** Calendar ids to watch. Null means every calendar on the phone. */
+  calendarIds: string[] | null;
+}
+
+export const NUDGE_DELAYS = [0, 5, 15, 30];
 
 export const REMINDER_INTERVALS = [1, 2, 3, 4, 6];
 
@@ -85,6 +99,17 @@ export const REWARD_MODES: {
     visual: "Several cascading ripples",
     haptic: "repeated light impacts",
   },
+];
+
+/** Every RewardMode id, for validating stored settings. */
+export const REWARD_MODE_IDS: RewardMode[] = REWARD_MODES.map((m) => m.id);
+export const PATTERN_IDS: PatternId[] = [
+  "short",
+  "long",
+  "staccato",
+  "heartbeat",
+  "ramp",
+  "purr",
 ];
 
 export const HOLD_PRESETS = [3, 5, 10, 15, 30, 60];
@@ -133,5 +158,11 @@ export const DEFAULT_SETTINGS: Settings = {
     endHour: 21,
     timeSensitive: true,
   },
+  calendarNudges: {
+    enabled: false,
+    minutesAfter: 5,
+    calendarIds: null,
+  },
   volumeButtons: false,
+  pushEnabled: false,
 };

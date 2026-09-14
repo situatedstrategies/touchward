@@ -39,7 +39,7 @@ interface Props {
 export function RewardButton({ settings, size, ringTrackColor, onReward, ref }: Props) {
   const { mode, shape, tapPattern, holdPattern, holdSeconds, idleColor, tapColors } = settings;
   const isRipples = shape === "ripples";
-  const rippleMode = RIPPLE_MODES[settings.rewardMode];
+  const rippleMode = RIPPLE_MODES[settings.rewardMode] ?? RIPPLE_MODES.pulse;
 
   const scale = useRef(new Animated.Value(1)).current;
   const ring = useRef(new Animated.Value(0)).current;

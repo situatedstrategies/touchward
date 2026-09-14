@@ -14,6 +14,9 @@ import Svg, {
 import { RewardButton, type RewardButtonHandle } from "../components/RewardButton";
 import { RIPPLE_PALETTE } from "../components/Ripples";
 import { startVolumeButtonListener } from "../hardware/volumeButtons";
+import { syncCalendarNudges } from "../notifications/calendar";
+import { setCalendarSyncTaskEnabled } from "../notifications/calendarTask";
+import { registerForPush } from "../notifications/push";
 import { configureNotifications, syncReminders } from "../notifications/reminders";
 import { useSettings } from "../store/settings";
 import { RIPPLE_THEME, useTheme } from "../theme";
@@ -57,6 +60,25 @@ export function HomeScreen() {
     if (!loaded) return;
     syncReminders(settings.reminders).catch(() => {});
   }, [loaded, settings.reminders]);
+  // Calendar nudges: rescan when settings change and each time the app comes back.
+  useEffect(() => {
+    if (!loaded) return;
+    const run = () =>
+      syncCalendarNudges(settings.calendarNudges, settings.reminders.timeSensitive).catch(
+        () => {},
+      );
+    run();
+    setCalendarSyncTaskEnabled(settings.calendarNudges.enabled).catch(() => {});
+    const sub = AppState.addEventListener("change", (state) => {
+      if (state === "active") run();
+    });
+    return () => sub.remove();
+  }, [loaded, settings.calendarNudges, settings.reminders.timeSensitive]);
+  // Push tokens can rotate, so re-register on every launch while push is on.
+  useEffect(() => {
+    if (!loaded || !settings.pushEnabled) return;
+    registerForPush().catch(() => {});
+  }, [loaded, settings.pushEnabled]);
 
   // Tapping a reminder (or its "I did it" button) counts as the tap.
   const lastResponse = Notifications.useLastNotificationResponse();

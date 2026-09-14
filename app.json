@@ -23,7 +23,14 @@
           "resizeMode": "contain",
           "backgroundColor": "#0B0B0F"
         }
-      ]
+      ],
+      [
+        "expo-calendar",
+        {
+          "calendarPermission": "Touchward reads your calendar so it can nudge you to tap right after an event ends. Nothing is written or uploaded."
+        }
+      ],
+      "expo-background-task"
     ],
     "ios": {
       "supportsTablet": true,
@@ -37,10 +44,7 @@
     },
     "android": {
       "package": "com.situatedstrategies.touchward",
-      "permissions": [
-        "android.permission.VIBRATE",
-        "android.permission.POST_NOTIFICATIONS"
-      ],
+      "permissions": ["android.permission.VIBRATE", "android.permission.POST_NOTIFICATIONS"],
       "adaptiveIcon": {
         "backgroundColor": "#0B0B0F",
         "foregroundImage": "./assets/android-icon-foreground.png",
@@ -51,6 +55,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "1f908ad7-e217-4c8b-b542-8b1f8328fe3d"
+      }
+    },
+    "owner": "omaas"
   }
 }

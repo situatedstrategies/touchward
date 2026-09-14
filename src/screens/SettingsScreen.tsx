@@ -1,4 +1,7 @@
-import React, { useState } from "react";
+import * as Application from "expo-application";
+import * as Clipboard from "expo-clipboard";
+import * as WebBrowser from "expo-web-browser";
+import React, { useEffect, useState } from "react";
 import {
   Linking as RNLinking,
   Modal,
@@ -28,21 +31,39 @@ import {
 } from "../haptics";
 import { isVolumeButtonSupportAvailable } from "../hardware/volumeButtons";
 import {
+  countScheduledNudges,
+  listCalendars,
+  requestCalendarPermission,
+  syncCalendarNudges,
+  type CalendarChoice,
+} from "../notifications/calendar";
+import { PRIVACY_URL, SOURCE_URL, SUPPORT_EMAIL, TERMS_URL } from "../links";
+import {
+  clearPushRegistration,
+  getStoredPushRegistration,
+  isPushSupported,
+  registerForPush,
+  type PushRegistration,
+} from "../notifications/push";
+import {
   formatHour,
   reminderTimes,
   requestReminderPermission,
 } from "../notifications/reminders";
 import { useSettings } from "../store/settings";
 import type { Theme } from "../theme";
+import { SupportScreen } from "./SupportScreen";
 import { body, bodyMedium, bodySemibold, heading } from "../typography";
 import {
   REWARD_MODES,
   HOLD_PRESETS,
+  NUDGE_DELAYS,
   REMINDER_INTERVALS,
   SHAPES,
   STRENGTHS,
   SWATCHES,
   type RewardMode,
+  type CalendarNudgeSettings,
   type Mode,
   type PatternId,
   type ReminderSettings,
@@ -71,6 +92,80 @@ export function SettingsScreen({ visible, onClose, theme }: Props) {
   const insets = useSafeAreaInsets();
   const [permissionDenied, setPermissionDenied] = useState(false);
   const volumeSupported = isVolumeButtonSupportAvailable();
+  const [supportOpen, setSupportOpen] = useState(false);
+
+  // Calendar nudges: permission, the calendar list, and how many are queued.
+  const [calendars, setCalendars] = useState<CalendarChoice[]>([]);
+  const [calendarDenied, setCalendarDenied] = useState(false);
+  const [nudgeCount, setNudgeCount] = useState<number | null>(null);
+  const updateNudges = (patch: Partial<CalendarNudgeSettings>) =>
+    update({ calendarNudges: { ...settings.calendarNudges, ...patch } });
+  useEffect(() => {
+    if (!visible || !settings.calendarNudges.enabled) return;
+    listCalendars().then(setCalendars);
+    countScheduledNudges().then(setNudgeCount);
+  }, [visible, settings.calendarNudges]);
+  const toggleNudges = async (on: boolean) => {
+    if (!on) {
+      updateNudges({ enabled: false });
+      return;
+    }
+    const notifications = await requestReminderPermission();
+    setPermissionDenied(!notifications);
+    const calendar = notifications && (await requestCalendarPermission());
+    setCalendarDenied(!calendar);
+    if (!notifications || !calendar) return;
+    updateNudges({ enabled: true });
+    const count = await syncCalendarNudges(
+      { ...settings.calendarNudges, enabled: true },
+      settings.reminders.timeSensitive,
+    );
+    setNudgeCount(count);
+  };
+  const toggleCalendar = (id: string) => {
+    const current = settings.calendarNudges.calendarIds;
+    if (current === null) {
+      // From "all" to "all but this one".
+      updateNudges({ calendarIds: calendars.map((c) => c.id).filter((c) => c !== id) });
+      return;
+    }
+    const next = current.includes(id) ? current.filter((c) => c !== id) : [...current, id];
+    updateNudges({ calendarIds: next.length === calendars.length ? null : next });
+  };
+
+  // Push: the toggle registers the device and shows the tokens a sender needs.
+  const pushSupported = isPushSupported();
+  const [push, setPush] = useState<PushRegistration | null>(null);
+  const [pushBusy, setPushBusy] = useState(false);
+  const [pushDenied, setPushDenied] = useState(false);
+  const [copied, setCopied] = useState<string | null>(null);
+  useEffect(() => {
+    getStoredPushRegistration().then(setPush);
+  }, []);
+  const togglePush = async (on: boolean) => {
+    if (!on) {
+      update({ pushEnabled: false });
+      setPush(null);
+      await clearPushRegistration();
+      return;
+    }
+    setPushBusy(true);
+    const reg = await registerForPush();
+    setPushBusy(false);
+    setPushDenied(reg === null);
+    setPush(reg);
+    update({ pushEnabled: reg !== null });
+  };
+  const copy = async (label: string, value: string) => {
+    await Clipboard.setStringAsync(value);
+    setCopied(label);
+    setTimeout(() => setCopied(null), 1500);
+  };
+  const open = (url: string) => {
+    WebBrowser.openBrowserAsync(url).catch(() => RNLinking.openURL(url));
+  };
+  const version = Application.nativeApplicationVersion ?? "dev";
+  const buildNumber = Application.nativeBuildVersion ?? "";
 
   const updateReminders = (patch: Partial<ReminderSettings>) =>
     update({ reminders: { ...settings.reminders, ...patch } });
@@ -121,7 +216,7 @@ export function SettingsScreen({ visible, onClose, theme }: Props) {
 
   const chooseStrength = (value: number) => {
     update({ hapticStrength: value });
-    const m = RIPPLE_MODES[settings.rewardMode];
+    const m = RIPPLE_MODES[settings.rewardMode] ?? RIPPLE_MODES.pulse;
     playReward({ pattern: m.pulsar, strength: value, pulses: m.pulses });
   };
 
@@ -392,6 +487,74 @@ export function SettingsScreen({ visible, onClose, theme }: Props) {
             />
           </Section>
 
+          <Section title="After calendar events" theme={theme}>
+            <ToggleRow
+              label="Nudge me after events end"
+              value={settings.calendarNudges.enabled}
+              onChange={(v) => void toggleNudges(v)}
+              theme={theme}
+            />
+            <Hint theme={theme}>
+              Reads your calendar and sends a notification when each event ends: the meeting is
+              over, the workout is done, come tap. Nothing is written to the calendar or sent
+              anywhere.
+            </Hint>
+            {calendarDenied && (
+              <Hint theme={theme}>
+                Calendar access is off for Touchward. Allow full calendar access in your phone
+                settings, then flip this switch again.
+              </Hint>
+            )}
+            {settings.calendarNudges.enabled && (
+              <>
+                <Text style={[styles.subLabel, { color: theme.muted }]}>Nudge</Text>
+                <Row>
+                  {NUDGE_DELAYS.map((m) => (
+                    <Chip
+                      key={m}
+                      label={m === 0 ? "Right away" : `${m} min after`}
+                      selected={settings.calendarNudges.minutesAfter === m}
+                      onPress={() => updateNudges({ minutesAfter: m })}
+                      theme={theme}
+                    />
+                  ))}
+                </Row>
+                {calendars.length > 1 && (
+                  <>
+                    <Text style={[styles.subLabel, { color: theme.muted }]}>Calendars</Text>
+                    <Row>
+                      <Chip
+                        label="All"
+                        selected={settings.calendarNudges.calendarIds === null}
+                        onPress={() => updateNudges({ calendarIds: null })}
+                        theme={theme}
+                      />
+                      {calendars.map((c) => (
+                        <Chip
+                          key={c.id}
+                          label={c.title}
+                          selected={
+                            settings.calendarNudges.calendarIds === null ||
+                            settings.calendarNudges.calendarIds.includes(c.id)
+                          }
+                          onPress={() => toggleCalendar(c.id)}
+                          theme={theme}
+                        />
+                      ))}
+                    </Row>
+                  </>
+                )}
+                <Hint theme={theme}>
+                  {nudgeCount === null
+                    ? "Scanning the next 7 days..."
+                    : nudgeCount === 0
+                      ? "No timed events in the next 7 days. All-day events are skipped."
+                      : `${nudgeCount} ${nudgeCount === 1 ? "nudge" : "nudges"} queued for the next 7 days. Refreshes each time you open the app.`}
+                </Hint>
+              </>
+            )}
+          </Section>
+
           <Section title="Reminders" theme={theme}>
             <ToggleRow
               label="Remind me to tap"
@@ -447,12 +610,20 @@ export function SettingsScreen({ visible, onClose, theme }: Props) {
                   {reminderCount} {reminderCount === 1 ? "reminder" : "reminders"} a day.
                   Tapping a reminder, or its "I did it" button, counts as a tap.
                 </Hint>
+              </>
+            )}
+            {(settings.reminders.enabled || settings.calendarNudges.enabled) && (
+              <>
                 <ToggleRow
                   label="Time sensitive (breaks through Focus)"
                   value={settings.reminders.timeSensitive}
                   onChange={(v) => updateReminders({ timeSensitive: v })}
                   theme={theme}
                 />
+                <Hint theme={theme}>
+                  Applies to reminders and calendar nudges. On iPhone they then show even in a
+                  Focus mode.
+                </Hint>
               </>
             )}
           </Section>
@@ -496,6 +667,71 @@ export function SettingsScreen({ visible, onClose, theme }: Props) {
             </View>
           </Section>
 
+          <Section title="Push notifications" theme={theme}>
+            <ToggleRow
+              label="Allow push notifications"
+              value={settings.pushEnabled && pushSupported}
+              onChange={(v) => void togglePush(v)}
+              theme={theme}
+            />
+            <Hint theme={theme}>
+              {pushSupported
+                ? pushBusy
+                  ? "Registering this phone..."
+                  : pushDenied
+                    ? "Notifications are turned off for Touchward in your phone settings, so push cannot be enabled."
+                    : "Lets Touchward receive notifications sent from outside the app, for example a nudge from a shortcut or automation. A push that carries reward: true counts as a tap when you open it. Reminders work without this."
+                : "Push needs a real phone and a development or store build. Reminders still work here."}
+            </Hint>
+            {settings.pushEnabled && push && (
+              <>
+                {push.expoToken && (
+                  <>
+                    <Text style={[styles.subLabel, { color: theme.muted }]}>
+                      Expo push token
+                    </Text>
+                    <Text
+                      selectable
+                      style={[styles.code, { color: theme.text, borderColor: theme.border }]}
+                    >
+                      {push.expoToken}
+                    </Text>
+                  </>
+                )}
+                {push.deviceToken && (
+                  <>
+                    <Text style={[styles.subLabel, { color: theme.muted }]}>
+                      {Platform.OS === "ios" ? "APNs device token" : "FCM device token"}
+                    </Text>
+                    <Text
+                      selectable
+                      numberOfLines={2}
+                      style={[styles.code, { color: theme.text, borderColor: theme.border }]}
+                    >
+                      {push.deviceToken}
+                    </Text>
+                  </>
+                )}
+                <View style={styles.actions}>
+                  {push.expoToken && (
+                    <TextButton
+                      label={copied === "expo" ? "Copied" : "Copy Expo token"}
+                      onPress={() => void copy("expo", push.expoToken ?? "")}
+                      theme={theme}
+                    />
+                  )}
+                  {push.deviceToken && (
+                    <TextButton
+                      label={copied === "device" ? "Copied" : "Copy device token"}
+                      onPress={() => void copy("device", push.deviceToken ?? "")}
+                      theme={theme}
+                    />
+                  )}
+                </View>
+              </>
+            )}
+          </Section>
+
           <Section title="Counter" theme={theme}>
             <Text style={[styles.statLine, { color: theme.text }]}>
               Today: {stats.rewardsToday} All time: {stats.rewardsAllTime}
@@ -505,8 +741,52 @@ export function SettingsScreen({ visible, onClose, theme }: Props) {
               <TextButton label="Reset all settings" onPress={reset} theme={theme} />
             </View>
           </Section>
+
+          <Section title="Support" theme={theme}>
+            <Hint theme={theme}>
+              Something off? Send a message from inside the app and we will write back. Your
+              phone model and app version go with it.
+            </Hint>
+            <View style={styles.actions}>
+              <TextButton
+                label="Contact support"
+                onPress={() => setSupportOpen(true)}
+                theme={theme}
+              />
+              <TextButton
+                label="Email instead"
+                onPress={() => open(`mailto:${SUPPORT_EMAIL}`)}
+                theme={theme}
+              />
+            </View>
+          </Section>
+
+          <Section title="About" theme={theme}>
+            <Text style={[styles.toggleLabel, { color: theme.text }]}>
+              Touchward {version}
+              {buildNumber ? ` (${buildNumber})` : ""}
+            </Text>
+            <Hint theme={theme}>
+              A one-time purchase. No subscription, no account, nothing to restore: if you paid
+              once, it is yours on every device signed in to the same store account.
+            </Hint>
+            <View style={styles.actions}>
+              <TextButton
+                label="Privacy policy"
+                onPress={() => open(PRIVACY_URL)}
+                theme={theme}
+              />
+              <TextButton label="Terms" onPress={() => open(TERMS_URL)} theme={theme} />
+              <TextButton label="Source code" onPress={() => open(SOURCE_URL)} theme={theme} />
+            </View>
+          </Section>
         </ScrollView>
       </View>
+      <SupportScreen
+        visible={supportOpen}
+        onClose={() => setSupportOpen(false)}
+        theme={theme}
+      />
     </Modal>
   );
 }

@@ -5,6 +5,17 @@ import type { ReminderSettings } from "../types";
 export const REMINDER_CATEGORY = "touchward-reminder";
 export const REWARD_ACTION = "reward";
 export const CHANNEL_ID = "reminders";
+/** Scheduled notification identifiers are prefixed so each feature can cancel only its own. */
+export const REMINDER_ID_PREFIX = "reminder:";
+
+export async function cancelScheduledWithPrefix(prefix: string): Promise<void> {
+  const all = await Notifications.getAllScheduledNotificationsAsync().catch(() => []);
+  await Promise.all(
+    all
+      .filter((n) => n.identifier.startsWith(prefix))
+      .map((n) => Notifications.cancelScheduledNotificationAsync(n.identifier).catch(() => {})),
+  );
+}
 
 const LINES: { title: string; body: string }[] = [
   { title: "Did the thing?", body: "Come tap. You earned it." },
@@ -83,7 +94,7 @@ export async function requestReminderPermission(): Promise<boolean> {
  * Cancelling first keeps old schedules from piling up after a settings change.
  */
 export async function syncReminders(r: ReminderSettings): Promise<void> {
-  await Notifications.cancelAllScheduledNotificationsAsync().catch(() => {});
+  await cancelScheduledWithPrefix(REMINDER_ID_PREFIX);
   if (!r.enabled) return;
 
   const times = reminderTimes(r);
@@ -91,6 +102,7 @@ export async function syncReminders(r: ReminderSettings): Promise<void> {
     times.map((t, i) => {
       const line = LINES[i % LINES.length];
       return Notifications.scheduleNotificationAsync({
+        identifier: `${REMINDER_ID_PREFIX}${i}`,
         content: {
           title: line.title,
           body: line.body,
