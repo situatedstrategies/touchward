@@ -23,8 +23,10 @@ export interface RippleModeSpec {
   spread: number;
   /** bands only: peak scale of a standing ring as the wave passes. */
   swell?: number;
-  /** Band thickness in path units (the shape lives in a 100 unit box). */
+  /** Ripple band thickness in path units (the shape lives in a 100 unit box). */
   width: number;
+  /** bands only: standing ring thickness in core units times 100. */
+  bandWidth?: number;
   /** The tap haptic when Pulsar is not available: built in pulses through expo-haptics. */
   pulses: Pulse[];
   /**
@@ -46,9 +48,10 @@ export const REWARD_MODE_SPECS: Record<RewardMode, RippleModeSpec> = {
     duration: 1100,
     count: 1,
     gap: 0,
-    spread: 2.8,
-    width: 4.5,
-    swell: 1.07,
+    spread: 3.6,
+    width: 5,
+    bandWidth: 18.5,
+    swell: 1.06,
     pulses: [{ ms: 40, gap: 0, intensity: "medium" }],
     pulsar: {
       discretePattern: [{ time: 0, amplitude: 0.8, frequency: 0.5 }],

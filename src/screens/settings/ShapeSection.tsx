@@ -36,8 +36,8 @@ export function ShapeSection({ theme }: { theme: Theme }) {
           ))}
         </Row>
         <Hint theme={theme}>
-          The outline each ripple takes as it travels out. Wavy rings are the look from the app
-          icon, whatever the button shape.
+          The outline of the ripples and of the rings in Original mode. Wavy rings around a
+          round button are the look from the app icon.
         </Hint>
       </Section>
     </Category>

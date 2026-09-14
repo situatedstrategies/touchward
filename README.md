@@ -7,12 +7,12 @@ hold it down, watch the ring close, and get a bigger buzz when the timer is up.
 
 ## What it does
 
-- One big button in the shape you choose: wavy (the icon's ring, the
-  default), circle, squircle, square, hexagon, star, heart, or blob. Every
+- One big button in the shape you choose: circle (the default), squircle,
+  square, hexagon, star, heart, or blob. Every
   shape is drawn the same way: a glowing core with a pale edge and bright rim,
   on a deep navy backdrop with a soft center glow (switchable).
-- One tap, one ripple. Each tap sends an outline of the button's shape (or a
-  wavy ring, or a circle) radiating outward and fading, in the next ripple
+- One tap, one ripple. Each tap sends a wavy ring (the icon's outline, the
+  default), the button's own shape, or a circle radiating outward and fading, in the next ripple
   color: pink, cyan, violet by default, so the multicolor look builds tap by
   tap. Pick any set of ripple colors, or none to follow the button color.
 - Reward modes: Original (the default: three standing rings in the ripple

@@ -109,8 +109,10 @@ export const SHAPE_POINTS: Record<Shape, Point[]> = {
   star: star(5, 48, 24),
   heart: heart(),
   blob: polar((a) => 42 + 4 * Math.sin(3 * a + 0.6) + 3 * Math.sin(5 * a + 2.1)),
-  ripples: wavyCircle(45, 8, 3),
 };
+
+/** The icon's wavy ring, used for ripples and the Original mode rings. */
+export const WAVY_PATH = toPath(wavyCircle(45, 8, 3));
 
 export const SHAPE_PATHS: Record<Shape, string> = Object.fromEntries(
   (Object.keys(SHAPE_POINTS) as Shape[]).map((k) => [k, toPath(SHAPE_POINTS[k])]),
@@ -125,7 +127,7 @@ export const SHAPE_LENGTHS: Record<Shape, number> = Object.fromEntries(
 export type RippleShape = "match" | "wavy" | "round";
 
 export function ripplePath(shape: Shape, rippleShape: RippleShape): string {
-  if (rippleShape === "wavy") return SHAPE_PATHS.ripples;
+  if (rippleShape === "wavy") return WAVY_PATH;
   if (rippleShape === "round") return SHAPE_PATHS.circle;
   return SHAPE_PATHS[shape];
 }

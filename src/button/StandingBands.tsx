@@ -6,11 +6,16 @@ import type { Shape } from "../types";
 import type { RippleModeSpec } from "./rewardModes";
 import { GLOW_BOX_RATIO, GLOW_VIEWBOX, ripplePath, type RippleShape } from "./shapes";
 
-/** Band scale relative to the core box, inner to outer, and when its part of the wave starts. */
+/**
+ * The three rings, measured from the app icon. With the core radius as 1, the
+ * band centers sit at 1.7, 2.4, and 3.2 and each band is about 0.37 thick.
+ * The outline path has radius 45 in its 100 unit box, which is 0.9 of the core
+ * radius, so scale = radius / 0.9.
+ */
 const BANDS = [
-  { scale: 1.45, start: 0 },
-  { scale: 1.95, start: 0.1 },
-  { scale: 2.45, start: 0.2 },
+  { scale: 1.7 / 0.9, start: 0 },
+  { scale: 2.4 / 0.9, start: 0.1 },
+  { scale: 3.2 / 0.9, start: 0.2 },
 ];
 
 interface Props {
@@ -92,7 +97,7 @@ function Band({
     };
   }, [pulse, start, scale, mode.swell]);
 
-  const w = mode.width / scale; // Keep the drawn band about the same thickness at every ring.
+  const w = (mode.bandWidth ?? mode.width) / scale; // Keep the drawn band about the same thickness at every ring.
   return (
     <Animated.View style={[styles.band, { width: box, height: box }, style]}>
       <Svg width={box} height={box} viewBox={GLOW_VIEWBOX}>

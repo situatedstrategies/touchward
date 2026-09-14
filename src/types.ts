@@ -1,5 +1,4 @@
-export type Shape =
-  "circle" | "squircle" | "square" | "hexagon" | "star" | "heart" | "blob" | "ripples";
+export type Shape = "circle" | "squircle" | "square" | "hexagon" | "star" | "heart" | "blob";
 
 export type PatternId = "short" | "long" | "staccato" | "heartbeat" | "ramp" | "purr";
 
@@ -87,7 +86,6 @@ export const SHAPES: { id: Shape; label: string }[] = [
   { id: "star", label: "Star" },
   { id: "heart", label: "Heart" },
   { id: "blob", label: "Blob" },
-  { id: "ripples", label: "Wavy" },
 ];
 
 export const REWARD_MODES: {
@@ -176,7 +174,7 @@ export const SWATCHES = [
 
 export const DEFAULT_SETTINGS: Settings = {
   mode: "both",
-  shape: "ripples",
+  shape: "circle",
   rewardMode: "original",
   tapPreset: null,
   holdPreset: null,
@@ -190,7 +188,7 @@ export const DEFAULT_SETTINGS: Settings = {
   rippleColors: ["#E6A9FF", "#8DEDFF", "#BBA4FF"],
   rippleFollowButton: false,
   colorLibraries: {},
-  rippleShape: "match",
+  rippleShape: "wavy",
   backdrop: "navy",
   reminders: {
     enabled: false,

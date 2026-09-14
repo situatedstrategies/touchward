@@ -140,10 +140,10 @@ export function HomeScreen() {
         {loaded && (
           <RewardButton ref={button} settings={settings} size={size} onReward={onReward} />
         )}
-        <Text style={[styles.prompt, { color: theme.muted }]}>{PROMPTS[settings.mode]}</Text>
       </View>
 
       <View style={styles.bottom}>
+        <Text style={[styles.prompt, { color: theme.text }]}>{PROMPTS[settings.mode]}</Text>
         <Pressable
           onPress={() => setSettingsOpen(true)}
           accessibilityRole="button"
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
   brand: heading(24),
   count: { ...body(15), fontVariant: ["tabular-nums"] },
   middle: { flex: 1, alignItems: "center", justifyContent: "center" },
-  prompt: { ...body(16), marginTop: 28, textAlign: "center" },
+  prompt: { ...body(16), marginBottom: 16, textAlign: "center" },
   bottom: { alignItems: "center" },
   settingsButton: {
     paddingHorizontal: 22,

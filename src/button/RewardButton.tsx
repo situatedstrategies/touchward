@@ -26,7 +26,7 @@ const RETURN_DELAY_MS = 900;
 /** Ripples still travelling at once. Older ones are dropped first. */
 const MAX_RIPPLES = 12;
 /** In the Original mode the core is smaller so its three rings have room. */
-const BANDS_CORE_RATIO = 0.5;
+const BANDS_CORE_RATIO = 0.4;
 
 /** Lets the screen trigger a reward from outside: a deep link, a notification, a side button. */
 export interface RewardButtonHandle {

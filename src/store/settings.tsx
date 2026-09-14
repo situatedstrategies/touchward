@@ -25,11 +25,25 @@ import {
   type Settings,
 } from "../types";
 
-const SETTINGS_KEY = "touchward.settings.v1";
+const SETTINGS_KEY = "touchward.settings.v2";
 const STATS_KEY = "touchward.stats.v1";
-/** Keys used before the app was renamed; read once so existing installs keep their data. */
-const LEGACY_SETTINGS_KEY = "dopamine.settings.v1";
+/**
+ * Earlier keys. v1 settings predate the final button design, so when one is
+ * migrated the look is reset to the icon (shape, mode, ripple colors) while
+ * every other preference is kept.
+ */
+const PREVIOUS_SETTINGS_KEYS = ["touchward.settings.v1", "dopamine.settings.v1"];
 const LEGACY_STATS_KEY = "dopamine.stats.v1";
+const ICON_LOOK: Partial<Settings> = {
+  shape: DEFAULT_SETTINGS.shape,
+  rewardMode: DEFAULT_SETTINGS.rewardMode,
+  rippleShape: DEFAULT_SETTINGS.rippleShape,
+  rippleColors: DEFAULT_SETTINGS.rippleColors,
+  rippleFollowButton: DEFAULT_SETTINGS.rippleFollowButton,
+  idleColor: DEFAULT_SETTINGS.idleColor,
+  tapColors: DEFAULT_SETTINGS.tapColors,
+  backdrop: DEFAULT_SETTINGS.backdrop,
+};
 /** Taps can come fast; the counter is written at most this often. */
 const STATS_WRITE_DELAY_MS = 400;
 
@@ -183,10 +197,21 @@ async function readWithFallback(key: string, legacyKey: string): Promise<string 
   return value ?? (await AsyncStorage.getItem(legacyKey));
 }
 
+/** Current settings, or settings migrated from an earlier key with the icon look restored. */
+async function readSettings(): Promise<Settings> {
+  const current = await AsyncStorage.getItem(SETTINGS_KEY);
+  if (current !== null) return parseSettings(current);
+  for (const key of PREVIOUS_SETTINGS_KEYS) {
+    const previous = await AsyncStorage.getItem(key);
+    if (previous !== null) return { ...parseSettings(previous), ...ICON_LOOK };
+  }
+  return DEFAULT_SETTINGS;
+}
+
 /** Settings as stored, for code that runs outside React (the background calendar sync). */
 export async function loadSettings(): Promise<Settings> {
   try {
-    return parseSettings(await readWithFallback(SETTINGS_KEY, LEGACY_SETTINGS_KEY));
+    return await readSettings();
   } catch {
     return DEFAULT_SETTINGS;
   }
@@ -204,12 +229,12 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     let cancelled = false;
     (async () => {
       try {
-        const [rawSettings, rawStats] = await Promise.all([
-          readWithFallback(SETTINGS_KEY, LEGACY_SETTINGS_KEY),
+        const [loadedSettings, rawStats] = await Promise.all([
+          readSettings(),
           readWithFallback(STATS_KEY, LEGACY_STATS_KEY),
         ]);
         if (cancelled) return;
-        setSettings(parseSettings(rawSettings));
+        setSettings(loadedSettings);
         setStats(parseStats(rawStats));
       } catch {
         // Storage unavailable: run with defaults until it is.
