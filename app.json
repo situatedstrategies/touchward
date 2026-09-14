@@ -36,7 +36,8 @@
           "calendarPermission": "Touchward reads your calendar only to schedule a nudge when each event ends. Event details are used at that moment on this phone and are never stored, copied, or transmitted by the app."
         }
       ],
-      "expo-background-task"
+      "expo-background-task",
+      "@bacons/apple-targets"
     ],
     "ios": {
       "supportsTablet": true,
@@ -56,14 +57,12 @@
         "NSPrivacyTracking": false,
         "NSPrivacyTrackingDomains": [],
         "NSPrivacyCollectedDataTypes": []
-      }
+      },
+      "appleTeamId": "4964KRMB5H"
     },
     "android": {
       "package": "com.situatedstrategies.touchward",
-      "permissions": [
-        "android.permission.VIBRATE",
-        "android.permission.POST_NOTIFICATIONS"
-      ],
+      "permissions": ["android.permission.VIBRATE", "android.permission.POST_NOTIFICATIONS"],
       "adaptiveIcon": {
         "backgroundColor": "#051C55",
         "foregroundImage": "./assets/android-icon-foreground.png",
@@ -89,9 +88,6 @@
     "owner": "omaas",
     "description": "A sensory reward button: tap it when you did the thing.",
     "primaryColor": "#2C66FF",
-    "platforms": [
-      "ios",
-      "android"
-    ]
+    "platforms": ["ios", "android"]
   }
 }

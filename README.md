@@ -135,6 +135,22 @@ events added while the app was closed still get their nudge. The scan also
 runs every time the app comes to the foreground. Expo Go has no background
 tasks, so there only the foreground scan runs.
 
+## iPad and Apple Watch
+
+- iPad: the same app, laid out larger. Any device whose shorter side is 700
+  points or more gets a bigger button and type; everything else is identical.
+- Apple Watch: a native SwiftUI companion in `targets/watch/`, built into the
+  iOS app by `@bacons/apple-targets` and installed on a paired watch with it.
+  It is only the button: the same shape, colors, ripples, and Original rings as
+  the phone, a click on each tap, and the phone's reminder schedule mirrored as
+  local watch notifications. Taps on the watch count on the phone. There are
+  no settings on the watch; it follows whatever the phone has. The phone sends
+  its settings over WatchConnectivity through the local module in
+  `modules/watch-sync/` whenever they change, and the watch keeps the last
+  copy so it works when the phone is out of reach. Build and run it through
+  the normal iOS build; Xcode's TouchwardWatch scheme runs it on a watch
+  simulator.
+
 ## Push notifications
 
 Reminders are local and need no server. Remote push is wired up too:
@@ -237,6 +253,9 @@ The bundle identifier and Android package are both
   `settings/`: the Customize sheet, one file per category.
 - `src/links.ts`: site, support, legal, and deep link URLs.
 - `app.config.js`: adds `google-services.json` for Android push when present.
+- `modules/watch-sync/`: local Expo module (Swift) that mirrors settings to
+  the watch and reports its rewards.
+- `targets/watch/`: the SwiftUI watch app (entry, model, outlines, view).
 
 ## Scripts
 

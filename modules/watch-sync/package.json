@@ -1,0 +1,10 @@
+{
+  "name": "watch-sync",
+  "version": "1.0.0",
+  "description": "Mirrors Touchward settings to the Apple Watch app and receives its rewards.",
+  "main": "index.ts",
+  "license": "MIT",
+  "author": "Situated Strategies LLC",
+  "homepage": "https://github.com/situatedstrategies/touchward",
+  "private": true
+}

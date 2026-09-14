@@ -11,6 +11,7 @@ import { setCalendarSyncTaskEnabled } from "../notifications/calendarTask";
 import { registerForPush } from "../notifications/push";
 import { configureNotifications, syncReminders } from "../notifications/reminders";
 import { useSettings } from "../store/settings";
+import { onWatchReward, sendSettingsToWatch } from "../../modules/watch-sync";
 import { themeForBackdrop, useTheme } from "../design/theme";
 import { body, bodySemibold, heading } from "../design/typography";
 import { SettingsScreen } from "./settings/SettingsScreen";
@@ -70,6 +71,26 @@ export function HomeScreen() {
     });
     return () => sub.remove();
   }, [loaded, settings.calendarNudges, settings.reminders.timeSensitive]);
+  // Apple Watch: mirror the look and the reminder schedule, and count its taps here too.
+  useEffect(() => {
+    if (!loaded) return;
+    sendSettingsToWatch({
+      shape: settings.shape,
+      rewardMode: settings.rewardMode,
+      rippleShape: settings.rippleShape,
+      idleColor: settings.idleColor,
+      tapColors: settings.tapColors,
+      rippleColors: settings.rippleColors,
+      rippleFollowButton: settings.rippleFollowButton,
+      backdrop: settings.backdrop,
+      remindersEnabled: settings.reminders.enabled,
+      reminderEveryHours: settings.reminders.everyHours,
+      reminderStartHour: settings.reminders.startHour,
+      reminderEndHour: settings.reminders.endHour,
+      hapticStrength: settings.hapticStrength,
+    });
+  }, [loaded, settings]);
+  useEffect(() => onWatchReward(() => recordReward()), [recordReward]);
   // Push tokens can rotate, so re-register on every launch while push is on.
   useEffect(() => {
     if (!loaded || !settings.pushEnabled) return;
