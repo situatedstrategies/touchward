@@ -45,8 +45,9 @@ const ICON_LOOK: Partial<Settings> = {
   tapColors: DEFAULT_SETTINGS.tapColors,
   backdrop: DEFAULT_SETTINGS.backdrop,
 };
-/** Taps can come fast; the counter is written at most this often. */
+/** Taps and color drags come fast; storage is written at most this often. */
 const STATS_WRITE_DELAY_MS = 400;
+const SETTINGS_WRITE_DELAY_MS = 300;
 
 export interface Stats {
   /** Calendar day (YYYY-MM-DD) the daily count belongs to. */
@@ -251,10 +252,26 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
+  const settingsTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pendingSettings = useRef<Settings | null>(null);
+  const flushSettings = useCallback(() => {
+    if (settingsTimer.current) {
+      clearTimeout(settingsTimer.current);
+      settingsTimer.current = null;
+    }
+    const value = pendingSettings.current;
+    if (!value) return;
+    pendingSettings.current = null;
+    AsyncStorage.setItem(SETTINGS_KEY, JSON.stringify(value)).catch(() => {});
+  }, []);
+
   useEffect(() => {
     if (!hydrated.current) return;
-    AsyncStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)).catch(() => {});
-  }, [settings]);
+    pendingSettings.current = settings;
+    if (!settingsTimer.current) {
+      settingsTimer.current = setTimeout(flushSettings, SETTINGS_WRITE_DELAY_MS);
+    }
+  }, [settings, flushSettings]);
 
   const flushStats = useCallback(() => {
     if (statsTimer.current) {
@@ -274,14 +291,18 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   }, [stats, flushStats]);
 
   useEffect(() => {
+    const flushAll = () => {
+      flushStats();
+      flushSettings();
+    };
     const sub = AppState.addEventListener("change", (state) => {
-      if (state !== "active") flushStats();
+      if (state !== "active") flushAll();
     });
     return () => {
       sub.remove();
-      flushStats();
+      flushAll();
     };
-  }, [flushStats]);
+  }, [flushStats, flushSettings]);
 
   const update = useCallback((patch: Partial<Settings>) => {
     setSettings((prev) => ({ ...prev, ...patch }));

@@ -160,8 +160,13 @@ function clamp01(v: number): number {
   return Math.min(1, Math.max(0, v));
 }
 
+/**
+ * Strength below 1 scales amplitude, but not all the way down: motors stop
+ * being felt somewhere around 0.3, so Gentle keeps roughly 70 percent of the
+ * pattern and Normal about 90 percent.
+ */
 function scalePattern(p: PulsarPattern, strength: number): PulsarPattern {
-  const s = clamp01(strength);
+  const s = 0.5 + 0.5 * clamp01(strength);
   return {
     discretePattern: p.discretePattern.map((d) => ({
       ...d,

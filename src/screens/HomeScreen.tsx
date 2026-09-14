@@ -24,6 +24,9 @@ import { SettingsScreen } from "./settings/SettingsScreen";
 const PILL_BACKGROUND = "#F4F4F5";
 const PILL_TEXT = "#18181B";
 
+/** A settings change reaches the watch after this pause, so drags send once. */
+const WATCH_SYNC_DELAY_MS = 600;
+
 /** Shortest side at or above this is laid out as a tablet. */
 const TABLET_MIN_SIDE = 700;
 
@@ -96,10 +99,12 @@ export function HomeScreen() {
     });
     return () => sub.remove();
   }, [loaded, settings.calendarNudges, settings.reminders.timeSensitive]);
-  // Apple Watch: mirror the look and the reminder schedule, and count its taps here too.
+  // Apple Watch: mirror the look and the reminder schedule, debounced so a color
+  // drag sends one update, and only when something the watch uses has changed.
+  const lastWatchPayload = useRef("");
   useEffect(() => {
     if (!loaded) return;
-    sendSettingsToWatch({
+    const payload = JSON.stringify({
       shape: settings.shape,
       rewardMode: settings.rewardMode,
       rippleShape: settings.rippleShape,
@@ -114,6 +119,12 @@ export function HomeScreen() {
       reminderEndHour: settings.reminders.endHour,
       hapticStrength: settings.hapticStrength,
     });
+    if (payload === lastWatchPayload.current) return;
+    const timer = setTimeout(() => {
+      lastWatchPayload.current = payload;
+      sendSettingsToWatch(JSON.parse(payload) as Record<string, unknown>);
+    }, WATCH_SYNC_DELAY_MS);
+    return () => clearTimeout(timer);
   }, [loaded, settings]);
   useEffect(() => onWatchReward(() => recordReward()), [recordReward]);
   // Push tokens can rotate, so re-register on every launch while push is on.
