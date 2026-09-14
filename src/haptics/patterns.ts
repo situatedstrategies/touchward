@@ -1,6 +1,7 @@
 import type { PatternId } from "../types";
 
-export type Intensity = "light" | "medium" | "heavy";
+/** Soft is iOS only in feel (a rounded, gentle impact); Android plays it as a short buzz. */
+export type Intensity = "soft" | "light" | "medium" | "heavy";
 
 /** One buzz: vibrate for `ms`, then rest for `gap` before the next pulse. */
 export interface Pulse {

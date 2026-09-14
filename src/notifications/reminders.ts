@@ -2,13 +2,13 @@ import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 import type { ReminderSettings } from "../types";
 
-export const REMINDER_CATEGORY = "dopamine-reminder";
+export const REMINDER_CATEGORY = "touchward-reminder";
 export const REWARD_ACTION = "reward";
 export const CHANNEL_ID = "reminders";
 
 const LINES: { title: string; body: string }[] = [
   { title: "Did the thing?", body: "Come tap. You earned it." },
-  { title: "Dopamine check", body: "One tap. Little buzz. Keep going." },
+  { title: "Touchward check", body: "One tap. Little buzz. Keep going." },
   { title: "Small win?", body: "Log it with a tap." },
   { title: "Hey.", body: "Anything done since last time? Tap it." },
   { title: "Reward yourself", body: "Hold the button, watch the ring close." },

@@ -8,8 +8,11 @@ import React, {
 } from "react";
 import { Animated, Easing, Pressable, StyleSheet, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
-import { playPatternById, stopHaptics, tick } from "../haptics/engine";
+import { playReward, stopHaptics, tick } from "../haptics/engine";
+import { getPattern } from "../haptics/patterns";
 import type { Settings } from "../types";
+import { RIPPLE_MODES } from "./rippleModes";
+import { RIPPLE_CORE_RATIO, RIPPLE_FIGURE_RATIO, RIPPLE_PALETTE, Ripples } from "./Ripples";
 import { SHAPE_PATHS, SHAPE_VIEWBOX } from "./shapes";
 import { TimerRing } from "./TimerRing";
 
@@ -35,10 +38,14 @@ interface Props {
 
 export function RewardButton({ settings, size, ringTrackColor, onReward, ref }: Props) {
   const { mode, shape, tapPattern, holdPattern, holdSeconds, idleColor, tapColors } = settings;
+  const isRipples = shape === "ripples";
+  const rippleMode = RIPPLE_MODES[settings.rewardMode];
 
   const scale = useRef(new Animated.Value(1)).current;
   const ring = useRef(new Animated.Value(0)).current;
   const colorMix = useRef(new Animated.Value(1)).current;
+  // 0 to 1 across one ripple wave; run on every reward. Only drawn for the ripples shape.
+  const pulse = useRef(new Animated.Value(0)).current;
 
   const [fromColor, setFromColor] = useState(idleColor);
   const [toColor, setToColor] = useState(idleColor);
@@ -117,11 +124,44 @@ export function RewardButton({ settings, size, ringTrackColor, onReward, ref }: 
     [scale],
   );
 
+  const ripple = useCallback(() => {
+    pulse.stopAnimation();
+    pulse.setValue(0);
+    // One wave per repeat, each a fresh 0 to 1 run (both ends are the resting look).
+    const steps: Animated.CompositeAnimation[] = [];
+    for (let i = 0; i < rippleMode.repeats; i++) {
+      steps.push(
+        Animated.timing(pulse, {
+          toValue: 1,
+          duration: rippleMode.duration,
+          easing: Easing.out(Easing.cubic),
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulse, { toValue: 0, duration: 0, useNativeDriver: true }),
+      );
+    }
+    Animated.sequence(steps).start();
+  }, [pulse, rippleMode]);
+
   const reward = useCallback(
     (kind: "tap" | "hold") => {
-      playPatternById(kind === "tap" ? tapPattern : holdPattern);
+      // A Pulsar preset from settings wins. Otherwise ripples taps follow the
+      // reward mode, everything else plays its named pattern. Holds keep their own.
+      if (kind === "hold") {
+        playReward({ preset: settings.holdPreset, pulses: getPattern(holdPattern).pulses });
+      } else if (isRipples) {
+        playReward({
+          preset: settings.tapPreset,
+          pattern: rippleMode.pulsar,
+          strength: settings.hapticStrength,
+          pulses: rippleMode.pulses,
+        });
+      } else {
+        playReward({ preset: settings.tapPreset, pulses: getPattern(tapPattern).pulses });
+      }
       animateTo(nextColor(), kind === "hold" ? 400 : 220);
       pop(kind === "hold" ? 1.14 : 1.08);
+      if (isRipples) ripple();
       onReward(kind);
 
       if (returnTimer.current) clearTimeout(returnTimer.current);
@@ -137,8 +177,14 @@ export function RewardButton({ settings, size, ringTrackColor, onReward, ref }: 
       animateTo,
       nextColor,
       pop,
+      isRipples,
+      rippleMode,
+      ripple,
       onReward,
       settings.returnToIdle,
+      settings.tapPreset,
+      settings.holdPreset,
+      settings.hapticStrength,
       idleColor,
     ],
   );
@@ -228,22 +274,28 @@ export function RewardButton({ settings, size, ringTrackColor, onReward, ref }: 
     [colorMix, fromColor, toColor],
   );
 
-  const ringSize = size + 36;
+  // Ripples: the whole figure is the tap target and the hold timer hugs the core,
+  // in the gap before the first band. Other shapes: the timer wraps the shape.
+  const coreSize = isRipples ? Math.round(size * RIPPLE_CORE_RATIO) : size;
+  const ringSize = isRipples ? coreSize + 28 : size + 36;
+  const wrapSize = isRipples ? Math.ceil(size * RIPPLE_FIGURE_RATIO) : ringSize;
   const showRing = mode !== "tap";
 
+  const timerLayer = showRing && (
+    <View style={styles.layer} pointerEvents="none">
+      <TimerRing
+        size={ringSize}
+        strokeWidth={8}
+        progress={ring}
+        color={isRipples ? RIPPLE_PALETTE.timer : toColor}
+        trackColor={isRipples ? RIPPLE_PALETTE.timerTrack : ringTrackColor}
+      />
+    </View>
+  );
+
   return (
-    <View style={[styles.wrap, { width: ringSize, height: ringSize }]}>
-      {showRing && (
-        <View style={StyleSheet.absoluteFill} pointerEvents="none">
-          <TimerRing
-            size={ringSize}
-            strokeWidth={8}
-            progress={ring}
-            color={toColor}
-            trackColor={ringTrackColor}
-          />
-        </View>
-      )}
+    <View style={[styles.wrap, { width: wrapSize, height: wrapSize }]}>
+      {!isRipples && timerLayer}
       <Pressable
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
@@ -254,18 +306,32 @@ export function RewardButton({ settings, size, ringTrackColor, onReward, ref }: 
         accessibilityState={{ busy: holding }}
         hitSlop={12}
       >
-        <Animated.View style={{ width: size, height: size, transform: [{ scale }] }}>
-          <Svg width={size} height={size} viewBox={SHAPE_VIEWBOX}>
-            <AnimatedPath d={SHAPE_PATHS[shape]} fill={fill} />
-          </Svg>
-        </Animated.View>
+        {isRipples ? (
+          <Ripples size={size} pulse={pulse} coreScale={scale} mode={rippleMode} />
+        ) : (
+          <Animated.View style={{ width: size, height: size, transform: [{ scale }] }}>
+            <Svg width={size} height={size} viewBox={SHAPE_VIEWBOX}>
+              <AnimatedPath d={SHAPE_PATHS[shape]} fill={fill} />
+            </Svg>
+          </Animated.View>
+        )}
       </Pressable>
+      {isRipples && timerLayer}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   wrap: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  layer: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
     alignItems: "center",
     justifyContent: "center",
   },

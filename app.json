@@ -1,17 +1,12 @@
 {
   "expo": {
-    "name": "Dopamine",
-    "slug": "dopamine-app",
+    "name": "Touchward",
+    "slug": "touchward",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "scheme": "dopamine",
+    "scheme": "touchward",
     "userInterfaceStyle": "automatic",
-    "splash": {
-      "image": "./assets/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#0B0B0F"
-    },
     "plugins": [
       [
         "expo-notifications",
@@ -19,21 +14,33 @@
           "color": "#C41200",
           "defaultChannel": "reminders"
         }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#0B0B0F"
+        }
       ]
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.situatedstrategies.dopamine",
+      "bundleIdentifier": "com.situatedstrategies.touchward",
       "entitlements": {
         "com.apple.developer.usernotifications.time-sensitive": true
       },
       "infoPlist": {
-        "NSUserNotificationsUsageDescription": "Dopamine sends the reminders you schedule so you remember to tap."
+        "NSUserNotificationsUsageDescription": "Touchward sends the reminders you schedule so you remember to tap."
       }
     },
     "android": {
-      "package": "com.situatedstrategies.dopamine",
-      "permissions": ["android.permission.VIBRATE", "android.permission.POST_NOTIFICATIONS"],
+      "package": "com.situatedstrategies.touchward",
+      "permissions": [
+        "android.permission.VIBRATE",
+        "android.permission.POST_NOTIFICATIONS"
+      ],
       "adaptiveIcon": {
         "backgroundColor": "#0B0B0F",
         "foregroundImage": "./assets/android-icon-foreground.png",

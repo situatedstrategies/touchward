@@ -1,4 +1,4 @@
-import { Platform } from "react-native";
+import { NativeModules, Platform } from "react-native";
 
 /**
  * Turns the physical volume buttons into a tap trigger while the app is open.
@@ -16,16 +16,31 @@ type VolumeManagerModule = typeof import("react-native-volume-manager");
 
 let cached: VolumeManagerModule | null | undefined;
 
+/**
+ * True when the native side of react-native-volume-manager is present in this
+ * binary. Checked before the JS package is required: the package builds a
+ * NativeEventEmitter at import time and throws when the native module is
+ * missing, and in development Metro reports that throw as a fatal error (a red
+ * screen in Expo Go) before a try/catch around the require can see it.
+ */
+function nativeModulePresent(): boolean {
+  try {
+    return NativeModules.VolumeManager != null;
+  } catch {
+    return false;
+  }
+}
+
 function loadModule(): VolumeManagerModule | null {
   if (cached !== undefined) return cached;
-  if (Platform.OS === "web") {
+  if (Platform.OS === "web" || !nativeModulePresent()) {
     cached = null;
     return cached;
   }
   try {
     // Required lazily so a build without the native module still boots.
     const mod = require("react-native-volume-manager") as VolumeManagerModule;
-    cached = typeof mod.addVolumeListener === "function" ? mod : null;
+    cached = typeof mod?.addVolumeListener === "function" ? mod : null;
   } catch {
     cached = null;
   }

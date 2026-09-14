@@ -3,11 +3,21 @@ import * as Notifications from "expo-notifications";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { AppState, Pressable, StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Svg, {
+  Circle,
+  Defs,
+  LinearGradient,
+  RadialGradient,
+  Rect,
+  Stop,
+} from "react-native-svg";
 import { RewardButton, type RewardButtonHandle } from "../components/RewardButton";
+import { RIPPLE_PALETTE } from "../components/Ripples";
 import { startVolumeButtonListener } from "../hardware/volumeButtons";
 import { configureNotifications, syncReminders } from "../notifications/reminders";
 import { useSettings } from "../store/settings";
-import { useTheme } from "../theme";
+import { RIPPLE_THEME, useTheme } from "../theme";
+import { body, bodySemibold, heading } from "../typography";
 import { SettingsScreen } from "./SettingsScreen";
 
 const PROMPTS = {
@@ -16,7 +26,7 @@ const PROMPTS = {
   hold: "Did the thing? Hold it.",
 };
 
-/** Opening dopamine://reward (or any link with ?reward=1) fires a tap on arrival. */
+/** Opening touchward://reward (or any link with ?reward=1) fires a tap on arrival. */
 function linkAsksForReward(url: string): boolean {
   const parsed = Linking.parse(url);
   const path = (parsed.path ?? parsed.hostname ?? "").replace(/^\/+|\/+$/g, "");
@@ -24,10 +34,13 @@ function linkAsksForReward(url: string): boolean {
 }
 
 export function HomeScreen() {
-  const theme = useTheme();
+  const systemTheme = useTheme();
   const insets = useSafeAreaInsets();
   const { width, height } = useWindowDimensions();
   const { settings, stats, recordReward, loaded } = useSettings();
+  // Ripples brings its own deep navy backdrop; the settings sheet keeps the system look.
+  const isRipples = loaded && settings.shape === "ripples";
+  const theme = isRipples ? RIPPLE_THEME : systemTheme;
   const [settingsOpen, setSettingsOpen] = useState(false);
   const button = useRef<RewardButtonHandle>(null);
 
@@ -102,8 +115,9 @@ export function HomeScreen() {
         },
       ]}
     >
+      {isRipples && <NavyBackdrop />}
       <View style={styles.top}>
-        <Text style={[styles.brand, { color: theme.text }]}>Dopamine</Text>
+        <Text style={[styles.brand, { color: theme.text }]}>Touchward</Text>
         <Text style={[styles.count, { color: theme.muted }]}>{stats.rewardsToday} today</Text>
       </View>
 
@@ -141,9 +155,29 @@ export function HomeScreen() {
       <SettingsScreen
         visible={settingsOpen}
         onClose={() => setSettingsOpen(false)}
-        theme={theme}
+        theme={systemTheme}
       />
     </View>
+  );
+}
+
+/** Top to bottom navy fade with a soft blue glow behind the button, like the icon. */
+function NavyBackdrop() {
+  return (
+    <Svg style={StyleSheet.absoluteFill} pointerEvents="none">
+      <Defs>
+        <LinearGradient id="navy" x1="0" y1="0" x2="0" y2="1">
+          <Stop offset="0" stopColor={RIPPLE_PALETTE.backgroundTop} />
+          <Stop offset="1" stopColor={RIPPLE_PALETTE.backgroundBottom} />
+        </LinearGradient>
+        <RadialGradient id="centerGlow" cx="50%" cy="50%" r="50%">
+          <Stop offset="0" stopColor={RIPPLE_PALETTE.centerGlow} stopOpacity={0.45} />
+          <Stop offset="1" stopColor={RIPPLE_PALETTE.centerGlow} stopOpacity={0} />
+        </RadialGradient>
+      </Defs>
+      <Rect width="100%" height="100%" fill="url(#navy)" />
+      <Circle cx="50%" cy="48%" r="42%" fill="url(#centerGlow)" />
+    </Svg>
   );
 }
 
@@ -154,10 +188,10 @@ const styles = StyleSheet.create({
     alignItems: "baseline",
     justifyContent: "space-between",
   },
-  brand: { fontSize: 22, fontWeight: "800", letterSpacing: -0.5 },
-  count: { fontSize: 15, fontVariant: ["tabular-nums"] },
+  brand: heading(24),
+  count: { ...body(15), fontVariant: ["tabular-nums"] },
   middle: { flex: 1, alignItems: "center", justifyContent: "center" },
-  prompt: { marginTop: 28, fontSize: 16, textAlign: "center" },
+  prompt: { ...body(16), marginTop: 28, textAlign: "center" },
   bottom: { alignItems: "center" },
   settingsButton: {
     paddingHorizontal: 22,
@@ -165,5 +199,5 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     borderWidth: 1,
   },
-  settingsText: { fontSize: 16, fontWeight: "600" },
+  settingsText: bodySemibold(16),
 });

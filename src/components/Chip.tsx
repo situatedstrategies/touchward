@@ -1,6 +1,7 @@
 import React from "react";
 import { Pressable, StyleSheet, Text } from "react-native";
 import type { Theme } from "../theme";
+import { bodySemibold } from "../typography";
 
 interface Props {
   label: string;
@@ -40,8 +41,5 @@ const styles = StyleSheet.create({
     marginRight: 8,
     marginBottom: 8,
   },
-  label: {
-    fontSize: 15,
-    fontWeight: "600",
-  },
+  label: bodySemibold(15),
 });

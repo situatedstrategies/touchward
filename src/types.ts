@@ -1,6 +1,10 @@
-export type Shape = "circle" | "squircle" | "square" | "hexagon" | "star" | "heart" | "blob";
+export type Shape =
+  "circle" | "squircle" | "square" | "hexagon" | "star" | "heart" | "blob" | "ripples";
 
 export type PatternId = "short" | "long" | "staccato" | "heartbeat" | "ramp" | "purr";
+
+/** For the ripples shape: one pick that sets both the ripple motion and the tap haptic. */
+export type RewardMode = "soft" | "pulse" | "spark" | "deep" | "double" | "wave";
 
 /**
  * tap: a press plays the tap pattern and changes color.
@@ -12,6 +16,14 @@ export type Mode = "tap" | "hold" | "both";
 export interface Settings {
   mode: Mode;
   shape: Shape;
+  /** Ripples only: the visual and haptic character of a tap. */
+  rewardMode: RewardMode;
+  /** Pulsar preset name that replaces the tap haptic. Null means use the pattern or mode. Needs a dev build. */
+  tapPreset: string | null;
+  /** Pulsar preset name that replaces the timer-done haptic. Null means use the pattern. Needs a dev build. */
+  holdPreset: string | null;
+  /** How hard Pulsar plays the reward mode patterns, 0 to 1. */
+  hapticStrength: number;
   /** Pattern played on a quick tap. */
   tapPattern: PatternId;
   /** Pattern played back at you when the hold timer completes. */
@@ -53,9 +65,35 @@ export const SHAPES: { id: Shape; label: string }[] = [
   { id: "star", label: "Star" },
   { id: "heart", label: "Heart" },
   { id: "blob", label: "Blob" },
+  { id: "ripples", label: "Ripples" },
+];
+
+export const REWARD_MODES: {
+  id: RewardMode;
+  label: string;
+  visual: string;
+  haptic: string;
+}[] = [
+  { id: "soft", label: "Soft", visual: "Slow, wide ripples", haptic: "one soft impact" },
+  { id: "pulse", label: "Pulse", visual: "A medium ripple", haptic: "one medium impact" },
+  { id: "spark", label: "Spark", visual: "Fast, tight ripples", haptic: "one light impact" },
+  { id: "deep", label: "Deep", visual: "Large, slow waves", haptic: "one heavy impact" },
+  { id: "double", label: "Double", visual: "Two ripple waves", haptic: "two impacts" },
+  {
+    id: "wave",
+    label: "Wave",
+    visual: "Several cascading ripples",
+    haptic: "repeated light impacts",
+  },
 ];
 
 export const HOLD_PRESETS = [3, 5, 10, 15, 30, 60];
+
+export const STRENGTHS: { value: number; label: string }[] = [
+  { value: 0.45, label: "Gentle" },
+  { value: 0.8, label: "Normal" },
+  { value: 1, label: "Full" },
+];
 
 export const SWATCHES = [
   "#C41200", // cherry
@@ -76,7 +114,11 @@ export const SWATCHES = [
 
 export const DEFAULT_SETTINGS: Settings = {
   mode: "both",
-  shape: "circle",
+  shape: "ripples",
+  rewardMode: "pulse",
+  tapPreset: null,
+  holdPreset: null,
+  hapticStrength: 0.8,
   tapPattern: "short",
   holdPattern: "heartbeat",
   holdSeconds: 5,

@@ -33,6 +33,18 @@ const dark: Theme = {
   ringTrack: "#27272A",
 };
 
+/** Used on the home screen while the ripples shape is selected: the icon's deep navy. */
+export const RIPPLE_THEME: Theme = {
+  dark: true,
+  background: "#081B4E",
+  surface: "#12276A",
+  border: "#2C4699",
+  text: "#F1F6FF",
+  muted: "#A9B8E6",
+  accent: "#8FE9FF",
+  ringTrack: "rgba(255, 255, 255, 0.14)",
+};
+
 export function useTheme(): Theme {
   return useColorScheme() === "dark" ? dark : light;
 }

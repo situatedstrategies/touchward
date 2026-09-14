@@ -10,8 +10,11 @@ import React, {
 } from "react";
 import { DEFAULT_SETTINGS, type Settings } from "../types";
 
-const SETTINGS_KEY = "dopamine.settings.v1";
-const STATS_KEY = "dopamine.stats.v1";
+const SETTINGS_KEY = "touchward.settings.v1";
+const STATS_KEY = "touchward.stats.v1";
+/** Keys from before the rename. Read once so an existing install keeps its settings and counter. */
+const LEGACY_SETTINGS_KEY = "dopamine.settings.v1";
+const LEGACY_STATS_KEY = "dopamine.stats.v1";
 
 interface Stats {
   /** ISO date (YYYY-MM-DD) the counter belongs to. */
@@ -53,6 +56,11 @@ function mergeSettings(raw: string | null): Settings {
       merged.holdSeconds = DEFAULT_SETTINGS.holdSeconds;
     }
     merged.reminders = { ...DEFAULT_SETTINGS.reminders, ...(parsed.reminders ?? {}) };
+    if (!Number.isFinite(merged.hapticStrength)) {
+      merged.hapticStrength = DEFAULT_SETTINGS.hapticStrength;
+    }
+    if (typeof merged.tapPreset !== "string") merged.tapPreset = null;
+    if (typeof merged.holdPreset !== "string") merged.holdPreset = null;
     return merged;
   } catch {
     return DEFAULT_SETTINGS;
@@ -69,10 +77,12 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     let cancelled = false;
     (async () => {
       try {
-        const [rawSettings, rawStats] = await Promise.all([
+        let [rawSettings, rawStats] = await Promise.all([
           AsyncStorage.getItem(SETTINGS_KEY),
           AsyncStorage.getItem(STATS_KEY),
         ]);
+        if (rawSettings === null) rawSettings = await AsyncStorage.getItem(LEGACY_SETTINGS_KEY);
+        if (rawStats === null) rawStats = await AsyncStorage.getItem(LEGACY_STATS_KEY);
         if (cancelled) return;
         setSettings(mergeSettings(rawSettings));
         if (rawStats) {

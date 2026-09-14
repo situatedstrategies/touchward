@@ -50,6 +50,7 @@ export const SHAPE_PATHS: Record<Shape, string> = {
   heart:
     "M50,92 C22,68 4,52 4,32 C4,18 15,7 28,7 C38,7 46,13 50,21 C54,13 62,7 72,7 C85,7 96,18 96,32 C96,52 78,68 50,92 Z",
   blob: "M52,4 C72,2 92,18 94,40 C96,62 84,90 60,95 C36,100 8,84 5,58 C2,34 30,6 52,4 Z",
+  ripples: "M50,2 A48,48 0 1,1 50,98 A48,48 0 1,1 50,2 Z",
 };
 
 export const SHAPE_VIEWBOX = `0 0 ${SIZE} ${SIZE}`;
