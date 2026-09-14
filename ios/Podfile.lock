@@ -180,6 +180,8 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
+  - ExpoAppleAuthentication (57.0.2):
+    - ExpoModulesCore
   - ExpoAsset (57.0.17):
     - ExpoModulesCore
   - ExpoBackgroundTask (57.0.17):
@@ -2329,6 +2331,7 @@ DEPENDENCIES:
   - expo-dev-launcher (from `../node_modules/expo-dev-launcher`)
   - expo-dev-menu (from `../node_modules/expo-dev-menu`)
   - expo-dev-menu-interface (from `../node_modules/expo-dev-menu-interface/ios`)
+  - ExpoAppleAuthentication (from `../node_modules/expo-apple-authentication/ios`)
   - ExpoAsset (from `../node_modules/expo/node_modules/expo-asset/ios`)
   - ExpoBackgroundTask (from `../node_modules/expo-background-task/ios`)
   - ExpoCalendar (from `../node_modules/expo-calendar/ios`)
@@ -2461,6 +2464,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-dev-menu"
   expo-dev-menu-interface:
     :path: "../node_modules/expo-dev-menu-interface/ios"
+  ExpoAppleAuthentication:
+    :path: "../node_modules/expo-apple-authentication/ios"
   ExpoAsset:
     :path: "../node_modules/expo/node_modules/expo-asset/ios"
   ExpoBackgroundTask:
@@ -2685,6 +2690,7 @@ SPEC CHECKSUMS:
   expo-dev-launcher: 05c72f3a22b4c742b06bd36fa391a30a990556a0
   expo-dev-menu: 272e23ced973a0e401c2b9a679595ea6c7c05d78
   expo-dev-menu-interface: 7a59e803916fbfd1b96c75ff91ea8dddac7e722f
+  ExpoAppleAuthentication: 16c2955d33ec7315e5a99d17fb5d62ed33cdb5b9
   ExpoAsset: b3999ffb3d4049b6c870708c60ea2209ace9f170
   ExpoBackgroundTask: 7f529e66e42f892236d16511306e224abd9c0bc1
   ExpoCalendar: c1154af2fce6106addd0360455673ddcfe830b40

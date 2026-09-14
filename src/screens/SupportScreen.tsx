@@ -15,15 +15,21 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Chip } from "../components/Chip";
+import {
+  getStoredPrivateEmail,
+  isPrivateEmailAvailable,
+  requestPrivateEmail,
+} from "../support/privateEmail";
 import { SUPPORT_API, SUPPORT_EMAIL } from "../links";
 import type { Theme } from "../design/theme";
 import { body, bodySemibold, heading } from "../design/typography";
 
 /**
  * In-app support form. Posts the same JSON the website's form sends to the
- * site's /api/support Function, which emails the support inbox through Resend.
- * If that fails (offline, or the Function is not configured yet), the message
- * is handed to the mail app addressed to the same inbox, so nothing is lost.
+ * site's /api/support route, which emails the support inbox through Resend.
+ * The reply address is the person's choice: Apple's Hide My Email relay, their
+ * own address, or none. If sending fails the message is handed to the mail
+ * app addressed to the same inbox, so nothing is lost.
  */
 
 const TOPICS = [
@@ -35,6 +41,11 @@ const TOPICS = [
   "Something else",
 ];
 const EMAIL_OK = /^[^\s@,;<>]+@[^\s@,;<>]+\.[^\s@,;<>]+$/;
+/** Placeholder the Worker recognizes as "no reply address". */
+const ANONYMOUS_EMAIL = "anonymous@touchward-dopamine.com";
+
+/** How the person wants to be reached: Apple's private relay, their own address, or not at all. */
+type ReplyMode = "private" | "own" | "none";
 
 interface Props {
   visible: boolean;
@@ -52,6 +63,10 @@ export function SupportScreen({ visible, onClose, theme }: Props) {
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
+  const [replyMode, setReplyMode] = useState<ReplyMode>("own");
+  const [privateAvailable, setPrivateAvailable] = useState(false);
+  const [privateEmail, setPrivateEmail] = useState<string | null>(null);
+  const [privateBusy, setPrivateBusy] = useState(false);
   const openedAt = useRef(Date.now());
 
   useEffect(() => {
@@ -62,6 +77,40 @@ export function SupportScreen({ visible, onClose, theme }: Props) {
     }
   }, [visible]);
 
+  useEffect(() => {
+    let cancelled = false;
+    isPrivateEmailAvailable().then((ok) => {
+      if (cancelled) return;
+      setPrivateAvailable(ok);
+      if (ok) setReplyMode("private");
+    });
+    getStoredPrivateEmail().then((stored) => {
+      if (!cancelled && stored) setPrivateEmail(stored);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const usePrivateEmail = async () => {
+    setPrivateBusy(true);
+    const relay = await requestPrivateEmail();
+    setPrivateBusy(false);
+    if (relay) {
+      setPrivateEmail(relay);
+      setError(null);
+    } else {
+      setError("Apple did not provide a private address. You can type an email instead.");
+    }
+  };
+
+  const replyAddress =
+    replyMode === "private"
+      ? privateEmail
+      : replyMode === "own"
+        ? email.trim()
+        : ANONYMOUS_EMAIL;
+
   const appVersion = Application.nativeApplicationVersion ?? "dev";
   const build = Application.nativeBuildVersion ?? "";
   const platform = `${Platform.OS === "ios" ? "iOS" : "Android"} ${Device.osVersion ?? ""}, ${
@@ -69,14 +118,20 @@ export function SupportScreen({ visible, onClose, theme }: Props) {
   }, app ${appVersion}${build ? ` (${build})` : ""}`;
 
   const validate = (): string | null => {
-    if (!EMAIL_OK.test(email.trim())) return "Add an email address so we can reply.";
+    if (replyMode === "private" && !privateEmail) {
+      return "Tap Use Apple private email first, or choose another reply option.";
+    }
+    if (replyMode === "own" && !EMAIL_OK.test(email.trim())) {
+      return "Add an email address so we can reply, or choose No reply.";
+    }
     if (!message.trim()) return "Write a message first.";
     return null;
   };
 
   const payload = () => ({
     name: name.trim(),
-    email: email.trim(),
+    email: replyAddress ?? ANONYMOUS_EMAIL,
+    anonymous: replyMode === "none",
     platform,
     topic,
     message: message.trim(),
@@ -181,18 +236,72 @@ export function SupportScreen({ visible, onClose, theme }: Props) {
                 ))}
               </View>
 
-              <Label theme={theme}>Email</Label>
-              <TextInput
-                value={email}
-                onChangeText={setEmail}
-                placeholder="you@example.com"
-                placeholderTextColor={theme.muted}
-                autoCapitalize="none"
-                autoCorrect={false}
-                keyboardType="email-address"
-                textContentType="emailAddress"
-                style={field}
-              />
+              <Label theme={theme}>Reply to</Label>
+              <View style={styles.row}>
+                {privateAvailable && (
+                  <Chip
+                    label="Apple private email"
+                    selected={replyMode === "private"}
+                    onPress={() => setReplyMode("private")}
+                    theme={theme}
+                  />
+                )}
+                <Chip
+                  label="My email"
+                  selected={replyMode === "own"}
+                  onPress={() => setReplyMode("own")}
+                  theme={theme}
+                />
+                <Chip
+                  label="No reply"
+                  selected={replyMode === "none"}
+                  onPress={() => setReplyMode("none")}
+                  theme={theme}
+                />
+              </View>
+              {replyMode === "private" && (
+                <View style={styles.privateBox}>
+                  <Text
+                    style={[styles.hint, { color: privateEmail ? theme.text : theme.muted }]}
+                  >
+                    {privateEmail
+                      ? `Replies go to ${privateEmail}, a relay Apple forwards to you. We never see your real address.`
+                      : "Apple gives the app a private relay address for you. Choose Hide My Email when Apple asks. We only ever see the relay."}
+                  </Text>
+                  <View style={styles.actions}>
+                    <Button
+                      label={
+                        privateBusy
+                          ? "Asking Apple..."
+                          : privateEmail
+                            ? "Use a different private email"
+                            : "Use Apple private email"
+                      }
+                      onPress={() => void usePrivateEmail()}
+                      theme={theme}
+                      disabled={privateBusy}
+                    />
+                  </View>
+                </View>
+              )}
+              {replyMode === "own" && (
+                <TextInput
+                  value={email}
+                  onChangeText={setEmail}
+                  placeholder="you@example.com"
+                  placeholderTextColor={theme.muted}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  keyboardType="email-address"
+                  textContentType="emailAddress"
+                  style={field}
+                />
+              )}
+              {replyMode === "none" && (
+                <Text style={[styles.hint, { color: theme.muted }]}>
+                  We will read it but cannot write back. No address is sent.
+                </Text>
+              )}
 
               <Label theme={theme}>Name (optional)</Label>
               <TextInput
@@ -237,7 +346,8 @@ export function SupportScreen({ visible, onClose, theme }: Props) {
               </View>
 
               <Text style={[styles.meta, { color: theme.muted }]}>
-                Sent with: {platform}. Or write directly to {SUPPORT_EMAIL}.
+                Sent with: {platform}. Writing to {SUPPORT_EMAIL} from your own mail app uses
+                whatever address that app sends from.
               </Text>
             </View>
           )}
@@ -309,6 +419,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   multiline: { minHeight: 140 },
+  privateBox: { marginTop: 4 },
   error: { ...body(14), marginTop: 12 },
   actions: { flexDirection: "row", flexWrap: "wrap", gap: 12, marginTop: 20 },
   button: {

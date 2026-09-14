@@ -202,10 +202,33 @@ Haptics play through Pulsar in development and store builds (the app logs
 Settings has a Support section with an in-app form. It posts the same JSON as
 the website's form to `https://touchward-dopamine.com/api/support`, which
 emails `support@touchward-dopamine.com` through Resend. That endpoint needs the
-`RESEND_API_KEY` variable on the Cloudflare Pages project (Production and
-Preview). Until it is set, the form falls back to the mail app, addressed to
+`RESEND_API_KEY` secret on the Cloudflare Worker `touchward-site` (Settings,
+Variables and Secrets, Add variable, type Secret). A secret in the account
+level Secrets Store is not visible to the Worker unless bound. Until it is set, the form falls back to the mail app, addressed to
 the same inbox. The About section links to `/privacy` and `/terms` on the site,
 opened in an in-app browser, and shows the version.
+
+## Support form reply address
+
+The in-app form offers three reply options. "Apple private email" uses Sign
+in with Apple (`expo-apple-authentication`) to get a Hide My Email relay
+address; we only ever see the relay, and Apple forwards our replies to the
+person's real inbox. "My email" is a typed address. "No reply" sends no
+address at all, and the Worker omits the reply-to. Emails themselves cannot
+be hashed and remain readable, since a hash is one way and would make replies
+impossible; the relay is the privacy preserving option that still allows a
+reply.
+
+Two one time setups make the relay work end to end:
+
+1. The App ID needs the Sign in with Apple capability (Xcode adds it on the
+   first signed build with `usesAppleSignIn` in `app.json`).
+2. Apple only forwards mail to relay addresses from registered senders:
+   Apple Developer, Certificates, Identifiers & Profiles, Services, Sign in
+   with Apple for Email Communication. Register the domain
+   `touchward-dopamine.com` and the addresses `support@touchward-dopamine.com`
+   and `notifications@touchward-dopamine.com`. Apple verifies SPF for the
+   domain, which Resend's DNS records provide.
 
 ## Crash reports
 
@@ -272,6 +295,7 @@ The bundle identifier and Android package are both
   `settings/`: the Customize sheet, one file per category.
 - `src/links.ts`: site, support, legal, and deep link URLs.
 - `src/support/crashReports.ts`: the crash handler, queue, and sender.
+- `src/support/privateEmail.ts`: Apple Hide My Email relay for the support form.
 - `src/looks/looks.ts`: what a look is, the randomizer, and name suggestions.
   `src/store/looks.tsx` persists the library; `components/LookPreview.tsx`
   draws a still; `screens/SaveLookSheet.tsx` and `screens/LibraryScreen.tsx`
