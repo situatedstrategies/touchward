@@ -9,7 +9,7 @@ import {
   type Ref,
 } from "react";
 import { Animated, Easing, Pressable, StyleSheet, View } from "react-native";
-import { playReward, stopHaptics, tick } from "../haptics/engine";
+import { playReward, prepareReward, stopHaptics, tick } from "../haptics/engine";
 import { getPattern } from "../haptics/patterns";
 import { colorVariants, lighten, withAlpha } from "../design/palette";
 import { RIPPLE_WIDTHS, type Settings } from "../types";
@@ -98,6 +98,17 @@ export function RewardButton({ settings, size, onReward, ref }: Props) {
     colorMix.setValue(1);
     colorIndex.current = -1;
   }, [idleColor, colorMix]);
+
+  // Parse the tap pattern when it is chosen rather than on the first tap, so
+  // the synchronous parse never overlaps a haptic already playing.
+  useEffect(() => {
+    prepareReward({
+      preset: settings.tapPreset,
+      pattern: rewardMode.pulsar,
+      strength: settings.hapticStrength,
+      pulses: rewardMode.pulses,
+    });
+  }, [settings.tapPreset, rewardMode, settings.hapticStrength]);
 
   useEffect(
     () => () => {
