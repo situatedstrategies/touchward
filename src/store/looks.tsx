@@ -73,6 +73,7 @@ function sanitizeLook(raw: unknown): LookSettings | null {
     hapticStrength: isNum(r.hapticStrength)
       ? Math.min(MAX_STRENGTH, Math.max(0, r.hapticStrength))
       : 0.8,
+    tapPreset: isStr(r.tapPreset) && r.tapPreset.length > 0 ? r.tapPreset : null,
   };
 }
 

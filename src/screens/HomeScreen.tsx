@@ -217,11 +217,7 @@ export function HomeScreen() {
         <View style={styles.toolbar}>
           <Pill label="Random" onPress={shuffleLook} scale={scale} />
           <Pill label="Save" onPress={() => setSaveOpen(true)} scale={scale} />
-          <Pill
-            label={looks.length > 0 ? `Library ${looks.length}` : "Library"}
-            onPress={() => setLibraryOpen(true)}
-            scale={scale}
-          />
+          <Pill label="Library" onPress={() => setLibraryOpen(true)} scale={scale} />
           <Pill label="Customize" onPress={() => setSettingsOpen(true)} scale={scale} />
         </View>
       </View>
