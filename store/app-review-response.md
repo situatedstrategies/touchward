@@ -126,8 +126,12 @@ during normal use.
 
 The complete list of anything outside the app:
 
-- Apple frameworks on the device: Core Haptics (through the open source
-  Pulsar library, react-native-pulsar, MIT license) for haptics; EventKit
+- Apple frameworks on the device: Core Haptics for haptics, called through
+  Pulsar (react-native-pulsar with its PulsarHaptics core, by Software
+  Mansion). Pulsar is an open source library under the MIT license, compiled
+  into the app from source. It is not a service: it needs no API key or
+  account, contains no networking code, collects nothing, and only wraps
+  Core Haptics on iOS and VibrationEffect on Android. EventKit
   for calendar nudges (read only, at runtime, never stored or transmitted);
   UserNotifications for local reminders and nudges; BGTaskScheduler to
   rescan the calendar a few times a day; WatchConnectivity to mirror
@@ -178,6 +182,8 @@ It contains no protected third party material. All artwork, the icon, the
 copy, and the haptic patterns are original work by Situated Strategies LLC.
 The open source libraries it uses are under permissive licenses (MIT,
 Apache 2.0, BSD, and the SIL Open Font License for the bundled typefaces),
-listed with their versions in package.json in the public repository. Avenir
+listed with their versions in package.json in the public repository. The
+Pulsar haptics library in particular is MIT licensed, with the license text
+shipped inside the package, and needs no commercial agreement. Avenir
 Next is an iOS system font used through the operating system. No music,
 video, brand, or character content belongs to anyone else.
