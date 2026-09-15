@@ -1,4 +1,4 @@
-import { Platform, TurboModuleRegistry } from "react-native";
+import { AppState, Platform, TurboModuleRegistry } from "react-native";
 
 /**
  * Optional richer haptics through Pulsar (react-native-pulsar by Software
@@ -132,15 +132,47 @@ export function playPulsarPreset(name: string): boolean {
  */
 const parsedPatterns = new Map<string, number>();
 const PARSED_LIMIT = 48;
+let appStateWatched = false;
+
+/**
+ * Pulsar builds a pattern's players only while the app is active (it reads
+ * UIApplication's state when asked to parse). A pattern parsed a moment
+ * before the app becomes active, as happens when the button mounts at launch,
+ * comes back with no players and stays silent for good. So parses happen only
+ * while active, and the cache is dropped whenever the app leaves the
+ * foreground, which is also when Pulsar tears its players down.
+ */
+function watchAppState(): void {
+  if (appStateWatched) return;
+  appStateWatched = true;
+  AppState.addEventListener("change", (state) => {
+    if (state !== "active") dropParsedPatterns();
+  });
+}
+
+function dropParsedPatterns(): void {
+  const n = native();
+  for (const id of parsedPatterns.values()) {
+    try {
+      n?.PatternComposer_release(id);
+    } catch {
+      // Already gone; nothing to do.
+    }
+  }
+  parsedPatterns.clear();
+}
 
 /**
  * Parse a pattern at a given strength and cache the result. Call this when a
  * pattern is chosen (settings change, screen mount), not at tap time, so the
- * parse never overlaps a play in flight. Returns null when Pulsar is missing.
+ * parse never overlaps a play in flight. Returns null when Pulsar is missing
+ * or the app is not active; the next tap then parses on the spot.
  */
 export function preparePulsarPattern(pattern: PulsarPattern, strength = 1): number | null {
   const n = native();
   if (!n) return null;
+  watchAppState();
+  if (AppState.currentState !== "active") return null;
   const scaled =
     strength > 1 ? amplifyPattern(pattern, strength) : scalePattern(pattern, strength);
   const key = JSON.stringify(scaled);
