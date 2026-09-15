@@ -65,8 +65,6 @@
 	<string>Touchward reads your calendar only to schedule a nudge when each event ends. Event details are used at that moment on this phone and are never stored, copied, or transmitted by the app.</string>
 	<key>NSCalendarsUsageDescription</key>
 	<string>Touchward reads your calendar only to schedule a nudge when each event ends. Event details are used at that moment on this phone and are never stored, copied, or transmitted by the app.</string>
-	<key>NSLocalNetworkUsageDescription</key>
-	<string>Expo Dev Launcher uses the local network to discover and connect to development servers running on your computer.</string>
 	<key>NSRemindersFullAccessUsageDescription</key>
 	<string>Allow $(PRODUCT_NAME) to access your reminders</string>
 	<key>NSRemindersUsageDescription</key>
