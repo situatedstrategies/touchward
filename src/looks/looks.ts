@@ -12,7 +12,7 @@ import {
   type Settings,
 } from "../types";
 
-/** The settings that make up a look: everything you see, plus the tap's strength. */
+/** The settings that make up a look: everything you see, plus the tap's strength and haptic preset. */
 export const LOOK_KEYS = [
   "shape",
   "rewardMode",
@@ -28,6 +28,7 @@ export const LOOK_KEYS = [
   "rippleFollowButton",
   "backdrop",
   "hapticStrength",
+  "tapPreset",
 ] as const;
 
 export type LookKey = (typeof LOOK_KEYS)[number];
@@ -98,6 +99,7 @@ export function randomLook(current?: LookSettings): LookSettings {
               ? pickOne(BACKDROP_COLORS).hex
               : randomHex(),
       hapticStrength: pickOne(STRENGTHS).value,
+      tapPreset: null,
     };
     if (!current || !sameLook(look, current)) return look;
   }
