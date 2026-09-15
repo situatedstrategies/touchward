@@ -11,6 +11,7 @@ import {
   isPulsarAvailable,
   playPulsarPattern,
   playPulsarPreset,
+  preparePulsarPattern,
   stopPulsar,
   type PulsarPattern,
 } from "./pulsar";
@@ -74,19 +75,33 @@ export interface RewardHaptic {
 }
 
 /**
+ * Parse a reward's Pulsar pattern ahead of time (see preparePulsarPattern).
+ * Safe to call often; a pattern already parsed is a cache hit.
+ */
+export function prepareReward(h: RewardHaptic): void {
+  if (h.preset || !h.pattern || !isPulsarAvailable()) return;
+  preparePulsarPattern(h.pattern, h.strength ?? 1);
+}
+
+/**
  * Play the richest version of a haptic this build supports: a Pulsar preset,
  * then a Pulsar pattern, then the built-in pulses through expo-haptics.
+ *
+ * Pulsar is not stopped first: rewards are short and may overlap, and stopping
+ * halts the Core Haptics engine, which then has to restart before the new
+ * pattern plays (the first taps after a stop were often silent). It also ran
+ * on the main thread at the same moment a pattern parse ran on the JavaScript
+ * thread, which crashed inside Pulsar.
  */
 export function playReward(h: RewardHaptic): Playback {
   const strength = h.strength ?? 1;
   if (isPulsarAvailable()) {
     current?.cancel();
-    stopPulsar();
     const played =
       (h.preset ? playPulsarPreset(h.preset) : false) ||
       (h.pattern ? playPulsarPattern(h.pattern, strength) : false);
     if (played) {
-      current = { cancel: stopPulsar };
+      current = { cancel: () => {} };
       return current;
     }
   }

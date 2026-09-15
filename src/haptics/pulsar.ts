@@ -119,29 +119,56 @@ export function playPulsarPreset(name: string): boolean {
 }
 
 /**
+ * Parsed patterns, keyed by their scaled contents. Parsing is the one Pulsar
+ * call React Native runs synchronously on the JavaScript thread (it returns a
+ * value); every other Pulsar call, including play, stop, and release, runs on
+ * the main thread. Pulsar keeps its player table unsynchronized, so a parse
+ * that overlaps a stop or release on the main thread can crash (a concurrent
+ * Swift Dictionary mutation). Parsing each pattern once and never releasing
+ * it keeps the JavaScript thread out of Pulsar during play.
+ *
+ * Pulsar recreates a parsed pattern's players on demand after its engine
+ * stops or resets, so a cached id stays valid for the life of the app.
+ */
+const parsedPatterns = new Map<string, number>();
+const PARSED_LIMIT = 48;
+
+/**
+ * Parse a pattern at a given strength and cache the result. Call this when a
+ * pattern is chosen (settings change, screen mount), not at tap time, so the
+ * parse never overlaps a play in flight. Returns null when Pulsar is missing.
+ */
+export function preparePulsarPattern(pattern: PulsarPattern, strength = 1): number | null {
+  const n = native();
+  if (!n) return null;
+  const scaled =
+    strength > 1 ? amplifyPattern(pattern, strength) : scalePattern(pattern, strength);
+  const key = JSON.stringify(scaled);
+  const cached = parsedPatterns.get(key);
+  if (cached !== undefined) return cached;
+  if (parsedPatterns.size >= PARSED_LIMIT) return null;
+  try {
+    const id = n.PatternComposer_parsePattern(scaled);
+    if (id < 0) return null;
+    parsedPatterns.set(key, id);
+    return id;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Play a composed pattern once. `strength` up to 1 scales every amplitude;
- * above 1 the pattern is amplified instead (see amplifyPattern). The parsed
- * pattern is released after it has had time to finish.
+ * above 1 the pattern is amplified instead (see amplifyPattern). Uses the
+ * cached parse when there is one and parses on the spot otherwise.
  */
 export function playPulsarPattern(pattern: PulsarPattern, strength = 1): boolean {
   const n = native();
   if (!n) return false;
-  const scaled =
-    strength > 1 ? amplifyPattern(pattern, strength) : scalePattern(pattern, strength);
+  const id = preparePulsarPattern(pattern, strength);
+  if (id === null) return false;
   try {
-    const id = n.PatternComposer_parsePattern(scaled);
-    if (id < 0) return false;
     n.PatternComposer_play(id);
-    setTimeout(
-      () => {
-        try {
-          n.PatternComposer_release(id);
-        } catch {
-          // Already gone; nothing to do.
-        }
-      },
-      patternLength(scaled) + 1000,
-    );
     return true;
   } catch {
     return false;
