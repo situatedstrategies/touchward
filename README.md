@@ -74,8 +74,8 @@ hold it down, watch the ring close, and get a bigger buzz when the timer is up.
 
 ## Run it on your phone
 
-The app runs as a development build (`expo-dev-client`); it does not run in
-Expo Go. In this folder:
+The app runs as a development build (`expo-dev-client`) with its native
+modules compiled in. In this folder:
 
 ```bash
 npm install
