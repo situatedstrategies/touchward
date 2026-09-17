@@ -94,8 +94,6 @@ A glowing button that buzzes back when you tap it. Hold it for a bigger reward.
 - Volume buttons and a link (touchward://reward) can count as a tap.
 - No account, no ads, no tracking. One-time purchase.
 
-Something off? Customize, More, Contact support.
-
 ### App Store "What's New" (4000)
 
 Touchward 1.0.1 is the first release. Here is what is in the box.
