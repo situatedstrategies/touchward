@@ -1,7 +1,11 @@
 // Turns phone screen captures into Google Play screenshots.
 //
-//   node store/make-screenshots.mjs            portrait 9:16 (1080 x 1920), the default
-//   node store/make-screenshots.mjs --landscape  landscape 16:9 (1920 x 1080)
+//   node store/make-screenshots.mjs --plain      the capture itself at exactly 9:16
+//                                                (trim status bar and bottom strip, extend
+//                                                the edge color to fill), for Play's
+//                                                phone screenshot slots
+//   node store/make-screenshots.mjs            captioned portrait 9:16 (1080 x 1920)
+//   node store/make-screenshots.mjs --landscape  captioned landscape 16:9 (1920 x 1080)
 //
 // The set and its order come from store/screenshots/captions.txt, one line per
 // capture as "filename | caption". Each file is looked up in
@@ -38,11 +42,12 @@ function loadPlaywright() {
 }
 
 const landscape = process.argv.includes("--landscape");
+const plain = process.argv.includes("--plain");
 const W = landscape ? 1920 : 1080;
 const H = landscape ? 1080 : 1920;
 const root = path.dirname(new URL(import.meta.url).pathname);
 const rawDir = path.join(root, "screenshots", "raw");
-const outDir = path.join(root, "screenshots", "play", landscape ? "16x9" : "9x16");
+const outDir = path.join(root, "screenshots", "play", plain ? "phone" : landscape ? "16x9" : "9x16");
 fs.mkdirSync(outDir, { recursive: true });
 
 // [{ file, source, caption }] in output order.
@@ -87,9 +92,47 @@ const { chromium } = loadPlaywright();
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: W, height: H }, deviceScaleFactor: 1 });
 
+// Plain mode. iPhone captures are about 9:19.5, taller than 9:16. Trim the
+// status bar (top) and the strip under the bottom row of buttons, which
+// leaves the capture a little too narrow for 9:16; make up the difference by
+// extending the outermost pixel column on each side, which is invisible on the
+// app's flat and vertically graded backgrounds. Height is a multiple of 16 so
+// the ratio is exact, and the width follows from it.
+async function plainShot(page, b64, mime, out) {
+  const dataUrl = `data:${mime};base64,${b64}`;
+  const png = await page.evaluate(async (src) => {
+    const img = new Image();
+    img.src = src;
+    await img.decode();
+    const TRIM_TOP = Math.round(img.height * 0.076); // status bar
+    const TRIM_BOTTOM = Math.round(img.height * 0.045); // below the buttons
+    let h = img.height - TRIM_TOP - TRIM_BOTTOM;
+    h -= h % 16;
+    const w = (h * 9) / 16;
+    const pad = Math.round((w - img.width) / 2);
+    const c = document.createElement("canvas");
+    c.width = w;
+    c.height = h;
+    const x = c.getContext("2d");
+    x.imageSmoothingEnabled = false;
+    // Edge columns stretched into the padding, then the capture on top.
+    x.drawImage(img, 0, TRIM_TOP, 1, h, 0, 0, pad + 1, h);
+    x.drawImage(img, img.width - 1, TRIM_TOP, 1, h, w - pad - 1, 0, pad + 1, h);
+    x.drawImage(img, 0, TRIM_TOP, img.width, h, pad, 0, img.width, h);
+    return c.toDataURL("image/png");
+  }, dataUrl);
+  fs.writeFileSync(out, Buffer.from(png.split(",")[1], "base64"));
+}
+
 for (const [i, { file, source, caption }] of entries.entries()) {
   const mime = /\.png$/i.test(file) ? "image/png" : "image/jpeg";
   const b64 = fs.readFileSync(source).toString("base64");
+  if (plain) {
+    const out = path.join(outDir, `${String(i + 1).padStart(2, "0")}-${file.replace(/\.(png|jpe?g)$/i, "")}.png`);
+    await plainShot(page, b64, mime, out);
+    console.log(`${file} -> ${path.relative(process.cwd(), out)} (plain 9:16)`);
+    continue;
+  }
   // Portrait: caption above, capture below. Landscape: caption left, capture right.
   const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}
     html,body{margin:0;width:${W}px;height:${H}px;overflow:hidden}
