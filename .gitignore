@@ -41,3 +41,6 @@ yarn-error.*
 # Firebase config for Android push (private, per project)
 google-services.json
 GoogleService-Info.plist
+
+# Firebase service account keys (FCM V1 / Admin SDK), private
+*firebase-adminsdk*.json
