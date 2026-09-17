@@ -1,0 +1,15 @@
+# One capture per line, in listing order: filename | caption
+# Files are looked up in store/screenshots/raw first, then in store/.
+# Google Play shows at most eight phone screenshots; the first eight here are the set to upload.
+IMG_1517.PNG | Tap when you did the thing.
+IMG_1518.PNG | Every tap, a new color.
+IMG_1529.PNG | Rings that ripple.
+IMG_1527.PNG | Heart, star, hexagon, blob.
+IMG_1519.PNG | Ripples that linger.
+IMG_1526.PNG | Or keep it dark.
+IMG_1525.PNG | Seven reward modes. Five strengths.
+IMG_1528.PNG | Save the looks you love.
+IMG_1520.PNG | Eight shapes to choose from.
+IMG_1524.PNG | Ripple colors and backgrounds.
+IMG_1521.PNG | Every color is yours to set.
+IMG_1523.PNG | No account. No ads. Private.

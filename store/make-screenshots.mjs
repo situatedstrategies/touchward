@@ -3,13 +3,16 @@
 //   node store/make-screenshots.mjs            portrait 9:16 (1080 x 1920), the default
 //   node store/make-screenshots.mjs --landscape  landscape 16:9 (1920 x 1080)
 //
-// Reads every PNG or JPEG in store/screenshots/raw (sorted by name) and writes
-// store/screenshots/play/<n>-<name>.png. Each capture is scaled onto a navy
-// canvas with a caption in Josefin Sans, the same type as the app, so the set
-// reads as one. Captions come from CAPTIONS below, in file order; edit them to
-// match the captures you drop in. Needs Playwright (npm i -D playwright, or the
-// global install used in Claude Code sessions) and the app's node_modules for
-// the font files.
+// The set and its order come from store/screenshots/captions.txt, one line per
+// capture as "filename | caption". Each file is looked up in
+// store/screenshots/raw first, then in store/. If captions.txt is missing,
+// every PNG or JPEG in raw is used in name order with the CAPTIONS below.
+// Output goes to store/screenshots/play/16x9 or play/9x16 as <nn>-<name>.png.
+//
+// Each capture is scaled onto a navy canvas with a caption in Josefin Sans,
+// the same type as the app, so the set reads as one. Needs Playwright (npm i
+// -D playwright, or the global install used in Claude Code sessions) and the
+// app's node_modules for the font files.
 import fs from "node:fs";
 import path from "node:path";
 import { createRequire } from "node:module";
@@ -39,15 +42,34 @@ const W = landscape ? 1920 : 1080;
 const H = landscape ? 1080 : 1920;
 const root = path.dirname(new URL(import.meta.url).pathname);
 const rawDir = path.join(root, "screenshots", "raw");
-const outDir = path.join(root, "screenshots", "play");
+const outDir = path.join(root, "screenshots", "play", landscape ? "16x9" : "9x16");
 fs.mkdirSync(outDir, { recursive: true });
 
-const files = fs
-  .readdirSync(rawDir)
-  .filter((f) => /\.(png|jpe?g)$/i.test(f))
-  .sort();
-if (files.length === 0) {
-  console.error(`No captures in ${rawDir}. Drop the phone screenshots there first.`);
+// [{ file, source, caption }] in output order.
+const captionsFile = path.join(root, "screenshots", "captions.txt");
+const locate = (file) => [path.join(rawDir, file), path.join(root, file)].find((p) => fs.existsSync(p));
+let entries;
+if (fs.existsSync(captionsFile)) {
+  entries = fs
+    .readFileSync(captionsFile, "utf8")
+    .split("\n")
+    .map((l) => l.trim())
+    .filter((l) => l && !l.startsWith("#"))
+    .map((l) => {
+      const [file, ...rest] = l.split("|");
+      const source = locate(file.trim());
+      if (!source) throw new Error(`${file.trim()} listed in captions.txt was not found in raw/ or store/`);
+      return { file: file.trim(), source, caption: rest.join("|").trim() };
+    });
+} else {
+  entries = fs
+    .readdirSync(rawDir)
+    .filter((f) => /\.(png|jpe?g)$/i.test(f))
+    .sort()
+    .map((f, i) => ({ file: f, source: path.join(rawDir, f), caption: CAPTIONS[i] ?? "" }));
+}
+if (entries.length === 0) {
+  console.error(`Nothing to do: no captures listed in ${captionsFile} and none in ${rawDir}.`);
   process.exit(1);
 }
 
@@ -65,10 +87,9 @@ const { chromium } = loadPlaywright();
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: W, height: H }, deviceScaleFactor: 1 });
 
-for (const [i, file] of files.entries()) {
-  const caption = CAPTIONS[i] ?? "";
+for (const [i, { file, source, caption }] of entries.entries()) {
   const mime = /\.png$/i.test(file) ? "image/png" : "image/jpeg";
-  const b64 = fs.readFileSync(path.join(rawDir, file)).toString("base64");
+  const b64 = fs.readFileSync(source).toString("base64");
   // Portrait: caption above, capture below. Landscape: caption left, capture right.
   const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}
     html,body{margin:0;width:${W}px;height:${H}px;overflow:hidden}
