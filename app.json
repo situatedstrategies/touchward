@@ -3,11 +3,21 @@
     "name": "Touchward",
     "slug": "touchward",
     "version": "1.0.1",
-    "orientation": "portrait",
+    "orientation": "default",
     "icon": "./assets/icon.png",
     "scheme": "touchward",
     "userInterfaceStyle": "automatic",
     "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "enableMinifyInReleaseBuilds": true,
+            "enableShrinkResourcesInReleaseBuilds": true,
+            "extraProguardRules": "# Native modules the app talks to by name from JS that ship no keep rules of\n# their own. Everything else (React Native, Expo modules, Firebase, react-native-svg,\n# react-native-worklets) ships consumer rules.\n-keep class com.swmansion.pulsar.** { *; }\n-keep class com.reactnativevolumemanager.** { *; }"
+          }
+        }
+      ],
       [
         "expo-notifications",
         {
@@ -38,7 +48,8 @@
       ],
       "expo-background-task",
       "@bacons/apple-targets",
-      "./plugins/withQuietPods.js"
+      "./plugins/withQuietPods.js",
+      "./plugins/withoutDeprecatedSystemBarColors.js"
     ],
     "ios": {
       "supportsTablet": true,

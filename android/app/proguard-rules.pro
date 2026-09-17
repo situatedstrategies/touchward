@@ -12,3 +12,11 @@
 -keep class com.facebook.react.turbomodule.** { *; }
 
 # Add any project specific keep options here:
+
+# @generated begin expo-build-properties - expo prebuild (DO NOT MODIFY)
+# Native modules the app talks to by name from JS that ship no keep rules of
+# their own. Everything else (React Native, Expo modules, Firebase, react-native-svg,
+# react-native-worklets) ships consumer rules.
+-keep class com.swmansion.pulsar.** { *; }
+-keep class com.reactnativevolumemanager.** { *; }
+# @generated end expo-build-properties
