@@ -5,7 +5,7 @@
  */
 export const RC_API_KEYS = {
   ios: "appl_yciPIpyaMnqBetHYvpBHraTWVPC",
-  android: "",
+  android: "goog_SowsLfWjGczkPKSWleqVVtFlzRw",
 } as const;
 
 /** The one entitlement: everything unlocked. */
