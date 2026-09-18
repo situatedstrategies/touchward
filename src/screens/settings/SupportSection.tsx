@@ -52,8 +52,8 @@ export function SupportSection({ theme }: { theme: Theme }) {
           {build ? ` (${build})` : ""}
         </Text>
         <Hint theme={theme}>
-          A one-time purchase. No subscription, no account, nothing to restore: if you paid
-          once, it is yours on every device signed in to the same store account.
+          Free to use, with a one-time unlock for everything else. No subscription, no account:
+          if you paid once, it is yours on every device signed in to the same store account.
         </Hint>
         <Actions>
           <TextButton

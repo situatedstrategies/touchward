@@ -3,6 +3,7 @@ import { ColorField } from "../../components/ColorField";
 import { BACKDROP_COLORS, isHexColor } from "../../design/palette";
 import type { Theme } from "../../design/theme";
 import { useSettings } from "../../store/settings";
+import { useGate, useUnlock } from "../../store/unlock";
 import {
   COLOR_LIBRARY_LIMIT,
   RIPPLE_COLOR_SLOTS,
@@ -24,6 +25,8 @@ const MAX_REWARD_COLORS = 8;
 
 export function ColorSection({ theme }: { theme: Theme }) {
   const { settings, update } = useSettings();
+  const { unlocked } = useUnlock();
+  const gate = useGate();
 
   const setTapColor = (index: number, hex: string) => {
     const next = [...settings.tapColors];
@@ -167,9 +170,13 @@ export function ColorSection({ theme }: { theme: Theme }) {
           <Chip
             label="Color"
             selected={customBackdrop}
-            onPress={() => {
-              if (!customBackdrop) update({ backdrop: BACKDROP_COLORS[0].hex });
-            }}
+            locked={!unlocked}
+            onPress={() =>
+              gate(false, () => {
+                if (!isHexColor(settings.backdrop))
+                  update({ backdrop: BACKDROP_COLORS[0].hex });
+              })
+            }
             theme={theme}
           />
         </Row>

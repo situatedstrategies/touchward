@@ -11,6 +11,7 @@ import { NotificationSection } from "./NotificationSection";
 import { ShapeSection } from "./ShapeSection";
 import { SupportSection } from "./SupportSection";
 import { TriggerSection } from "./TriggerSection";
+import { UnlockSection } from "./UnlockSection";
 
 type Tab = "reward" | "colors" | "notify" | "more";
 
@@ -83,6 +84,7 @@ export function SettingsScreen({ visible, onClose, theme }: Props) {
           {tab === "notify" && <NotificationSection theme={theme} visible={visible} />}
           {tab === "more" && (
             <>
+              <UnlockSection theme={theme} />
               <TriggerSection theme={theme} />
               <CounterSection theme={theme} />
               <SupportSection theme={theme} />

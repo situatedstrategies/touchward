@@ -11,7 +11,9 @@ import {
   pulsarSupportLevel,
   PATTERNS_BY_ID,
 } from "../../haptics";
+import { isFreePattern, isFreeRewardMode, isFreeStrength } from "../../purchases/gates";
 import { useSettings } from "../../store/settings";
+import { useGate, useUnlock } from "../../store/unlock";
 import { REWARD_MODES, STRENGTHS, type PatternId, type RewardMode } from "../../types";
 import { Category, Hint, PresetPicker, Row, Section, SubLabel } from "./controls";
 
@@ -19,6 +21,8 @@ const ADVANCED_SUPPORT = 3;
 
 export function FeelSection({ theme }: { theme: Theme }) {
   const { settings, update } = useSettings();
+  const { unlocked } = useUnlock();
+  const gate = useGate();
   const pulsar = isPulsarAvailable();
   const limited = pulsar && pulsarSupportLevel() < ADVANCED_SUPPORT;
   const mode = REWARD_MODES.find((m) => m.id === settings.rewardMode) ?? REWARD_MODES[0];
@@ -64,7 +68,8 @@ export function FeelSection({ theme }: { theme: Theme }) {
               key={m.id}
               label={m.label}
               selected={settings.rewardMode === m.id}
-              onPress={() => chooseMode(m.id)}
+              locked={!unlocked && !isFreeRewardMode(m.id)}
+              onPress={() => gate(isFreeRewardMode(m.id), () => chooseMode(m.id))}
               theme={theme}
             />
           ))}
@@ -86,7 +91,8 @@ export function FeelSection({ theme }: { theme: Theme }) {
                   key={s.value}
                   label={s.label}
                   selected={Math.abs(settings.hapticStrength - s.value) < 0.01}
-                  onPress={() => chooseStrength(s.value)}
+                  locked={!unlocked && !isFreeStrength(s.value)}
+                  onPress={() => gate(isFreeStrength(s.value), () => chooseStrength(s.value))}
                   theme={theme}
                 />
               ))}
@@ -110,7 +116,8 @@ export function FeelSection({ theme }: { theme: Theme }) {
                 key={p.id}
                 label={p.label}
                 selected={settings.holdPattern === p.id}
-                onPress={() => chooseHoldPattern(p.id)}
+                locked={!unlocked && !isFreePattern(p.id)}
+                onPress={() => gate(isFreePattern(p.id), () => chooseHoldPattern(p.id))}
                 theme={theme}
               />
             ))}

@@ -1,6 +1,14 @@
 import { Chip } from "../../components/Chip";
 import type { Theme } from "../../design/theme";
+import {
+  isFreeLinger,
+  isFreeRippleMax,
+  isFreeRippleShape,
+  isFreeRippleWidth,
+  isFreeShape,
+} from "../../purchases/gates";
 import { useSettings } from "../../store/settings";
+import { useGate, useUnlock } from "../../store/unlock";
 import {
   RIPPLE_LINGERS,
   RIPPLE_MAX_MAX,
@@ -13,6 +21,8 @@ import { Category, Hint, Row, Section, SubLabel } from "./controls";
 
 export function ShapeSection({ theme }: { theme: Theme }) {
   const { settings, update } = useSettings();
+  const { unlocked } = useUnlock();
+  const gate = useGate();
   return (
     <Category title="Shape" theme={theme}>
       <Section title="Button" theme={theme}>
@@ -22,7 +32,8 @@ export function ShapeSection({ theme }: { theme: Theme }) {
               key={s.id}
               label={s.label}
               selected={settings.shape === s.id}
-              onPress={() => update({ shape: s.id })}
+              locked={!unlocked && !isFreeShape(s.id)}
+              onPress={() => gate(isFreeShape(s.id), () => update({ shape: s.id }))}
               theme={theme}
             />
           ))}
@@ -37,7 +48,8 @@ export function ShapeSection({ theme }: { theme: Theme }) {
               key={r.id}
               label={r.label}
               selected={settings.rippleShape === r.id}
-              onPress={() => update({ rippleShape: r.id })}
+              locked={!unlocked && !isFreeRippleShape(r.id)}
+              onPress={() => gate(isFreeRippleShape(r.id), () => update({ rippleShape: r.id }))}
               theme={theme}
             />
           ))}
@@ -53,7 +65,8 @@ export function ShapeSection({ theme }: { theme: Theme }) {
               key={w.id}
               label={w.label}
               selected={settings.rippleWidth === w.id}
-              onPress={() => update({ rippleWidth: w.id })}
+              locked={!unlocked && !isFreeRippleWidth(w.id)}
+              onPress={() => gate(isFreeRippleWidth(w.id), () => update({ rippleWidth: w.id }))}
               theme={theme}
             />
           ))}
@@ -65,7 +78,10 @@ export function ShapeSection({ theme }: { theme: Theme }) {
               key={l.value}
               label={l.label}
               selected={settings.rippleLinger === l.value}
-              onPress={() => update({ rippleLinger: l.value })}
+              locked={!unlocked && !isFreeLinger(l.value)}
+              onPress={() =>
+                gate(isFreeLinger(l.value), () => update({ rippleLinger: l.value }))
+              }
               theme={theme}
             />
           ))}
@@ -84,7 +100,8 @@ export function ShapeSection({ theme }: { theme: Theme }) {
               key={n}
               label={String(n)}
               selected={settings.rippleMax === n}
-              onPress={() => update({ rippleMax: n })}
+              locked={!unlocked && !isFreeRippleMax(n)}
+              onPress={() => gate(isFreeRippleMax(n), () => update({ rippleMax: n }))}
               theme={theme}
             />
           ))}

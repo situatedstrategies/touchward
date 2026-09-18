@@ -16,7 +16,10 @@ import { body, bodySemibold, heading } from "../design/typography";
 import { presetLabel } from "../haptics";
 import { sameLook, type LookSettings, type SavedLook } from "../looks/looks";
 import { PRESETS, type Preset } from "../looks/presets";
+import { FREE_COUNT, FREE_SAVED_LOOKS, isFreeLook } from "../purchases/gates";
 import { useLooks } from "../store/looks";
+import { useUnlock } from "../store/unlock";
+import { LockIcon } from "../components/LockIcon";
 import { REWARD_MODES, SHAPES } from "../types";
 
 interface Props {
@@ -42,7 +45,23 @@ const PAGES: { id: Page; label: string }[] = [
 export function LibraryScreen({ visible, current, theme, onApply, onClose }: Props) {
   const insets = useSafeAreaInsets();
   const { looks, save, rename, remove } = useLooks();
+  const { unlocked, presentPaywall } = useUnlock();
   const [page, setPage] = useState<Page>("saved");
+
+  // Presets past the first few, and any look that uses a locked choice, need the unlock.
+  const presetLocked = (index: number) => !unlocked && index >= FREE_COUNT;
+  const lookLocked = (look: LookSettings) => !unlocked && !isFreeLook(look);
+  const wear = (look: LookSettings, locked: boolean) => {
+    if (!locked) {
+      onApply(look);
+      return;
+    }
+    presentPaywall()
+      .then((ok) => {
+        if (ok) onApply(look);
+      })
+      .catch(() => {});
+  };
   const [editing, setEditing] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
 
@@ -64,6 +83,14 @@ export function LibraryScreen({ visible, current, theme, onApply, onClose }: Pro
   };
 
   const keepPreset = (preset: Preset) => {
+    if (!unlocked && looks.length >= FREE_SAVED_LOOKS) {
+      presentPaywall()
+        .then((ok) => {
+          if (ok) keepPreset(preset);
+        })
+        .catch(() => {});
+      return;
+    }
     save(preset.name, preset.look);
     Alert.alert("Saved", `"${preset.name}" is now in your saved looks.`);
   };
@@ -76,6 +103,7 @@ export function LibraryScreen({ visible, current, theme, onApply, onClose }: Pro
     meta: string,
     actions: ReactNode,
     spread = false,
+    locked = false,
   ) => {
     const active = sameLook(look, current);
     return (
@@ -84,17 +112,23 @@ export function LibraryScreen({ visible, current, theme, onApply, onClose }: Pro
         style={[styles.item, { borderColor: active ? theme.text : theme.border }]}
       >
         <Pressable
-          onPress={() => onApply(look)}
+          onPress={() => wear(look, locked)}
           accessibilityRole="button"
           accessibilityLabel={`Use ${label}`}
+          accessibilityHint={locked ? "Needs the unlock" : undefined}
           style={({ pressed }) => [styles.itemMain, { opacity: pressed ? 0.7 : 1 }]}
         >
           <LookPreview look={look} size={84} />
           <View style={styles.itemText}>
             {name}
             <Text style={[styles.meta, { color: theme.muted }]}>
-              {active ? "Wearing now" : meta}
+              {active ? "Wearing now" : locked ? "Needs the unlock" : meta}
             </Text>
+            {locked && (
+              <View style={styles.lockRow}>
+                <LockIcon color={theme.muted} size={13} />
+              </View>
+            )}
           </View>
         </Pressable>
         <View style={[styles.itemActions, spread && styles.spread]}>{actions}</View>
@@ -138,10 +172,13 @@ export function LibraryScreen({ visible, current, theme, onApply, onClose }: Pro
           <Text style={[styles.action, { color: theme.accent }]}>Delete</Text>
         </Pressable>
       </>,
+      false,
+      lookLocked(item.look),
     );
   };
 
-  const renderPreset = ({ item }: { item: Preset }) => {
+  const renderPreset = ({ item, index }: { item: Preset; index: number }) => {
+    const locked = presetLocked(index) || lookLocked(item.look);
     const shape = SHAPES.find((s) => s.id === item.look.shape)?.label ?? "";
     const mode = REWARD_MODES.find((m) => m.id === item.look.rewardMode)?.label ?? "";
     const haptic = item.look.tapPreset ? presetLabel(item.look.tapPreset) : "";
@@ -155,11 +192,18 @@ export function LibraryScreen({ visible, current, theme, onApply, onClose }: Pro
         <Text style={[styles.detail, { color: theme.muted }]}>
           {[shape, mode, haptic].filter(Boolean).join(" · ")}
         </Text>
-        <Pressable onPress={() => keepPreset(item)} hitSlop={8} accessibilityRole="button">
-          <Text style={[styles.action, { color: theme.accent }]}>Save a copy</Text>
+        <Pressable
+          onPress={() => (locked ? wear(item.look, true) : keepPreset(item))}
+          hitSlop={8}
+          accessibilityRole="button"
+        >
+          <Text style={[styles.action, { color: theme.accent }]}>
+            {locked ? "Unlock" : "Save a copy"}
+          </Text>
         </Pressable>
       </>,
       true,
+      locked,
     );
   };
 
@@ -258,6 +302,7 @@ const styles = StyleSheet.create({
   tabLabel: bodySemibold(15),
   list: { padding: 16 },
   item: { borderWidth: 1, borderRadius: 20, padding: 12, marginBottom: 12 },
+  lockRow: { marginTop: 6 },
   itemMain: { flexDirection: "row", alignItems: "center", gap: 14 },
   itemText: { flex: 1 },
   name: bodySemibold(17),

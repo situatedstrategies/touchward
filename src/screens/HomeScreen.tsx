@@ -12,7 +12,9 @@ import { registerForPush } from "../notifications/push";
 import { configureNotifications, syncReminders } from "../notifications/reminders";
 import { pickLook, randomLook, suggestName, type LookSettings } from "../looks/looks";
 import { useLooks } from "../store/looks";
+import { lockedToFree, lookToFree, FREE_SAVED_LOOKS } from "../purchases/gates";
 import { useSettings } from "../store/settings";
+import { useUnlock } from "../store/unlock";
 import { onWatchReward, sendSettingsToWatch } from "../../modules/watch-sync";
 import { themeForBackdrop, useTheme } from "../design/theme";
 import { body, bodySemibold, heading } from "../design/typography";
@@ -56,14 +58,27 @@ export function HomeScreen() {
   const [saveOpen, setSaveOpen] = useState(false);
   const [libraryOpen, setLibraryOpen] = useState(false);
   const { looks, save } = useLooks();
+  const { unlocked, known, presentPaywall } = useUnlock();
   const button = useRef<RewardButtonHandle>(null);
 
   const currentLook = pickLook(settings);
   const applyLook = useCallback((look: LookSettings) => update(look), [update]);
-  const shuffleLook = useCallback(
-    () => update(randomLook(pickLook(settings))),
-    [update, settings],
-  );
+  // The free app shuffles within what it includes.
+  const shuffleLook = useCallback(() => {
+    const look = randomLook(pickLook(settings));
+    update(unlocked ? look : lookToFree(look));
+  }, [update, settings, unlocked]);
+  const openSave = useCallback(() => {
+    if (unlocked || looks.length < FREE_SAVED_LOOKS) {
+      setSaveOpen(true);
+      return;
+    }
+    presentPaywall()
+      .then((ok) => {
+        if (ok) setSaveOpen(true);
+      })
+      .catch(() => {});
+  }, [unlocked, looks.length, presentPaywall]);
   const saveLook = useCallback(
     (name: string) => {
       save(name, pickLook(settings));
@@ -71,6 +86,14 @@ export function HomeScreen() {
     },
     [save, settings],
   );
+
+  // Once the store has answered "not unlocked", anything locked that is still
+  // switched on (a refund, a reinstall on another account) goes back to free.
+  useEffect(() => {
+    if (!loaded || !known || unlocked) return;
+    const patch = lockedToFree(settings);
+    if (Object.keys(patch).length > 0) update(patch);
+  }, [loaded, known, unlocked, settings, update]);
 
   const onReward = useCallback(() => recordReward(), [recordReward]);
 
@@ -216,7 +239,7 @@ export function HomeScreen() {
         </Text>
         <View style={styles.toolbar}>
           <Pill label="Random" onPress={shuffleLook} scale={scale} />
-          <Pill label="Save" onPress={() => setSaveOpen(true)} scale={scale} />
+          <Pill label="Save" onPress={openSave} scale={scale} />
           <Pill label="Library" onPress={() => setLibraryOpen(true)} scale={scale} />
           <Pill label="Customize" onPress={() => setSettingsOpen(true)} scale={scale} />
         </View>

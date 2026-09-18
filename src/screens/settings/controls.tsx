@@ -4,6 +4,8 @@ import { Chip } from "../../components/Chip";
 import type { Theme } from "../../design/theme";
 import { body, bodyMedium, bodySemibold, heading } from "../../design/typography";
 import { presetLabel, pulsarPresetNames } from "../../haptics";
+import { isFreePreset } from "../../purchases/gates";
+import { useGate, useUnlock } from "../../store/unlock";
 
 /**
  * Building blocks shared by the settings sections. A Category is a top level
@@ -179,6 +181,8 @@ export function PresetPicker({
   theme: Theme;
 }) {
   const [filter, setFilter] = useState("");
+  const { unlocked } = useUnlock();
+  const gate = useGate();
   const names = pulsarPresetNames();
   const query = filter.trim().toLowerCase();
   const matches = query
@@ -223,7 +227,8 @@ export function PresetPicker({
             key={n}
             label={presetLabel(n)}
             selected={value === n}
-            onPress={() => onChange(n)}
+            locked={!unlocked && !isFreePreset(n)}
+            onPress={() => gate(isFreePreset(n), () => onChange(n))}
             theme={theme}
           />
         ))}

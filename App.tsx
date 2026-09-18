@@ -16,6 +16,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { HomeScreen } from "./src/screens/HomeScreen";
 import { LooksProvider } from "./src/store/looks";
 import { SettingsProvider } from "./src/store/settings";
+import { UnlockProvider } from "./src/store/unlock";
 
 // Catch unhandled errors from the very start.
 installCrashReporting();
@@ -54,12 +55,14 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <SettingsProvider>
-        <LooksProvider>
-          <HomeScreen />
-          <StatusBar style="auto" />
-        </LooksProvider>
-      </SettingsProvider>
+      <UnlockProvider>
+        <SettingsProvider>
+          <LooksProvider>
+            <HomeScreen />
+            <StatusBar style="auto" />
+          </LooksProvider>
+        </SettingsProvider>
+      </UnlockProvider>
     </SafeAreaProvider>
   );
 }
