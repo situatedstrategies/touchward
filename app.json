@@ -49,7 +49,8 @@
       "expo-background-task",
       "@bacons/apple-targets",
       "./plugins/withQuietPods.js",
-      "./plugins/withoutDeprecatedSystemBarColors.js"
+      "./plugins/withoutDeprecatedSystemBarColors.js",
+      "./plugins/withAndroidSigning.js"
     ],
     "ios": {
       "supportsTablet": true,
@@ -91,7 +92,7 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "versionCode": 2,
+      "versionCode": 7,
       "blockedPermissions": [
         "android.permission.WRITE_CALENDAR",
         "android.permission.READ_EXTERNAL_STORAGE",
