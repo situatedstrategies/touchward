@@ -44,3 +44,6 @@ GoogleService-Info.plist
 
 # Firebase service account keys (FCM V1 / Admin SDK), private
 *firebase-adminsdk*.json
+
+# EAS local credentials (keystore paths and passwords)
+credentials.json

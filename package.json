@@ -43,7 +43,8 @@
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "eas-build-pre-install": "if [ -n \"$GOOGLE_SERVICES_JSON\" ]; then cp \"$GOOGLE_SERVICES_JSON\" google-services.json && cp \"$GOOGLE_SERVICES_JSON\" android/app/google-services.json; fi"
   },
   "private": true,
   "expo": {
