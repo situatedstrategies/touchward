@@ -284,6 +284,11 @@ PODS:
     - ReactNativeDependencies
     - Yoga
   - PulsarHaptics (1.4.0)
+  - PurchasesHybridCommon (19.0.0):
+    - RevenueCat (= 5.89.0)
+  - PurchasesHybridCommonUI (19.0.0):
+    - PurchasesHybridCommon (= 19.0.0)
+    - RevenueCatUI (= 5.89.0)
   - RCTDeprecation (0.86.3)
   - RCTRequired (0.86.3)
   - RCTSwiftUI (0.86.3)
@@ -2176,6 +2181,9 @@ PODS:
     - React-utils (= 0.86.3)
     - ReactNativeDependencies
   - ReactNativeDependencies (0.86.3)
+  - RevenueCat (5.89.0)
+  - RevenueCatUI (5.89.0):
+    - RevenueCat (= 5.89.0)
   - RNCAsyncStorage (2.2.0):
     - hermes-engine
     - RCTRequired
@@ -2198,6 +2206,12 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
+  - RNPaywalls (10.10.0):
+    - PurchasesHybridCommonUI (= 19.0.0)
+    - React-Core
+  - RNPurchases (10.10.0):
+    - PurchasesHybridCommon (= 19.0.0)
+    - React-Core
   - RNSVG (15.15.4):
     - hermes-engine
     - RCTRequired
@@ -2431,6 +2445,8 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - ReactNativeDependencies (from `../node_modules/react-native/third-party-podspecs/ReactNativeDependencies.podspec`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
+  - RNPaywalls (from `../node_modules/react-native-purchases-ui`)
+  - RNPurchases (from `../node_modules/react-native-purchases`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNWorklets (from `../node_modules/react-native-worklets`)
   - UMAppLoader (from `../node_modules/unimodules-app-loader/ios`)
@@ -2441,6 +2457,10 @@ SPEC REPOS:
   trunk:
     - Mute
     - PulsarHaptics
+    - PurchasesHybridCommon
+    - PurchasesHybridCommonUI
+    - RevenueCat
+    - RevenueCatUI
 
 EXTERNAL SOURCES:
   EXApplication:
@@ -2664,6 +2684,10 @@ EXTERNAL SOURCES:
     :podspec: "../node_modules/react-native/third-party-podspecs/ReactNativeDependencies.podspec"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-async-storage/async-storage"
+  RNPaywalls:
+    :path: "../node_modules/react-native-purchases-ui"
+  RNPurchases:
+    :path: "../node_modules/react-native-purchases"
   RNSVG:
     :path: "../node_modules/react-native-svg"
   RNWorklets:
@@ -2713,6 +2737,8 @@ SPEC CHECKSUMS:
   Mute: 20135a96076f140cc82bfc8b810e2d6150d8ec7e
   Pulsar: 26e18cdb1c30b233be9bec431aeec9b8048c5ae9
   PulsarHaptics: 62d13e9ef63535263f110a925e587d5d027dc683
+  PurchasesHybridCommon: 526db4f4895166e57ae866b3daeb0025030f84bd
+  PurchasesHybridCommonUI: 25e6a479383af677f7a9760c7a297af624d5186e
   RCTDeprecation: 96f68ebf33f8762466b01d57d6e873c4f30efb07
   RCTRequired: 166eed8ad6d8440e73e56d09a9090366609823d2
   RCTSwiftUI: e818198d11928a78c2b2afe281d072171dab617f
@@ -2787,7 +2813,11 @@ SPEC CHECKSUMS:
   ReactCodegen: 828f54f35f2bc4ee3f39345144ff0ec22c9535c2
   ReactCommon: 02f6a489d5eb4ab79d7deba5cd4434e0ba351a07
   ReactNativeDependencies: 6738e602b46fd24aa453cd58267ec3bb8bf29d27
+  RevenueCat: 5e390c204dafb3ceeff76ade29bf295b952e6681
+  RevenueCatUI: cfceb1e303473d6ed7541058366e9354bb9a75c6
   RNCAsyncStorage: 2ad919e88b8bc2cd80e8697ce66d04d006743283
+  RNPaywalls: e58b38ca7f80744be671547c2e65f8da957f3a88
+  RNPurchases: 11d5e6e80a5b1ae278e4ed385db196fa384e7503
   RNSVG: 3fe8590403ac9f107b4d14591bc6e54da4894e5c
   RNWorklets: 43af89f696342f91118a2f1f3a879056e2f47331
   UMAppLoader: d69910810f31d2e2cfd49706e89ad372161b0561
