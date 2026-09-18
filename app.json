@@ -92,7 +92,7 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "versionCode": 9,
+      "versionCode": 10,
       "blockedPermissions": [
         "android.permission.WRITE_CALENDAR",
         "android.permission.READ_EXTERNAL_STORAGE",
