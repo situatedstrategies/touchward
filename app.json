@@ -2,7 +2,7 @@
   "expo": {
     "name": "Touchward",
     "slug": "touchward",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "orientation": "default",
     "icon": "./assets/icon.png",
     "scheme": "touchward",
@@ -50,7 +50,8 @@
       "@bacons/apple-targets",
       "./plugins/withQuietPods.js",
       "./plugins/withoutDeprecatedSystemBarColors.js",
-      "./plugins/withAndroidSigning.js"
+      "./plugins/withAndroidSigning.js",
+      "./plugins/withR8Optimize.js"
     ],
     "ios": {
       "supportsTablet": true,
