@@ -237,9 +237,13 @@ say the same: Crash Data, collected, not linked to identity, app functionality.
 
 ## Pricing
 
-Touchward is a paid app (one-time purchase, 1.99) with no in-app purchases,
-subscriptions, or accounts, so there is no restore-purchases flow. Ownership
-follows the store account.
+Touchward is free to download with one non consumable in-app purchase, the
+unlock (1.99 US), through RevenueCat (`src/purchases/`). The free app has the
+first three of every option, all colors, reminders, and the Shortcut link;
+everything else, plus custom backdrops, calendar nudges, volume button taps,
+and an unlimited library, needs the unlock (`gates.ts`). No subscriptions or
+accounts. Restore purchases is in Customize, More, and the unlock follows the
+store account.
 
 ## Build store binaries
 

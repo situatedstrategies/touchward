@@ -13,8 +13,8 @@ Tap when you did the thing.
 
 ## Promotional text (170)
 
-You did the thing. Tap the button and get a little buzz back. Shape it, color
-it, feel it your way. No account, no ads, nothing to sign in to.
+You did the thing. Tap the button and get a little buzz back. Free to start,
+one unlock for everything. No account, no ads, nothing to sign in to.
 
 ## Description (4000)
 
@@ -69,8 +69,8 @@ your phone. Calendar data is read only to schedule nudges and is never stored
 or sent. The app never asks for your email or your name. If it crashes, an
 anonymous report helps us fix it, and you can turn that off.
 
-Touchward is a one time purchase. No subscription, no in-app purchases, no
-ads.
+Touchward is free to download. One in-app purchase of 1.99 unlocks every
+feature, once, forever. No subscription, no ads.
 
 ## Keywords (100)
 
@@ -92,7 +92,7 @@ A glowing button that buzzes back when you tap it. Hold it for a bigger reward.
 - Random builds a new look in one press. Save the ones you love to your library.
 - Reminders on your schedule, and calendar nudges when each event ends.
 - Volume buttons and a link (touchward://reward) can count as a tap.
-- No account, no ads, no tracking. One-time purchase.
+- Free to start. One 1.99 unlock for everything. No account.
 
 ### App Store "What's New" (4000)
 
@@ -123,12 +123,12 @@ TAP FROM ANYWHERE
 PRIVATE BY DESIGN
 No account and nothing to sign in to. Your settings and your counter stay on your phone. Calendar events are read only to schedule nudges and are never stored or sent. If the app crashes, an anonymous report helps us fix it, and you can turn that off in Customize, More.
 
-Touchward is a one-time purchase with no subscription and no in-app purchases. Questions or ideas: Customize, More, Contact support, or touchward-dopamine.com/support.
+Touchward is free, with one 1.99 in-app purchase that unlocks everything. No subscription. Questions or ideas: Customize, More, Contact support, or touchward-dopamine.com/support.
 
 ### Build notes (for the team, not the stores)
 
-- Version 1.0.1, iOS build 2, Android versionCode 2. First build submitted to
-  both stores.
+- First submitted as 1.0.1 (iOS build 2, Android versionCode 2), a paid app.
+  From 1.0.2 the app is free with a one time 1.99 unlock through RevenueCat.
 - Android release is signed with the Play upload key; Firebase is wired for
   push but no registration address is set, so no tokens leave the device.
 - Crash reports and the in-app support form post to the site Worker at
@@ -174,11 +174,11 @@ Apple Watch, the Action Button, or time sensitive delivery.
 
 ### Short description (80)
 
-Tap when you did the thing. A glowing button that buzzes back. No account.
+Free dopamine reward button. Tap when you did the thing and feel the buzz.
 
 Alternatives:
 
-- A reward button that buzzes back. Tap it when you did the thing.
+- Tap when you did the thing. A glowing button that buzzes back. Free.
 - You did the thing. Tap the button, feel the buzz. Private, no account, no ads.
 
 ### Full description (4000)
@@ -234,9 +234,12 @@ stored or sent anywhere. The app never asks for your name or email, and there
 is no advertising and no tracking. If the app crashes, an anonymous report
 helps us fix it, and you can turn that off in settings.
 
-ONE PRICE, THAT IS IT
-Touchward is a one time purchase. No subscription, no in-app purchases, no ads,
-no upsell. Buy it once and it is yours.
+FREE TO START, ONE UNLOCK FOR EVERYTHING
+Touchward is free. The button, the buzz, the counter, every color, reminders,
+and the first three of every option are yours from the first tap. One in-app
+purchase of 1.99 unlocks the rest: all shapes and reward modes, every strength
+and haptic preset, custom backgrounds, calendar nudges, volume button taps, and
+an unlimited library. Once, forever. No subscription, no ads.
 
 OPEN SOURCE
 The complete source code is public, so every claim above can be checked:
