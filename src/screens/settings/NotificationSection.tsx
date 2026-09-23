@@ -23,6 +23,7 @@ import {
   requestReminderPermission,
 } from "../../notifications/reminders";
 import { useSettings } from "../../store/settings";
+import { useGate, useUnlock } from "../../store/unlock";
 import {
   NUDGE_DELAYS,
   REMINDER_INTERVALS,
@@ -46,6 +47,8 @@ const COPIED_FEEDBACK_MS = 1500;
 
 export function NotificationSection({ theme, visible }: { theme: Theme; visible: boolean }) {
   const { settings, update } = useSettings();
+  const { unlocked } = useUnlock();
+  const gate = useGate();
   const [notificationsDenied, setNotificationsDenied] = useState(false);
 
   const nudges = settings.calendarNudges;
@@ -158,9 +161,9 @@ export function NotificationSection({ theme, visible }: { theme: Theme; visible:
     <Category title="Notifications" theme={theme}>
       <Section title="After calendar events" theme={theme}>
         <ToggleRow
-          label="Nudge me after events end"
+          label={unlocked ? "Nudge me after events end" : "Nudge me after events end (unlock)"}
           value={nudges.enabled}
-          onChange={(v) => void toggleNudges(v)}
+          onChange={(v) => gate(!v, () => void toggleNudges(v))}
           theme={theme}
         />
         <Hint theme={theme}>

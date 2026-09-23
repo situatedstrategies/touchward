@@ -2,12 +2,22 @@
   "expo": {
     "name": "Touchward",
     "slug": "touchward",
-    "version": "1.0.1",
-    "orientation": "portrait",
+    "version": "1.0.2",
+    "orientation": "default",
     "icon": "./assets/icon.png",
     "scheme": "touchward",
     "userInterfaceStyle": "automatic",
     "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "enableMinifyInReleaseBuilds": true,
+            "enableShrinkResourcesInReleaseBuilds": true,
+            "extraProguardRules": "# Native modules the app talks to by name from JS that ship no keep rules of\n# their own. Everything else (React Native, Expo modules, Firebase, react-native-svg,\n# react-native-worklets) ships consumer rules.\n-keep class com.swmansion.pulsar.** { *; }\n-keep class com.reactnativevolumemanager.** { *; }"
+          }
+        }
+      ],
       [
         "expo-notifications",
         {
@@ -38,7 +48,10 @@
       ],
       "expo-background-task",
       "@bacons/apple-targets",
-      "./plugins/withQuietPods.js"
+      "./plugins/withQuietPods.js",
+      "./plugins/withoutDeprecatedSystemBarColors.js",
+      "./plugins/withAndroidSigning.js",
+      "./plugins/withR8Optimize.js"
     ],
     "ios": {
       "supportsTablet": true,
@@ -53,7 +66,7 @@
         "TouchwardDataAccessNote": "Touchward requests access to calendar events and notifications solely to provide its features on this device. Calendar data is read at runtime to schedule local notifications and is not retained. The app stores its own settings and the reward counter locally. Two things leave the device, both to the Touchward support inbox: messages you send through the support form (what you type, plus device model and app version), and, unless turned off in the app, crash reports (the error, app version, device model, OS version, and the app's settings). Neither includes personal identifiers.",
         "TouchwardEncryptionNote": "Touchward contains no custom or proprietary encryption. Network requests (the optional support form and push token registration) use HTTPS through the operating system's standard networking stack, which is exempt encryption under U.S. export rules. ITSAppUsesNonExemptEncryption is therefore false."
       },
-      "buildNumber": "2",
+      "buildNumber": "4",
       "privacyManifests": {
         "NSPrivacyTracking": false,
         "NSPrivacyTrackingDomains": [],
@@ -80,7 +93,7 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "versionCode": 2,
+      "versionCode": 14,
       "blockedPermissions": [
         "android.permission.WRITE_CALENDAR",
         "android.permission.READ_EXTERNAL_STORAGE",

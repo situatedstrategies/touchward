@@ -1,9 +1,11 @@
 import * as Linking from "expo-linking";
 import * as Notifications from "expo-notifications";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { AppState, Pressable, StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Svg, { Path } from "react-native-svg";
 import { RewardButton, type RewardButtonHandle } from "../button/RewardButton";
+import { SHAPE_VIEWBOX, WAVY_PATH } from "../button/shapes";
 import { NavyBackdrop } from "../components/Backdrop";
 import { startVolumeButtonListener } from "../hardware/volumeButtons";
 import { syncCalendarNudges } from "../notifications/calendar";
@@ -12,7 +14,9 @@ import { registerForPush } from "../notifications/push";
 import { configureNotifications, syncReminders } from "../notifications/reminders";
 import { pickLook, randomLook, suggestName, type LookSettings } from "../looks/looks";
 import { useLooks } from "../store/looks";
+import { lockedToFree, lookToFree, FREE_SAVED_LOOKS } from "../purchases/gates";
 import { useSettings } from "../store/settings";
+import { useUnlock } from "../store/unlock";
 import { onWatchReward, sendSettingsToWatch } from "../../modules/watch-sync";
 import { themeForBackdrop, useTheme } from "../design/theme";
 import { body, bodySemibold, heading } from "../design/typography";
@@ -23,6 +27,14 @@ import { SettingsScreen } from "./settings/SettingsScreen";
 /** The bottom row buttons are always off white with dark text. */
 const PILL_BACKGROUND = "#F4F4F5";
 const PILL_TEXT = "#18181B";
+
+/** The clear-screen toggle: the icon's wavy ring, outlined, always white. */
+const CLEAR_ICON = "#FFFFFF";
+const CLEAR_ICON_SIZE = 22;
+const CLEAR_ICON_STROKE = 7;
+/** A faint dark halo under the ring so it still reads on the white backdrop. */
+const CLEAR_ICON_SHADOW = "rgba(0, 0, 0, 0.35)";
+const CLEAR_ICON_SHADOW_STROKE = 13;
 
 /** A settings change reaches the watch after this pause, so drags send once. */
 const WATCH_SYNC_DELAY_MS = 600;
@@ -55,15 +67,31 @@ export function HomeScreen() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [saveOpen, setSaveOpen] = useState(false);
   const [libraryOpen, setLibraryOpen] = useState(false);
+  // Cleared: only the button and the ring stay on screen. Tap the ring again to restore.
+  const [cleared, setCleared] = useState(false);
+  const toggleCleared = useCallback(() => setCleared((c) => !c), []);
   const { looks, save } = useLooks();
+  const { unlocked, known, presentPaywall } = useUnlock();
   const button = useRef<RewardButtonHandle>(null);
 
   const currentLook = pickLook(settings);
   const applyLook = useCallback((look: LookSettings) => update(look), [update]);
-  const shuffleLook = useCallback(
-    () => update(randomLook(pickLook(settings))),
-    [update, settings],
-  );
+  // The free app shuffles within what it includes.
+  const shuffleLook = useCallback(() => {
+    const look = randomLook(pickLook(settings));
+    update(unlocked ? look : lookToFree(look));
+  }, [update, settings, unlocked]);
+  const openSave = useCallback(() => {
+    if (unlocked || looks.length < FREE_SAVED_LOOKS) {
+      setSaveOpen(true);
+      return;
+    }
+    presentPaywall()
+      .then((ok) => {
+        if (ok) setSaveOpen(true);
+      })
+      .catch(() => {});
+  }, [unlocked, looks.length, presentPaywall]);
   const saveLook = useCallback(
     (name: string) => {
       save(name, pickLook(settings));
@@ -71,6 +99,14 @@ export function HomeScreen() {
     },
     [save, settings],
   );
+
+  // Once the store has answered "not unlocked", anything locked that is still
+  // switched on (a refund, a reinstall on another account) goes back to free.
+  useEffect(() => {
+    if (!loaded || !known || unlocked) return;
+    const patch = lockedToFree(settings);
+    if (Object.keys(patch).length > 0) update(patch);
+  }, [loaded, known, unlocked, settings, update]);
 
   const onReward = useCallback(() => recordReward(), [recordReward]);
 
@@ -196,12 +232,19 @@ export function HomeScreen() {
     >
       {neon && <NavyBackdrop />}
       <View style={styles.top}>
-        <Text style={[styles.brand, { color: theme.text, fontSize: 24 * scale }]}>
-          Touchward
-        </Text>
-        <Text style={[styles.count, { color: theme.muted, fontSize: 15 * scale }]}>
-          {stats.rewardsToday} today
-        </Text>
+        <View style={styles.brandRow}>
+          <ClearToggle cleared={cleared} onPress={toggleCleared} scale={scale} />
+          <Hidden hidden={cleared}>
+            <Text style={[styles.brand, { color: theme.text, fontSize: 24 * scale }]}>
+              Touchward
+            </Text>
+          </Hidden>
+        </View>
+        <Hidden hidden={cleared}>
+          <Text style={[styles.count, { color: theme.muted, fontSize: 15 * scale }]}>
+            {stats.rewardsToday} today
+          </Text>
+        </Hidden>
       </View>
 
       <View style={styles.middle}>
@@ -210,17 +253,17 @@ export function HomeScreen() {
         )}
       </View>
 
-      <View style={styles.bottom}>
+      <Hidden hidden={cleared} style={styles.bottom}>
         <Text style={[styles.prompt, { color: theme.text, fontSize: 16 * scale }]}>
           {PROMPTS[settings.mode]}
         </Text>
         <View style={styles.toolbar}>
           <Pill label="Random" onPress={shuffleLook} scale={scale} />
-          <Pill label="Save" onPress={() => setSaveOpen(true)} scale={scale} />
+          <Pill label="Save" onPress={openSave} scale={scale} />
           <Pill label="Library" onPress={() => setLibraryOpen(true)} scale={scale} />
           <Pill label="Customize" onPress={() => setSettingsOpen(true)} scale={scale} />
         </View>
-      </View>
+      </Hidden>
 
       <SettingsScreen
         visible={settingsOpen}
@@ -245,6 +288,75 @@ export function HomeScreen() {
         }}
         onClose={() => setLibraryOpen(false)}
       />
+    </View>
+  );
+}
+
+/**
+ * The clear-screen toggle in front of the title: the icon's wavy ring as a
+ * white outline. Tapping it hides everything but the button; tapping again
+ * brings the screen back.
+ */
+function ClearToggle({
+  cleared,
+  onPress,
+  scale,
+}: {
+  cleared: boolean;
+  onPress: () => void;
+  scale: number;
+}) {
+  const size = CLEAR_ICON_SIZE * scale;
+  return (
+    <Pressable
+      onPress={onPress}
+      hitSlop={12}
+      accessibilityRole="button"
+      accessibilityLabel={cleared ? "Show the screen" : "Clear the screen"}
+      accessibilityState={{ selected: cleared }}
+      style={({ pressed }) => [styles.clearToggle, { opacity: pressed ? 0.6 : 1 }]}
+    >
+      <Svg width={size} height={size} viewBox={SHAPE_VIEWBOX}>
+        <Path
+          d={WAVY_PATH}
+          fill="none"
+          stroke={CLEAR_ICON_SHADOW}
+          strokeWidth={CLEAR_ICON_SHADOW_STROKE}
+          strokeLinejoin="round"
+        />
+        <Path
+          d={WAVY_PATH}
+          fill="none"
+          stroke={CLEAR_ICON}
+          strokeWidth={CLEAR_ICON_STROKE}
+          strokeLinejoin="round"
+        />
+      </Svg>
+    </Pressable>
+  );
+}
+
+/**
+ * Keeps its children laid out but invisible and untouchable while hidden, so
+ * clearing the screen never shifts the button.
+ */
+function Hidden({
+  hidden,
+  style,
+  children,
+}: {
+  hidden: boolean;
+  style?: object;
+  children: ReactNode;
+}) {
+  return (
+    <View
+      style={[style, hidden && styles.hidden]}
+      pointerEvents={hidden ? "none" : "auto"}
+      accessibilityElementsHidden={hidden}
+      importantForAccessibility={hidden ? "no-hide-descendants" : "auto"}
+    >
+      {children}
     </View>
   );
 }
@@ -282,9 +394,12 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   top: {
     flexDirection: "row",
-    alignItems: "baseline",
+    alignItems: "center",
     justifyContent: "space-between",
   },
+  brandRow: { flexDirection: "row", alignItems: "center", gap: 10 },
+  clearToggle: { alignItems: "center", justifyContent: "center" },
+  hidden: { opacity: 0 },
   brand: heading(24),
   count: { ...body(15), fontVariant: ["tabular-nums"] },
   middle: { flex: 1, alignItems: "center", justifyContent: "center" },
