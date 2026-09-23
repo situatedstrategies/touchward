@@ -47,12 +47,18 @@ const W = landscape ? 1920 : 1080;
 const H = landscape ? 1080 : 1920;
 const root = path.dirname(new URL(import.meta.url).pathname);
 const rawDir = path.join(root, "screenshots", "raw");
-const outDir = path.join(root, "screenshots", "play", plain ? "phone" : landscape ? "16x9" : "9x16");
+const outDir = path.join(
+  root,
+  "screenshots",
+  "play",
+  plain ? "phone" : landscape ? "16x9" : "9x16",
+);
 fs.mkdirSync(outDir, { recursive: true });
 
 // [{ file, source, caption }] in output order.
 const captionsFile = path.join(root, "screenshots", "captions.txt");
-const locate = (file) => [path.join(rawDir, file), path.join(root, file)].find((p) => fs.existsSync(p));
+const locate = (file) =>
+  [path.join(rawDir, file), path.join(root, file)].find((p) => fs.existsSync(p));
 let entries;
 if (fs.existsSync(captionsFile)) {
   entries = fs
@@ -63,7 +69,10 @@ if (fs.existsSync(captionsFile)) {
     .map((l) => {
       const [file, ...rest] = l.split("|");
       const source = locate(file.trim());
-      if (!source) throw new Error(`${file.trim()} listed in captions.txt was not found in raw/ or store/`);
+      if (!source)
+        throw new Error(
+          `${file.trim()} listed in captions.txt was not found in raw/ or store/`,
+        );
       return { file: file.trim(), source, caption: rest.join("|").trim() };
     });
 } else {
@@ -128,7 +137,10 @@ for (const [i, { file, source, caption }] of entries.entries()) {
   const mime = /\.png$/i.test(file) ? "image/png" : "image/jpeg";
   const b64 = fs.readFileSync(source).toString("base64");
   if (plain) {
-    const out = path.join(outDir, `${String(i + 1).padStart(2, "0")}-${file.replace(/\.(png|jpe?g)$/i, "")}.png`);
+    const out = path.join(
+      outDir,
+      `${String(i + 1).padStart(2, "0")}-${file.replace(/\.(png|jpe?g)$/i, "")}.png`,
+    );
     await plainShot(page, b64, mime, out);
     console.log(`${file} -> ${path.relative(process.cwd(), out)} (plain 9:16)`);
     continue;
@@ -152,7 +164,10 @@ for (const [i, { file, source, caption }] of entries.entries()) {
   await page.setContent(html);
   await page.evaluate(() => document.fonts.ready);
   await page.evaluate(() => Promise.all(Array.from(document.images, (im) => im.decode())));
-  const out = path.join(outDir, `${String(i + 1).padStart(2, "0")}-${file.replace(/\.(png|jpe?g)$/i, "")}.png`);
+  const out = path.join(
+    outDir,
+    `${String(i + 1).padStart(2, "0")}-${file.replace(/\.(png|jpe?g)$/i, "")}.png`,
+  );
   await page.screenshot({ path: out, clip: { x: 0, y: 0, width: W, height: H } });
   console.log(`${file} -> ${path.relative(process.cwd(), out)} (${W}x${H})`);
 }

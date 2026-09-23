@@ -19,7 +19,7 @@ Reminders are local. Calendar nudges go off when a meeting ends, from the calend
 
 The helpful details field is short (450 characters); this fits.
 
-No account or setup: open it and tap. Hold the button to see the timer trace its outline. Customize, then Reward and Feel, plays each haptic as you pick it (Core Haptics, 150+ presets). Random makes a new look every press. The Apple Watch app installs with the phone app and mirrors it. Calendar nudges and reminders are local notifications. Paid up front, no in-app purchases, no analytics, and the source is public on GitHub.
+No account or setup: open it and tap. Hold the button to see the timer trace its outline. Customize, then Reward and Feel, plays each haptic as you pick it (Core Haptics, 150+ presets). Random makes a new look every press. The Apple Watch app installs with the phone app and mirrors it. Calendar nudges and reminders are local notifications. Free with one in-app unlock, no subscription, no analytics, and the source is public on GitHub.
 
 ## Other fields
 

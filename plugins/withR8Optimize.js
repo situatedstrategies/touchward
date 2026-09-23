@@ -20,7 +20,9 @@ module.exports = function withR8Optimize(config) {
     const contents = config.modResults.contents;
     if (contents.includes(optimized)) return config;
     if (!contents.includes(plain)) {
-      throw new Error("withR8Optimize: proguard-android.txt reference not found in app/build.gradle");
+      throw new Error(
+        "withR8Optimize: proguard-android.txt reference not found in app/build.gradle",
+      );
     }
     config.modResults.contents = contents.replace(plain, optimized);
     return config;

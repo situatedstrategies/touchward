@@ -102,6 +102,7 @@ THE BUTTON
 Tap it when you did the thing and get a buzz and a ripple of light back. Press and hold, and a timer traces the outline of the button; when it completes you get a bigger reward. Choose tap only, hold only, or both.
 
 MAKE IT YOURS
+
 - Eight shapes: circle, the icon's wavy ring, squircle, square, hexagon, star, heart, and blob.
 - Seven reward modes, from Original's three standing rings to Soft, Spark, Deep, Double, and Wave. Each sets the motion and the haptic together.
 - Ripples you can shape: outline, thickness, how long they linger, and how many stack.
@@ -110,12 +111,14 @@ MAKE IT YOURS
 - Random builds a whole new look in one press. Save the ones you love and bring them back from your library.
 
 NUDGES
+
 - Reminders on a schedule you set, between the hours you choose.
 - Calendar nudges: with calendar access, a notification when each event ends, right away or a few minutes after.
 - Time sensitive delivery, so a nudge can reach you inside a Focus mode.
 - Every nudge has an "I did it" button that counts the tap for you.
 
 TAP FROM ANYWHERE
+
 - Volume buttons count as a tap while the app is open.
 - The link touchward://reward fires a tap when it opens the app. Wire it to the Action Button or Back Tap with Shortcuts.
 - Apple Watch: the button and its ripples on your wrist, with your reminders mirrored and taps counted alongside the phone.
@@ -208,6 +211,7 @@ button while you press, and when it completes you get a bigger one. Choose tap
 only, hold only, or both.
 
 MAKE IT YOURS
+
 - Shapes: circle, the icon's wavy ring, squircle, square, hexagon, star, heart,
   or blob. Every shape glows, and the hold timer follows its outline.
 - Ripples: each tap sends a ripple out from the button. Pick its outline, its
@@ -223,6 +227,7 @@ MAKE IT YOURS
   library and bring them back any time.
 
 NUDGES THAT FIT YOUR DAY
+
 - Calendar nudges: with calendar access, Touchward notices when each event ends
   and sends a notification to tap, right away or a few minutes after. The
   meeting is over, the workout is done, come tap.
@@ -231,6 +236,7 @@ NUDGES THAT FIT YOUR DAY
 - Each nudge has an "I did it" button that counts the tap for you.
 
 TAP FROM ANYWHERE
+
 - Volume buttons: while the app is open, either volume button counts as a tap.
 - A link, touchward://reward, fires a tap when it opens the app. Wire it to
   Quick Tap or a button remapper for a one gesture reward.
