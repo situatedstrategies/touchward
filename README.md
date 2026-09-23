@@ -234,6 +234,9 @@ device; see Xcode Organizer and the Play Console. The privacy manifest
 declares crash data (not linked, not used for tracking), and the site's
 privacy policy describes it. App Store Connect's privacy questionnaire must
 say the same: Crash Data, collected, not linked to identity, app functionality.
+The unlock adds a second row: Purchase History, collected, not linked, not for
+tracking, app functionality, because RevenueCat receives the store receipt and
+a random app generated identifier. The manifest in `app.json` declares both.
 
 ## Pricing
 

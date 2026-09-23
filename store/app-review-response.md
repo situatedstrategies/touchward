@@ -59,12 +59,15 @@ step with `app-review-notes.md` and `listing.md` if the app changes.
 - User generated content and reporting or blocking: there is no content
   from other people. Nothing is shared or published. Saved looks are private
   settings on the device.
-- Accessing paid content or features: the app is a one time paid download
-  with no in-app purchases, subscriptions, or locked features. Everything
-  in the recording is available the moment the app is installed.
+- Accessing paid content or features: the app is free with one non
+  consumable in-app purchase, "Unlock everything". Show it in the recording:
+  in Customize, tap a padlocked option (for example the fourth shape,
+  Square) to open the purchase screen, complete the purchase with a sandbox
+  tester account, and show the padlocks gone. Then show Customize, More,
+  Restore purchases. There are no subscriptions and no consumables.
 
-State those three facts in the reply so the reviewer does not go looking for
-them.
+State the first two facts in the reply so the reviewer does not go looking
+for them, and name the sandbox purchase step so they can find it.
 
 ## 2. Purpose and target audience
 
@@ -113,15 +116,16 @@ To reach each feature:
 - The deep link touchward://reward fires a tap when opened; "Test the link"
   in the More tab demonstrates it without leaving the app.
 
-Everything works offline. The only network calls are the optional support
+Everything except the purchase works offline. The network calls are the optional support
 form and, unless turned off, crash reports, both described in item 4.
 
 ## 4. External services, tools, and platforms
 
 Core functionality (the button, haptics, ripples, colors, looks, reminders,
 calendar nudges, the watch app) runs entirely on the device using Apple
-frameworks and open source libraries bundled in the app. No external service
-is required for any feature to work, and the app makes no network request
+frameworks and open source libraries bundled in the app. The only feature
+that needs a service is the optional unlock, which goes through StoreKit and
+RevenueCat as described below. Otherwise the app makes no network request
 during normal use.
 
 The complete list of anything outside the app:
@@ -152,11 +156,19 @@ The complete list of anything outside the app:
   registers with APNs and the token is shown to the user for their own
   automations. In this build no registration address is configured, so the
   token is not sent to us or anyone. Reminders and nudges do not use push.
-- Apple's own App Store services for the purchase and for the optional
+- StoreKit and RevenueCat for the one time unlock. The purchase itself is
+  Apple's, through StoreKit. RevenueCat (react-native-purchases, a purchase
+  management SDK) confirms the purchase and restores it on the user's other
+  devices. It receives the App Store receipt and a random identifier the app
+  generates on the device; the app has no name, email, or account to link it
+  to. Declared in the privacy manifest and in App Privacy as Purchase
+  History, not linked to identity, not used for tracking, for app
+  functionality. RevenueCat's SDK ships its own privacy manifest.
+- Apple's own App Store services for the download and for the optional
   device level crash reporting that Apple offers developers.
 
-Not used: no authentication service, no payment processor (the purchase is
-the App Store's), no data provider, no AI or machine learning service, no
+Not used: no authentication service, no payment processor other than the
+App Store, no data provider, no AI or machine learning service, no
 analytics, advertising, or tracking SDK, no over the air update service, no
 third party backend. Fonts (Josefin Sans and Nunito Sans, SIL Open Font
 License) are bundled; nothing is fetched at runtime. The source is public at

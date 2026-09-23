@@ -155,7 +155,15 @@ https://touchward-dopamine.com
 
 - Data collected: Crash Data. Not linked to the user. Not used for tracking.
   Purpose: App Functionality.
+- Data collected: Purchase History (the unlock, through RevenueCat). Not
+  linked to the user. Not used for tracking. Purpose: App Functionality.
 - Everything else: not collected.
+
+Google Play Data safety form, the same facts: Crash logs (collected, not
+shared, app functionality, optional since the user can turn it off) and
+Purchase history (collected, shared with RevenueCat as a service provider for
+app functionality, required for the unlock). No account, no encryption in
+transit claim beyond HTTPS, deletion by deleting the app.
 
 ## Age rating
 
