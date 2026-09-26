@@ -13,8 +13,8 @@ Tap when you did the thing.
 
 ## Promotional text (170)
 
-You did the thing. Tap the button and get a little buzz back. Shape it, color
-it, feel it your way. No account, no ads, nothing to sign in to.
+You did the thing. Tap the button and get a little buzz back. Free to start,
+one unlock for everything. No account, no ads, nothing to sign in to.
 
 ## Description (4000)
 
@@ -69,17 +69,78 @@ your phone. Calendar data is read only to schedule nudges and is never stored
 or sent. The app never asks for your email or your name. If it crashes, an
 anonymous report helps us fix it, and you can turn that off.
 
-Touchward is a one time purchase. No subscription, no in-app purchases, no
-ads.
+Touchward is free to download. One in-app purchase of 1.99 unlocks every
+feature, once, forever. No subscription, no ads.
 
 ## Keywords (100)
 
 reward,dopamine,haptic,habit,motivation,button,tap,ADHD,focus,ritual,vibrate,celebrate
 
-## What's new (first release)
+## Release notes: 1.0.1 (build 2), first production release
 
-Touchward 1.0: the reward button, ripples, haptics, reminders, calendar
-nudges, Apple Watch, and a library for your looks.
+Google Play's release notes field allows 500 characters per language and shows
+them under "What's new" on the listing. App Store Connect's "What's New in This
+Version" allows 4,000. Both versions below describe the same build.
+
+### Google Play release notes (500)
+
+Touchward 1.0.1, the first release.
+
+A glowing button that buzzes back when you tap it. Hold it for a bigger reward.
+
+- Eight shapes, seven reward modes, five haptic strengths, and a color picker for everything.
+- Random builds a new look in one press. Save the ones you love to your library.
+- Reminders on your schedule, and calendar nudges when each event ends.
+- Volume buttons and a link (touchward://reward) can count as a tap.
+- Free to start. One 1.99 unlock for everything. No account.
+
+### App Store "What's New" (4000)
+
+Touchward 1.0.1 is the first release. Here is what is in the box.
+
+THE BUTTON
+Tap it when you did the thing and get a buzz and a ripple of light back. Press and hold, and a timer traces the outline of the button; when it completes you get a bigger reward. Choose tap only, hold only, or both.
+
+MAKE IT YOURS
+
+- Eight shapes: circle, the icon's wavy ring, squircle, square, hexagon, star, heart, and blob.
+- Seven reward modes, from Original's three standing rings to Soft, Spark, Deep, Double, and Wave. Each sets the motion and the haptic together.
+- Ripples you can shape: outline, thickness, how long they linger, and how many stack.
+- Five haptic strengths, from Gentle to Max, plus a library of over 150 haptic presets for the tap and the timer.
+- A full color picker with a hue wheel, brightness slider, and hex entry, for the button, its reward colors, the ripple colors, and the background. Save colors you like.
+- Random builds a whole new look in one press. Save the ones you love and bring them back from your library.
+
+NUDGES
+
+- Reminders on a schedule you set, between the hours you choose.
+- Calendar nudges: with calendar access, a notification when each event ends, right away or a few minutes after.
+- Time sensitive delivery, so a nudge can reach you inside a Focus mode.
+- Every nudge has an "I did it" button that counts the tap for you.
+
+TAP FROM ANYWHERE
+
+- Volume buttons count as a tap while the app is open.
+- The link touchward://reward fires a tap when it opens the app. Wire it to the Action Button or Back Tap with Shortcuts.
+- Apple Watch: the button and its ripples on your wrist, with your reminders mirrored and taps counted alongside the phone.
+
+PRIVATE BY DESIGN
+No account and nothing to sign in to. Your settings and your counter stay on your phone. Calendar events are read only to schedule nudges and are never stored or sent. If the app crashes, an anonymous report helps us fix it, and you can turn that off in Customize, More.
+
+Touchward is free, with one 1.99 in-app purchase that unlocks everything. No subscription. Questions or ideas: Customize, More, Contact support, or touchward-dopamine.com/support.
+
+### Build notes (for the team, not the stores)
+
+- First submitted as 1.0.1 (iOS build 2, Android versionCode 2), a paid app.
+  From 1.0.2 the app is free with a one time 1.99 unlock through RevenueCat.
+- Android release is signed with the Play upload key; Firebase is wired for
+  push but no registration address is set, so no tokens leave the device.
+- Crash reports and the in-app support form post to the site Worker at
+  touchward-dopamine.com and reach the support inbox through Resend.
+- App Store privacy questionnaire and the privacy manifest both declare Crash
+  Data only, not linked, not for tracking.
+- Known limits: Avenir Next falls back to Nunito Sans on Android; Pulsar
+  presets need a device with a rich haptic motor; the Apple Watch app is iOS
+  only; push notifications are opt in and unused by the app itself.
 
 ## Support URL
 
@@ -97,7 +158,15 @@ https://touchward-dopamine.com
 
 - Data collected: Crash Data. Not linked to the user. Not used for tracking.
   Purpose: App Functionality.
+- Data collected: Purchase History (the unlock, through RevenueCat). Not
+  linked to the user. Not used for tracking. Purpose: App Functionality.
 - Everything else: not collected.
+
+Google Play Data safety form, the same facts: Crash logs (collected, not
+shared, app functionality, optional since the user can turn it off) and
+Purchase history (collected, shared with RevenueCat as a service provider for
+app functionality, required for the unlock). No account, no encryption in
+transit claim beyond HTTPS, deletion by deleting the app.
 
 ## Age rating
 
@@ -116,11 +185,11 @@ Apple Watch, the Action Button, or time sensitive delivery.
 
 ### Short description (80)
 
-Tap when you did the thing. A glowing button that buzzes back. No account.
+Free dopamine reward button. Tap when you did the thing and feel the buzz.
 
 Alternatives:
 
-- A reward button that buzzes back. Tap it when you did the thing.
+- Tap when you did the thing. A glowing button that buzzes back. Free.
 - You did the thing. Tap the button, feel the buzz. Private, no account, no ads.
 
 ### Full description (4000)
@@ -142,6 +211,7 @@ button while you press, and when it completes you get a bigger one. Choose tap
 only, hold only, or both.
 
 MAKE IT YOURS
+
 - Shapes: circle, the icon's wavy ring, squircle, square, hexagon, star, heart,
   or blob. Every shape glows, and the hold timer follows its outline.
 - Ripples: each tap sends a ripple out from the button. Pick its outline, its
@@ -157,6 +227,7 @@ MAKE IT YOURS
   library and bring them back any time.
 
 NUDGES THAT FIT YOUR DAY
+
 - Calendar nudges: with calendar access, Touchward notices when each event ends
   and sends a notification to tap, right away or a few minutes after. The
   meeting is over, the workout is done, come tap.
@@ -165,6 +236,7 @@ NUDGES THAT FIT YOUR DAY
 - Each nudge has an "I did it" button that counts the tap for you.
 
 TAP FROM ANYWHERE
+
 - Volume buttons: while the app is open, either volume button counts as a tap.
 - A link, touchward://reward, fires a tap when it opens the app. Wire it to
   Quick Tap or a button remapper for a one gesture reward.
@@ -176,9 +248,12 @@ stored or sent anywhere. The app never asks for your name or email, and there
 is no advertising and no tracking. If the app crashes, an anonymous report
 helps us fix it, and you can turn that off in settings.
 
-ONE PRICE, THAT IS IT
-Touchward is a one time purchase. No subscription, no in-app purchases, no ads,
-no upsell. Buy it once and it is yours.
+FREE TO START, ONE UNLOCK FOR EVERYTHING
+Touchward is free. The button, the buzz, the counter, every color, reminders,
+and the first three of every option are yours from the first tap. One in-app
+purchase of 1.99 unlocks the rest: all shapes and reward modes, every strength
+and haptic preset, custom backgrounds, calendar nudges, volume button taps, and
+an unlimited library. Once, forever. No subscription, no ads.
 
 OPEN SOURCE
 The complete source code is public, so every claim above can be checked:

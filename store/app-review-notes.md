@@ -6,9 +6,10 @@ needed: the app has no sign in.
 
 ---
 
-Touchward is a paid sensory reward button. You tap (or hold) a big button and
-get a haptic pattern and a ripple animation back. There is no account, no sign
-in, no in-app purchase, no ads, and no server the app depends on. Every
+Touchward is a sensory reward button, free with one in-app unlock. You tap
+(or hold) a big button and get a haptic pattern and a ripple animation back.
+There is no account, no sign in, no ads, and no server the app depends on
+beyond the store's purchase check. Every
 feature below works offline. Everything is on by default except where noted.
 
 HOW TO TEST
@@ -65,12 +66,23 @@ DATA AND PRIVACY
   identity, not for tracking, and in App Privacy the same way.
 - Support form (More, Support): sends the topic, the message, device model,
   and app version. It asks for no email and no name.
+- The unlock (in-app purchase): purchases go through StoreKit. RevenueCat
+  (react-native-purchases) confirms and restores the purchase using the
+  App Store receipt and a random identifier generated on the device. Declared
+  in the privacy manifest and App Privacy as Purchase History, not linked to
+  identity, not for tracking. RevenueCat's SDK ships its own privacy manifest.
 - Privacy policy: https://touchward-dopamine.com/privacy
 - Support: https://touchward-dopamine.com/support
 
 BUSINESS MODEL
-One time paid app. No IAP, subscriptions, or restore flow. Ownership follows
-the App Store account.
+Free download with one non consumable in-app purchase, "Unlock everything"
+(1.99 US), through StoreKit and RevenueCat. No subscriptions, no consumables,
+no account. The free app includes the button, the first three of every
+option, all colors, reminders, and the Shortcut link; locked options show a
+padlock and open the purchase screen. Restore purchases is in Customize,
+More. To test: tap any padlocked option in Customize (for example the fourth
+shape, Square) to reach the paywall; use a sandbox tester account to buy,
+then Restore purchases to confirm it returns.
 
 OPEN SOURCE
 The complete source is public at github.com/situatedstrategies/touchward, so
