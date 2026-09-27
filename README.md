@@ -438,7 +438,8 @@ ripples or the timer, then the surroundings.
   URLs. Both platforms need their Firebase config file (see Firebase and
   analytics).
 - Both: the `assets/` icons are final; unused Android permissions are blocked
-  in `app.json`.
+  in `app.json`. Every track in `assets/music/` has its row in
+  `assets/music/LICENSES.md` and the credit line in the app matches it.
 - iOS privacy: `app.json` sets `ITSAppUsesNonExemptEncryption` to false, a
   privacy manifest with no tracking and four collected data types that are not
   linked to identity (crash data, purchase history, product interaction, other

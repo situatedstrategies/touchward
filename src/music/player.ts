@@ -194,8 +194,8 @@ export function stopMusic(): void {
   disposeDeck(outgoing);
   current = null;
   outgoing = null;
-  const audio = loadAudio();
-  audio?.setIsAudioActiveAsync(false).catch(() => {});
+  // The audio session is left as it is: the volume button listener may be
+  // using it, and released players hold nothing open.
 }
 
 /** The app went to the background: hold both players where they are. */

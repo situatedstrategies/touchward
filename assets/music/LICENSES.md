@@ -29,13 +29,11 @@ through Perplexity Computer. The credit line the app carries:
 > libraries were incorporated into the generation process.
 
 So the audio was rendered by code, not by a music model trained on recordings,
-and no sample library or third party recording is inside it. Still to file
-before release:
-
-- Perplexity account plan at the time of generation: Personal Pro
-- Perplexity Terms of Service clause on Output ownership and commercial use,
-  quoted with the terms' last-updated date: TODO
-- Link to the generation thread: TODO
+and no sample library or third party recording is inside it. The account was
+Perplexity Personal Pro when the tracks were made (September 2026) and is
+Enterprise Pro now; the account holder treats Perplexity's paid-plan terms on
+output as covering commercial use in the app. Keep the generation thread with
+the LLC's records.
 
 The prompt described a style; no artist's name appears in the app, the store
 listing, or the track titles, and none of the audio is a recording or a
