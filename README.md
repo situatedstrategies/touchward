@@ -259,9 +259,12 @@ What gets measured (`src/analytics/analytics.ts`): Firebase's automatic events
 and every setting stay on the device. "Share usage analytics" in Customize,
 More, Support turns collection off, and turning it off also resets the app
 instance identifier. Events show up in the Firebase console under Analytics,
-Events (real time through DebugView when the build runs with
-`-FIRDebugEnabled` on iOS or `adb shell setprop debug.firebase.analytics.app
-com.situatedstrategies.touchward` on Android).
+Events, and in real time in DebugView: the shared Xcode scheme passes
+`-FIRDebugEnabled` to Debug runs (Product, Run), so a debug build on a phone
+reports live; a clean `npx expo prebuild` regenerates the scheme, so re-add
+the argument under Edit Scheme, Run, Arguments if it goes missing. On Android
+run `adb shell setprop debug.firebase.analytics.app
+com.situatedstrategies.touchward`.
 
 ## Crash reports
 
