@@ -52,9 +52,12 @@ hold it down, watch the ring close, and get a bigger buzz when the timer is up.
   `touchward://reward` fires a tap when it opens the app, so it can be wired to
   the iPhone Action Button or Back Tap through Shortcuts, or to Quick Tap or a
   button remapper on Android.
-- Music (unlock): ten short ambient pieces play in a shuffled rotation while
-  the app is open, one crossfading into the next, at a volume you pick, with a
-  choice to play or stop when the ringer is silent. Nothing plays once you leave.
+- Music (unlock): ten short ambient pieces. Pick a first and a second piece
+  and they take turns, one crossfading into the next (the same piece twice is a
+  single loop; ten by ten makes 100 combinations), or shuffle all ten. A
+  speaker at the top of the home screen turns it on and off; Customize sets
+  the volume and whether the ringer switch stops it. Nothing plays once you
+  leave the app.
 - A small counter of rewards today and all time. Everything is stored on the
   device. No account, no server, and the reminders are scheduled locally, so
   there is no push backend to run.
@@ -280,16 +283,29 @@ com.situatedstrategies.touchward`.
 
 ## Music
 
-Customize, Reward, Sound has a music switch (part of the unlock). While it is on
-and the app is in the foreground, `src/music/player.ts` plays the ten pieces in
-`assets/music/` in a shuffled order through `expo-audio`, keeping two players
-alive only during the two second crossfade between pieces. The pieces fade in
-from and out to silence on their own, so the rotation, not a loop, is what
-makes them continuous. `MusicController` (mounted in `App.tsx`) starts and stops
-playback from settings, pauses it when the app goes to the background, and
-applies volume (Quiet, Medium, Loud) and the silent switch choice live. Music
-never plays before stored settings are loaded or before the unlock is known, so
-a refunded purchase goes quiet by itself (`lockedToFree` also turns it off).
+Customize, Reward, Sound has the music switch (part of the unlock), and the
+speaker icon at the top of the home screen (`src/music/MusicToggle.tsx`) flips
+the same setting, showing the paywall first in the free app. While music is on
+and the app is in the foreground, `src/music/player.ts` plays pieces from
+`assets/music/` through `expo-audio`: either the chosen first and second piece
+in turn (a two track loop; the same piece twice collapses to one) or all ten
+shuffled, keeping two players alive only during the two second crossfade
+between pieces. The pieces fade in from and out to silence on their own, so
+the rotation, not a loop, is what makes them continuous. `MusicController`
+(mounted in `App.tsx`) starts and stops playback from settings, pauses it when
+the app goes to the background, and applies the track choice, volume (Quiet,
+Medium, Loud), and the silent switch choice live; changing the tracks
+crossfades into the new choice at once. Music never plays before stored
+settings are loaded or before the unlock is known, so a refunded purchase goes
+quiet by itself (`lockedToFree` also turns it off).
+
+Haptics and music share the phone's audio session, and starting the Core
+Haptics engine for a tap can register as an audio interruption, which would
+otherwise pause the players with no permission from iOS to resume. The audio
+mode is therefore set to duck on interruptions rather than pause, a one second
+watchdog in the player restores the volume or restarts playback if anything
+stops it, and every reward calls `nudgeMusic` so the check runs right after
+the haptic instead of waiting for the next tick.
 
 The `expo-audio` config plugin is set to add nothing: no microphone usage
 string, no Android record permission, and no background audio mode, so the

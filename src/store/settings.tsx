@@ -12,6 +12,7 @@ import {
 import { AppState } from "react-native";
 import { configureAnalytics } from "../analytics/analytics";
 import { isHexColor } from "../design/palette";
+import { TRACKS } from "../music/tracks";
 import { configureCrashReports } from "../support/crashReports";
 import {
   DEFAULT_SETTINGS,
@@ -26,6 +27,7 @@ import {
   RIPPLE_WIDTHS,
   SHAPES,
   COLOR_LIBRARY_LIMIT,
+  MUSIC_MIXES,
   MUSIC_VOLUMES,
   type CalendarNudgeSettings,
   type ColorLibraryKey,
@@ -125,8 +127,18 @@ function sanitizeMusic(raw: unknown): MusicSettings {
     enabled: isBool(r.enabled) ? r.enabled : d.enabled,
     volume: MUSIC_VOLUMES.some((v) => v.value === r.volume) ? (r.volume as number) : d.volume,
     playsInSilentMode: isBool(r.playsInSilentMode) ? r.playsInSilentMode : d.playsInSilentMode,
+    mix: oneOf(
+      r.mix,
+      MUSIC_MIXES.map((m) => m.id),
+    )
+      ? r.mix
+      : d.mix,
+    first: oneOf(r.first, trackIds) ? r.first : d.first,
+    second: oneOf(r.second, trackIds) ? r.second : d.second,
   };
 }
+
+const trackIds = TRACKS.map((t) => t.id);
 
 /**
  * Turn whatever is in storage into a valid Settings object. Unknown keys are

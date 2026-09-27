@@ -3,9 +3,15 @@ import { requireOptionalNativeModule } from "expo-modules-core";
 import { TRACKS } from "./tracks";
 
 /**
- * Background music while the app is open: the bundled ambient set, shuffled,
- * with a crossfade between pieces. Two players are alive during a crossfade
- * (the one ending and the one starting) and one the rest of the time.
+ * Background music while the app is open: either a two track loop (the first
+ * and second track in turn) or the whole bundled set shuffled, with a
+ * crossfade between pieces. Two players are alive during a crossfade (the one
+ * ending and the one starting) and one the rest of the time.
+ *
+ * Haptics share the phone's audio session, and starting the Core Haptics
+ * engine on a tap can register as an audio interruption. The audio module is
+ * told to duck rather than pause on interruptions, and a watchdog restores
+ * the volume, or restarts playback, within a second if anything stops it.
  *
  * expo-audio is a native module that Expo Go and builds made before it was
  * added do not have, so it is required lazily after checking that the native
@@ -39,6 +45,10 @@ const CROSSFADE_MS = 2000;
 const TICK_MS = 50;
 /** How often a player reports its position; sets how precisely the crossfade starts. */
 const STATUS_INTERVAL_MS = 250;
+/** How often the watchdog checks that the music is still playing at the set volume. */
+const WATCHDOG_MS = 1000;
+/** After a reward, a second check a little later catches a late interruption. */
+const NUDGE_DELAY_MS = 350;
 
 interface Deck {
   player: AudioPlayer;
@@ -47,11 +57,13 @@ interface Deck {
   ending: boolean;
 }
 
-interface MusicOptions {
+export interface MusicOptions {
   /** 0 to 1. */
   volume: number;
   /** Keep playing when the ringer switch is on silent. */
   playsInSilentMode: boolean;
+  /** Track indexes to cycle through in order, or null to shuffle the whole set. */
+  queue: number[] | null;
 }
 
 let running = false;
@@ -59,7 +71,9 @@ let paused = false;
 let current: Deck | null = null;
 let outgoing: Deck | null = null;
 let fadeTimer: ReturnType<typeof setInterval> | null = null;
+let watchdog: ReturnType<typeof setInterval> | null = null;
 let targetVolume = 0.6;
+let queue: number[] | null = null;
 let order: number[] = [];
 let position = 0;
 let lastPlayed = -1;
@@ -76,6 +90,12 @@ function shuffled(): number[] {
 }
 
 function nextTrack(): number {
+  if (queue && queue.length > 0) {
+    const index = queue[position % queue.length];
+    position++;
+    lastPlayed = index;
+    return index;
+  }
   if (position >= order.length) {
     order = shuffled();
     position = 0;
@@ -145,14 +165,31 @@ function crossfade(): void {
   }, TICK_MS);
 }
 
+/**
+ * Put the music back the way it should be: playing, at the set volume. Safe to
+ * call at any time; it does nothing while paused, stopped, or mid crossfade.
+ */
+function check(): void {
+  if (!running || paused || !current || fadeTimer) return;
+  try {
+    if (!current.player.playing) current.player.play();
+    if (Math.abs(current.player.volume - targetVolume) > 0.01) {
+      current.player.volume = targetVolume;
+    }
+  } catch {
+    // The player is gone; the next crossfade or start replaces it.
+  }
+}
+
 async function applyMode(playsInSilentMode: boolean): Promise<void> {
   const audio = loadAudio();
   if (!audio) return;
   try {
     await audio.setAudioModeAsync({
       playsInSilentMode,
-      // Music, not a sound effect: other apps pause while this plays.
-      interruptionMode: "doNotMix",
+      // Duck on interruptions instead of pausing: a haptic engine start counts
+      // as one, and a pause there would need iOS's say so to resume.
+      interruptionMode: "duckOthers",
       allowsRecording: false,
       shouldPlayInBackground: false,
     });
@@ -161,10 +198,11 @@ async function applyMode(playsInSilentMode: boolean): Promise<void> {
   }
 }
 
-/** Begin the rotation. Calling it while running restarts nothing; use the setters. */
+/** Begin playing. Calling it while running restarts nothing; use the setters. */
 export async function startMusic(options: MusicOptions): Promise<void> {
   if (!loadAudio()) return;
   targetVolume = options.volume;
+  queue = options.queue;
   if (running) return;
   running = true;
   paused = false;
@@ -179,6 +217,7 @@ export async function startMusic(options: MusicOptions): Promise<void> {
   }
   current = deck;
   deck.player.play();
+  if (!watchdog) watchdog = setInterval(check, WATCHDOG_MS);
 }
 
 /** Stop and release everything. */
@@ -189,6 +228,10 @@ export function stopMusic(): void {
   if (fadeTimer) {
     clearInterval(fadeTimer);
     fadeTimer = null;
+  }
+  if (watchdog) {
+    clearInterval(watchdog);
+    watchdog = null;
   }
   disposeDeck(current);
   disposeDeck(outgoing);
@@ -214,6 +257,16 @@ export function resumeMusic(): void {
   outgoing?.player.play();
 }
 
+/**
+ * A reward just fired its haptic. Make sure the music is still going now and
+ * again a moment later, without waiting for the watchdog's next tick.
+ */
+export function nudgeMusic(): void {
+  if (!running) return;
+  check();
+  setTimeout(check, NUDGE_DELAY_MS);
+}
+
 export function setMusicVolume(volume: number): void {
   targetVolume = volume;
   // Outside a crossfade the current deck follows the setting at once; during
@@ -223,4 +276,21 @@ export function setMusicVolume(volume: number): void {
 
 export function setMusicSilentMode(playsInSilentMode: boolean): void {
   if (running) applyMode(playsInSilentMode).catch(() => {});
+}
+
+/**
+ * Change what plays: a list of track indexes to cycle, or null to shuffle the
+ * set. The new choice starts at once with a crossfade from whatever is playing.
+ */
+export function setMusicQueue(next: number[] | null): void {
+  const same =
+    (next === null && queue === null) ||
+    (next !== null &&
+      queue !== null &&
+      next.length === queue.length &&
+      next.every((v, i) => v === queue![i]));
+  queue = next;
+  position = 0;
+  order = shuffled();
+  if (running && !paused && !same) crossfade();
 }

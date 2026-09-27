@@ -4,10 +4,14 @@ import { isMusicAvailable } from "../../music/player";
 import { MUSIC_CREDIT, TRACKS } from "../../music/tracks";
 import { useSettings } from "../../store/settings";
 import { useGate, useUnlock } from "../../store/unlock";
-import { MUSIC_VOLUMES, type MusicSettings } from "../../types";
+import { MUSIC_MIXES, MUSIC_VOLUMES, type MusicSettings } from "../../types";
 import { Category, Hint, Row, Section, SubLabel, ToggleRow } from "./controls";
 
-/** Background music: on or off, how loud, and whether the silent switch stops it. */
+/**
+ * Background music: on or off, what plays (a two track loop or the shuffled
+ * set), how loud, and whether the silent switch stops it. All of it is part
+ * of the unlock; the speaker on the home screen flips the same switch.
+ */
 export function SoundSection({ theme }: { theme: Theme }) {
   const { settings, update } = useSettings();
   const { unlocked } = useUnlock();
@@ -15,6 +19,17 @@ export function SoundSection({ theme }: { theme: Theme }) {
   const available = isMusicAvailable();
   const music = settings.music;
   const set = (patch: Partial<MusicSettings>) => update({ music: { ...music, ...patch } });
+  const trackChips = (slot: "first" | "second") =>
+    TRACKS.map((t) => (
+      <Chip
+        key={t.id}
+        label={t.title}
+        selected={music[slot] === t.id}
+        locked={!unlocked}
+        onPress={() => gate(false, () => set({ [slot]: t.id }))}
+        theme={theme}
+      />
+    ));
 
   return (
     <Category title="Sound" theme={theme}>
@@ -27,11 +42,40 @@ export function SoundSection({ theme }: { theme: Theme }) {
         />
         <Hint theme={theme}>
           {available
-            ? `${TRACKS.length} ambient pieces play in a shuffled rotation while Touchward is open, one fading into the next. Nothing plays once you leave the app.`
+            ? "Plays while Touchward is open and stops when you leave. The speaker at the top of the home screen turns it on and off too."
             : "Not available in this build. The development and store builds support it."}
         </Hint>
         {available && (
           <>
+            <SubLabel theme={theme}>What plays</SubLabel>
+            <Row>
+              {MUSIC_MIXES.map((m) => (
+                <Chip
+                  key={m.id}
+                  label={m.label}
+                  selected={music.mix === m.id}
+                  locked={!unlocked}
+                  onPress={() => gate(false, () => set({ mix: m.id }))}
+                  theme={theme}
+                />
+              ))}
+            </Row>
+            {music.mix === "pair" ? (
+              <>
+                <Hint theme={theme}>
+                  Two pieces take turns, one fading into the next. Pick the same piece twice for
+                  a single loop. Ten pieces make {TRACKS.length * TRACKS.length} combinations.
+                </Hint>
+                <SubLabel theme={theme}>First</SubLabel>
+                <Row>{trackChips("first")}</Row>
+                <SubLabel theme={theme}>Second</SubLabel>
+                <Row>{trackChips("second")}</Row>
+              </>
+            ) : (
+              <Hint theme={theme}>
+                All {TRACKS.length} pieces in a shuffled rotation, one fading into the next.
+              </Hint>
+            )}
             <SubLabel theme={theme}>Volume</SubLabel>
             <Row>
               {MUSIC_VOLUMES.map((v) => (
