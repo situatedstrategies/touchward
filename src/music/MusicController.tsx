@@ -29,8 +29,8 @@ export function MusicController() {
     if (!on) return;
     startMusic({ volume, playsInSilentMode }).catch(() => {});
     return () => stopMusic();
-    // Volume and silent mode have their own effects below; only on/off restarts.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // Only on and off restart playback; volume and silent mode have their own
+    // effects below and are read here just for the starting values.
   }, [on]);
 
   useEffect(() => {
