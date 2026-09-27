@@ -94,6 +94,14 @@ run the Touchward scheme). The installed app connects to Metro from
 Haptics need a real device. Simulators and the web build show the UI but do
 not vibrate.
 
+After a `pod install` that adds or relinks pods, clean before building
+(Product, hold Option, Clean Build Folder). Xcode's build products folder can
+keep a React framework from the earlier layout, and the linker finds it before
+the fresh one, which shows up as a wall of undefined `facebook::react` symbols
+referenced from pods such as RNSVG. Decline Xcode's "update to recommended
+settings" prompt: it turns on the debug dylib and raises the deployment
+target, and `expo prebuild` would undo both.
+
 Three features rely on native code, which is why a development build is
 required:
 
