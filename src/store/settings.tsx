@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import { AppState } from "react-native";
+import { configureAnalytics } from "../analytics/analytics";
 import { isHexColor } from "../design/palette";
 import { configureCrashReports } from "../support/crashReports";
 import {
@@ -166,6 +167,7 @@ export function sanitizeSettings(raw: unknown): Settings {
     volumeButtons: isBool(r.volumeButtons) ? r.volumeButtons : d.volumeButtons,
     pushEnabled: isBool(r.pushEnabled) ? r.pushEnabled : d.pushEnabled,
     crashReports: isBool(r.crashReports) ? r.crashReports : d.crashReports,
+    analytics: isBool(r.analytics) ? r.analytics : d.analytics,
   };
 }
 
@@ -286,6 +288,12 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     configureCrashReports(settings);
   }, [settings]);
+
+  // Analytics waits for the stored preference: defaults must not switch it on
+  // for someone who turned it off.
+  useEffect(() => {
+    if (loaded) configureAnalytics(settings);
+  }, [loaded, settings]);
 
   useEffect(() => {
     if (!hydrated.current) return;

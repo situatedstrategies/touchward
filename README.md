@@ -164,10 +164,8 @@ Reminders are local and need no server. Remote push is wired up too:
   Certificates, Identifiers & Profiles, Keys, create a key with "Apple Push
   Notifications service (APNs)" enabled. Its name is up to you; keep the Key
   ID, your Team ID (4964KRMB5H), and the downloaded `.p8`.
-- Android: push goes through Firebase Cloud Messaging. Create a Firebase
-  project, add an Android app with package `com.situatedstrategies.touchward`,
-  download `google-services.json` into the repo root (gitignored; picked up by
-  `app.config.js`), and rebuild.
+- Android: push goes through Firebase Cloud Messaging, which needs the
+  Firebase config file described under Firebase and analytics below.
 - Sending: the settings sheet has an "Allow push notifications" switch that
   registers the phone and shows two tokens. The Expo push token works with
   Expo's push service once the APNs key and FCM credentials are uploaded to the
@@ -220,6 +218,51 @@ no address is collected, replies are not possible from the app. The website
 shows the support address and its form has an optional email field for people
 who want a reply.
 
+## Firebase and analytics
+
+Firebase does two jobs: Cloud Messaging carries Android push, and Google
+Analytics for Firebase measures use on both platforms
+(`@react-native-firebase/app` and `@react-native-firebase/analytics`, wired up
+by their Expo config plugins in `app.json`). Both need the per platform config
+file from the Firebase console, and prebuild fails with a clear message until
+the files are in place:
+
+- iOS: Project settings, Your apps, add or pick the iOS app whose bundle ID is
+  `com.situatedstrategies.touchward`, download `GoogleService-Info.plist` into
+  the repo root. A plist registered under a different bundle ID still sends
+  events, but Firebase logs a bundle ID mismatch at every launch and the
+  console shows the wrong app, so register the real one.
+- Android: the Android app with package `com.situatedstrategies.touchward`,
+  download `google-services.json` into the repo root.
+
+Both files are gitignored (`app.json` points at them by name) and copied into
+the native projects by `npx expo prebuild`. EAS Build uses the committed native
+projects, so the files arrive there as EAS file secrets instead: create
+`GOOGLE_SERVICES_JSON` and `GOOGLE_SERVICE_INFO_PLIST` (type File) on the EAS
+project, and the `eas-build-pre-install` script in `package.json` copies them
+to the repo root and into `android/app/` and `ios/Touchward/`. Check that
+Google Analytics is enabled for the project (Project settings, Integrations);
+without it the events have nowhere to land.
+
+On iOS the Firebase SDK is installed through CocoaPods with static frameworks
+(`expo-build-properties` sets `ios.useFrameworks` to `static`, the
+`@react-native-firebase/app` plugin sets `disableSPM`) and Analytics is built
+without the advertising identifier (`withoutAdIdSupport`), so AdSupport is
+never linked and the app stays a non tracking app. After changing native
+dependencies run `npx pod-install` (or `npx expo run:ios`) to refresh
+`Podfile.lock`.
+
+What gets measured (`src/analytics/analytics.ts`): Firebase's automatic events
+(first open, sessions, app updates) plus two of the app's own: `reward` with a
+`source` of `tap`, `hold`, or `watch`, and `unlock` with a `source` of
+`paywall` or `restore`. Nothing that identifies the person is sent; the counter
+and every setting stay on the device. "Share usage analytics" in Customize,
+More, Support turns collection off, and turning it off also resets the app
+instance identifier. Events show up in the Firebase console under Analytics,
+Events (real time through DebugView when the build runs with
+`-FIRDebugEnabled` on iOS or `adb shell setprop debug.firebase.analytics.app
+com.situatedstrategies.touchward` on Android).
+
 ## Crash reports
 
 Unhandled JavaScript errors are reported to the support inbox through the
@@ -236,7 +279,13 @@ privacy policy describes it. App Store Connect's privacy questionnaire must
 say the same: Crash Data, collected, not linked to identity, app functionality.
 The unlock adds a second row: Purchase History, collected, not linked, not for
 tracking, app functionality, because RevenueCat receives the store receipt and
-a random app generated identifier. The manifest in `app.json` declares both.
+a random app generated identifier. Analytics adds Product Interaction and
+Other Usage Data, collected, not linked, not for tracking, analytics; Google's
+own list for the Analytics SDK is at
+firebase.google.com/docs/ios/app-store-data-collection, and Play's Data safety
+form needs the matching answers (App interactions, Device or other IDs). The
+manifest in `app.json` declares all four, and the site's privacy policy has to
+describe analytics as well.
 
 ## Pricing
 
@@ -297,7 +346,8 @@ The bundle identifier and Android package are both
   `src/store/looks.tsx` persists the library; `components/LookPreview.tsx`
   draws a still; `screens/SaveLookSheet.tsx` and `screens/LibraryScreen.tsx`
   are the two sheets.
-- `app.config.js`: adds `google-services.json` for Android push when present.
+- `src/analytics/analytics.ts`: Google Analytics for Firebase, lazily loaded,
+  with the opt out and the two app events.
 - `modules/watch-sync/`: local Expo module (Swift) that mirrors settings to
   the watch and reports its rewards.
 - `targets/watch/`: the SwiftUI watch app (entry, model, outlines, view).
@@ -344,12 +394,14 @@ ripples or the timer, then the surroundings.
 - Android: `npx eas-cli build --profile production --platform android` for an
   AAB, or `cd android && ./gradlew bundleRelease` with your upload keystore
   configured in `android/gradle.properties`. Play Console needs the same two
-  URLs. Push on Android additionally needs `google-services.json` (see Push
-  notifications).
+  URLs. Both platforms need their Firebase config file (see Firebase and
+  analytics).
 - Both: the `assets/` icons are final; unused Android permissions are blocked
   in `app.json`.
 - iOS privacy: `app.json` sets `ITSAppUsesNonExemptEncryption` to false, a
-  privacy manifest with no tracking and no collected data types, usage strings
+  privacy manifest with no tracking and four collected data types that are not
+  linked to identity (crash data, purchase history, product interaction, other
+  usage data), usage strings
   that say calendar and notification access is used only to provide the
   feature and that nothing read is stored or sent, and two plain language
   Info.plist notes (`TouchwardDataAccessNote`, `TouchwardEncryptionNote`) that

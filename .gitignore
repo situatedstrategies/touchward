@@ -38,7 +38,7 @@ yarn-error.*
 
 # native projects are committed; build output, Pods, and local files are ignored inside them
 
-# Firebase config for Android push (private, per project)
+# Firebase config files (push on Android, analytics on both; private, per project)
 google-services.json
 GoogleService-Info.plist
 

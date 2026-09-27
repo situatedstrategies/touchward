@@ -46,6 +46,22 @@ export function SupportSection({ theme }: { theme: Theme }) {
         </Hint>
       </Section>
 
+      <Section title="Usage analytics" theme={theme}>
+        <ToggleRow
+          label="Share usage analytics"
+          value={settings.analytics}
+          onChange={(v) => update({ analytics: v })}
+          theme={theme}
+        />
+        <Hint theme={theme}>
+          Helps us see which features get used: taps and holds, unlocks, how often the app
+          opens, plus the app version, your phone model, OS version, language, and country, tied
+          to a random identifier for this install. Handled by Google Analytics for Firebase.
+          Never your name, contacts, calendar contents, or anything you typed. Turning this off
+          also resets that identifier.
+        </Hint>
+      </Section>
+
       <Section title="About" theme={theme}>
         <Text style={[styles.plain, { color: theme.text }]}>
           Touchward {version}

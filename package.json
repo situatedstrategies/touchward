@@ -7,6 +7,8 @@
     "@expo-google-fonts/josefin-sans": "^0.4.2",
     "@expo-google-fonts/nunito-sans": "^0.4.2",
     "@react-native-async-storage/async-storage": "^2.2.0",
+    "@react-native-firebase/analytics": "^26.4.0",
+    "@react-native-firebase/app": "^26.4.0",
     "expo": "~57.0.22",
     "expo-background-task": "~57.0.17",
     "expo-build-properties": "~57.0.20",
@@ -46,7 +48,7 @@
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "eas-build-pre-install": "if [ -n \"$GOOGLE_SERVICES_JSON\" ]; then cp \"$GOOGLE_SERVICES_JSON\" google-services.json && cp \"$GOOGLE_SERVICES_JSON\" android/app/google-services.json; fi"
+    "eas-build-pre-install": "if [ -n \"$GOOGLE_SERVICES_JSON\" ]; then cp \"$GOOGLE_SERVICES_JSON\" google-services.json && cp \"$GOOGLE_SERVICES_JSON\" android/app/google-services.json; fi; if [ -n \"$GOOGLE_SERVICE_INFO_PLIST\" ]; then cp \"$GOOGLE_SERVICE_INFO_PLIST\" GoogleService-Info.plist && cp \"$GOOGLE_SERVICE_INFO_PLIST\" ios/Touchward/GoogleService-Info.plist; fi"
   },
   "private": true,
   "expo": {

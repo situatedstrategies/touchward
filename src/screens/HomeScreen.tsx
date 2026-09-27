@@ -15,6 +15,7 @@ import { configureNotifications, syncReminders } from "../notifications/reminder
 import { pickLook, randomLook, suggestName, type LookSettings } from "../looks/looks";
 import { useLooks } from "../store/looks";
 import { lockedToFree, lookToFree, FREE_SAVED_LOOKS } from "../purchases/gates";
+import { logReward } from "../analytics/analytics";
 import { useSettings } from "../store/settings";
 import { useUnlock } from "../store/unlock";
 import { onWatchReward, sendSettingsToWatch } from "../../modules/watch-sync";
@@ -108,7 +109,13 @@ export function HomeScreen() {
     if (Object.keys(patch).length > 0) update(patch);
   }, [loaded, known, unlocked, settings, update]);
 
-  const onReward = useCallback(() => recordReward(), [recordReward]);
+  const onReward = useCallback(
+    (kind: "tap" | "hold") => {
+      recordReward();
+      logReward(kind);
+    },
+    [recordReward],
+  );
 
   // External triggers all land here so they behave exactly like a finger tap.
   const triggerTap = useCallback(() => button.current?.reward("tap"), []);
@@ -162,7 +169,14 @@ export function HomeScreen() {
     }, WATCH_SYNC_DELAY_MS);
     return () => clearTimeout(timer);
   }, [loaded, settings]);
-  useEffect(() => onWatchReward(() => recordReward()), [recordReward]);
+  useEffect(
+    () =>
+      onWatchReward(() => {
+        recordReward();
+        logReward("watch");
+      }),
+    [recordReward],
+  );
   // Push tokens can rotate, so re-register on every launch while push is on.
   useEffect(() => {
     if (!loaded || !settings.pushEnabled) return;

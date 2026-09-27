@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		77C905FFF55E4736AE38DA9C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 53468EC0C7084D5790CC6AB9 /* GoogleService-Info.plist */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
 		7665C9E4C97B4982ADC1E289 /* libPods-Touchward.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EE40EED45B00DEF4065F08A9 /* libPods-Touchward.a */; };
@@ -47,6 +48,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		53468EC0C7084D5790CC6AB9 /* GoogleService-Info.plist */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "Touchward/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		0F35D40ED49D4DEF9EF3CDF6 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = PrivacyInfo.xcprivacy; path = Touchward/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* Touchward.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; fileEncoding = 4; includeInIndex = 0; path = Touchward.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Touchward/Images.xcassets; sourceTree = "<group>"; };
@@ -126,6 +128,7 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
 				0F35D40ED49D4DEF9EF3CDF6 /* PrivacyInfo.xcprivacy */,
+				53468EC0C7084D5790CC6AB9 /* GoogleService-Info.plist */,
 			);
 			name = Touchward;
 			sourceTree = "<group>";
@@ -313,6 +316,7 @@
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
 				B6A130F494C64C67BD9F926D /* PrivacyInfo.xcprivacy in Resources */,
+				77C905FFF55E4736AE38DA9C /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

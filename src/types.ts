@@ -61,6 +61,8 @@ export interface Settings {
   pushEnabled: boolean;
   /** Send crash reports (error, app version, device model, OS version, settings) to support. */
   crashReports: boolean;
+  /** Share usage analytics (feature use, sessions, app version, device model, OS) with Google Analytics for Firebase. */
+  analytics: boolean;
 }
 
 export interface ReminderSettings {
@@ -244,4 +246,5 @@ export const DEFAULT_SETTINGS: Settings = {
   volumeButtons: false,
   pushEnabled: false,
   crashReports: true,
+  analytics: true,
 };
