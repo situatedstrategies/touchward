@@ -41,11 +41,11 @@ by the account holder in September 2026:
 > to the extent it obtains any such rights by operation of law or otherwise,
 > hereby assigns such rights to Customer.
 
-The account was Personal Pro when the tracks were first generated (September
-2026) and was upgraded to Enterprise Pro the same month. To keep the record
-unambiguous, regenerate or re-export the set from the Enterprise account, or
-keep the generation thread and the upgrade date together with the LLC's
-records so the two plans' terms can both be shown.
+The account was Personal Pro when the tracks were generated (September 2026)
+and was upgraded to Enterprise Pro the same month; the files are the same ones
+made under the earlier plan. The account holder's position is that the
+Enterprise terms govern the account's output. Keep the generation thread and
+the upgrade date with the LLC's records.
 
 The prompt described a style; no artist's name appears in the app, the store
 listing, or the track titles, and none of the audio is a recording or a
