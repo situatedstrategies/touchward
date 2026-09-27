@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import { Alert } from "react-native";
+import { logUnlock } from "../analytics/analytics";
 import {
   fetchUnlocked,
   isPurchasingAvailable,
@@ -85,6 +86,7 @@ export function UnlockProvider({ children }: { children: ReactNode }) {
     const outcome: PaywallOutcome = await presentUnlockPaywall();
     if (outcome === "unlocked") {
       apply(true);
+      logUnlock("paywall");
       return true;
     }
     if (outcome === "unavailable") {
@@ -112,6 +114,7 @@ export function UnlockProvider({ children }: { children: ReactNode }) {
       return;
     }
     apply(value);
+    if (value) logUnlock("restore");
     Alert.alert(
       value ? "Restored" : "Nothing to restore",
       value

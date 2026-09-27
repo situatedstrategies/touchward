@@ -9,6 +9,7 @@ import { CounterSection } from "./CounterSection";
 import { FeelSection } from "./FeelSection";
 import { NotificationSection } from "./NotificationSection";
 import { ShapeSection } from "./ShapeSection";
+import { SoundSection } from "./SoundSection";
 import { SupportSection } from "./SupportSection";
 import { TriggerSection } from "./TriggerSection";
 import { UnlockSection } from "./UnlockSection";
@@ -78,6 +79,7 @@ export function SettingsScreen({ visible, onClose, theme }: Props) {
               <ButtonSection theme={theme} />
               <ShapeSection theme={theme} />
               <FeelSection theme={theme} />
+              <SoundSection theme={theme} />
             </>
           )}
           {tab === "colors" && <ColorSection theme={theme} />}

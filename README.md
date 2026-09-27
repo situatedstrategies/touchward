@@ -52,6 +52,9 @@ hold it down, watch the ring close, and get a bigger buzz when the timer is up.
   `touchward://reward` fires a tap when it opens the app, so it can be wired to
   the iPhone Action Button or Back Tap through Shortcuts, or to Quick Tap or a
   button remapper on Android.
+- Music (unlock): ten short ambient pieces play in a shuffled rotation while
+  the app is open, one crossfading into the next, at a volume you pick, with a
+  choice to play or stop when the ringer is silent. Nothing plays once you leave.
 - A small counter of rewards today and all time. Everything is stored on the
   device. No account, no server, and the reminders are scheduled locally, so
   there is no push backend to run.
@@ -68,6 +71,7 @@ hold it down, watch the ring close, and get a bigger buzz when the timer is up.
   `@expo-google-fonts/josefin-sans`, loaded with `expo-font`) with moderate
   tracking, and Avenir Next for body text. Avenir Next is an iOS system font;
   Android falls back to bundled Nunito Sans. See `src/typography.ts`.
+- `expo-audio` for the background music (bundled AAC files in `assets/music/`).
 - `@react-native-async-storage/async-storage` for settings and the counter.
 - `expo-notifications` for scheduled reminders, `expo-linking` for the deep
   link, `react-native-volume-manager` for the volume buttons.
@@ -164,10 +168,8 @@ Reminders are local and need no server. Remote push is wired up too:
   Certificates, Identifiers & Profiles, Keys, create a key with "Apple Push
   Notifications service (APNs)" enabled. Its name is up to you; keep the Key
   ID, your Team ID (4964KRMB5H), and the downloaded `.p8`.
-- Android: push goes through Firebase Cloud Messaging. Create a Firebase
-  project, add an Android app with package `com.situatedstrategies.touchward`,
-  download `google-services.json` into the repo root (gitignored; picked up by
-  `app.config.js`), and rebuild.
+- Android: push goes through Firebase Cloud Messaging, which needs the
+  Firebase config file described under Firebase and analytics below.
 - Sending: the settings sheet has an "Allow push notifications" switch that
   registers the phone and shows two tokens. The Expo push token works with
   Expo's push service once the APNs key and FCM credentials are uploaded to the
@@ -220,6 +222,84 @@ no address is collected, replies are not possible from the app. The website
 shows the support address and its form has an optional email field for people
 who want a reply.
 
+## Firebase and analytics
+
+Firebase does two jobs: Cloud Messaging carries Android push, and Google
+Analytics for Firebase measures use on both platforms
+(`@react-native-firebase/app` and `@react-native-firebase/analytics`, wired up
+by their Expo config plugins in `app.json`). Both need the per platform config
+file from the Firebase console, and prebuild fails with a clear message until
+the files are in place:
+
+- iOS: Project settings, Your apps, add or pick the iOS app whose bundle ID is
+  `com.situatedstrategies.touchward`, download `GoogleService-Info.plist` into
+  the repo root. A plist registered under a different bundle ID still sends
+  events, but Firebase logs a bundle ID mismatch at every launch and the
+  console shows the wrong app, so register the real one.
+- Android: the Android app with package `com.situatedstrategies.touchward`,
+  download `google-services.json` into the repo root.
+
+Both files are gitignored (`app.json` points at them by name) and copied into
+the native projects by `npx expo prebuild`. EAS Build uses the committed native
+projects, so the files arrive there as EAS file secrets instead: create
+`GOOGLE_SERVICES_JSON` and `GOOGLE_SERVICE_INFO_PLIST` (type File) on the EAS
+project, and the `eas-build-pre-install` script in `package.json` copies them
+to the repo root and into `android/app/` and `ios/Touchward/`. Check that
+Google Analytics is enabled for the project (Project settings, Integrations);
+without it the events have nowhere to land.
+
+On iOS the Firebase SDK is installed through CocoaPods with static frameworks
+(`expo-build-properties` sets `ios.useFrameworks` to `static`, the
+`@react-native-firebase/app` plugin sets `disableSPM`) and Analytics is built
+without the advertising identifier (`withoutAdIdSupport`), so AdSupport is
+never linked and the app stays a non tracking app. After changing native
+dependencies run `npx pod-install` (or `npx expo run:ios`) to refresh
+`Podfile.lock`.
+
+What gets measured (`src/analytics/analytics.ts`): Firebase's automatic events
+(first open, sessions, app updates) plus two of the app's own: `reward` with a
+`source` of `tap`, `hold`, or `watch`, and `unlock` with a `source` of
+`paywall` or `restore`. Nothing that identifies the person is sent; the counter
+and every setting stay on the device. "Share usage analytics" in Customize,
+More, Support turns collection off, and turning it off also resets the app
+instance identifier. Events show up in the Firebase console under Analytics,
+Events, and in real time in DebugView: the shared Xcode scheme passes
+`-FIRDebugEnabled` to Debug runs (Product, Run), so a debug build on a phone
+reports live; a clean `npx expo prebuild` regenerates the scheme, so re-add
+the argument under Edit Scheme, Run, Arguments if it goes missing. On Android
+run `adb shell setprop debug.firebase.analytics.app
+com.situatedstrategies.touchward`.
+
+## Music
+
+Customize, Reward, Sound has a music switch (part of the unlock). While it is on
+and the app is in the foreground, `src/music/player.ts` plays the ten pieces in
+`assets/music/` in a shuffled order through `expo-audio`, keeping two players
+alive only during the two second crossfade between pieces. The pieces fade in
+from and out to silence on their own, so the rotation, not a loop, is what
+makes them continuous. `MusicController` (mounted in `App.tsx`) starts and stops
+playback from settings, pauses it when the app goes to the background, and
+applies volume (Quiet, Medium, Loud) and the silent switch choice live. Music
+never plays before stored settings are loaded or before the unlock is known, so
+a refunded purchase goes quiet by itself (`lockedToFree` also turns it off).
+
+The `expo-audio` config plugin is set to add nothing: no microphone usage
+string, no Android record permission, and no background audio mode, so the
+privacy manifest and the App Store questionnaire are unchanged (the music is
+local and sends nothing). Its one native addition is Android's
+`MODIFY_AUDIO_SETTINGS`, which the module's own manifest declares anyway.
+
+Volume buttons as a tap trigger park the media volume at half and switch the
+iOS audio session to ambient, so with both on the music sits at half system
+volume and follows the ringer switch regardless of the setting; the Sound
+section says so and points at the in-app volume chips.
+
+Every track's origin and terms live in `assets/music/LICENSES.md`, and the
+credit line the app shows (`MUSIC_CREDIT` in `src/music/tracks.ts`) comes from
+there. Processing was ffmpeg: level matched to -16 LUFS and re-encoded to AAC
+128 kbps, 7.7 MB for the set. To add a piece, drop the `.m4a` in
+`assets/music/`, add its row to the license file, and add it to `TRACKS`.
+
 ## Crash reports
 
 Unhandled JavaScript errors are reported to the support inbox through the
@@ -236,7 +316,13 @@ privacy policy describes it. App Store Connect's privacy questionnaire must
 say the same: Crash Data, collected, not linked to identity, app functionality.
 The unlock adds a second row: Purchase History, collected, not linked, not for
 tracking, app functionality, because RevenueCat receives the store receipt and
-a random app generated identifier. The manifest in `app.json` declares both.
+a random app generated identifier. Analytics adds Product Interaction and
+Other Usage Data, collected, not linked, not for tracking, analytics; Google's
+own list for the Analytics SDK is at
+firebase.google.com/docs/ios/app-store-data-collection, and Play's Data safety
+form needs the matching answers (App interactions, Device or other IDs). The
+manifest in `app.json` declares all four, and the site's privacy policy has to
+describe analytics as well.
 
 ## Pricing
 
@@ -244,7 +330,7 @@ Touchward is free to download with one non consumable in-app purchase, the
 unlock (1.99 US), through RevenueCat (`src/purchases/`). The free app has the
 first three of every option, all colors, reminders, and the Shortcut link;
 everything else, plus custom backdrops, calendar nudges, volume button taps,
-and an unlimited library, needs the unlock (`gates.ts`). No subscriptions or
+music, and an unlimited library, needs the unlock (`gates.ts`). No subscriptions or
 accounts. Restore purchases is in Customize, More, and the unlock follows the
 store account.
 
@@ -297,7 +383,11 @@ The bundle identifier and Android package are both
   `src/store/looks.tsx` persists the library; `components/LookPreview.tsx`
   draws a still; `screens/SaveLookSheet.tsx` and `screens/LibraryScreen.tsx`
   are the two sheets.
-- `app.config.js`: adds `google-services.json` for Android push when present.
+- `src/analytics/analytics.ts`: Google Analytics for Firebase, lazily loaded,
+  with the opt out and the two app events.
+- `src/music/`: the track list (`tracks.ts`), the shuffled crossfading player
+  (`player.ts`), and `MusicController.tsx`, which ties it to settings.
+  `assets/music/` holds the audio and `LICENSES.md`.
 - `modules/watch-sync/`: local Expo module (Swift) that mirrors settings to
   the watch and reports its rewards.
 - `targets/watch/`: the SwiftUI watch app (entry, model, outlines, view).
@@ -323,7 +413,8 @@ Four tabs. Inside each, categories keep one order: the button first, then the
 ripples or the timer, then the surroundings.
 
 - Reward: Button (press style, hold timer), Shape (button, ripples), Feel (tap
-  mode, strength and Pulsar preset; timer done pattern and preset).
+  mode, strength and Pulsar preset; timer done pattern and preset), Sound
+  (music on or off, volume, silent switch).
 - Colors: Button (resting, reward colors), Ripples (Color 1, 2, 3 or follow the
   button), Background (navy glow, match phone, or any color). Every color has a
   picker with a hue wheel, brightness slider, quick swatches, and a hex field,
@@ -344,12 +435,15 @@ ripples or the timer, then the surroundings.
 - Android: `npx eas-cli build --profile production --platform android` for an
   AAB, or `cd android && ./gradlew bundleRelease` with your upload keystore
   configured in `android/gradle.properties`. Play Console needs the same two
-  URLs. Push on Android additionally needs `google-services.json` (see Push
-  notifications).
+  URLs. Both platforms need their Firebase config file (see Firebase and
+  analytics).
 - Both: the `assets/` icons are final; unused Android permissions are blocked
-  in `app.json`.
+  in `app.json`. Every track in `assets/music/` has its row in
+  `assets/music/LICENSES.md` and the credit line in the app matches it.
 - iOS privacy: `app.json` sets `ITSAppUsesNonExemptEncryption` to false, a
-  privacy manifest with no tracking and no collected data types, usage strings
+  privacy manifest with no tracking and four collected data types that are not
+  linked to identity (crash data, purchase history, product interaction, other
+  usage data), usage strings
   that say calendar and notification access is used only to provide the
   feature and that nothing read is stored or sent, and two plain language
   Info.plist notes (`TouchwardDataAccessNote`, `TouchwardEncryptionNote`) that
@@ -385,7 +479,6 @@ or commit messages. Use periods, hyphens, and colons.
 ## Ideas for later
 
 - Custom patterns: let the user tap out a rhythm and save it.
-- Sound as an optional second channel.
 - Home screen widget or lock screen control so the tap is one gesture away.
 - Notification-only rewards: play the haptic from the "I did it" button
   without opening the app (needs a notification service extension on iOS).

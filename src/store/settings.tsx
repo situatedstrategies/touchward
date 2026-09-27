@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import { AppState } from "react-native";
+import { configureAnalytics } from "../analytics/analytics";
 import { isHexColor } from "../design/palette";
 import { configureCrashReports } from "../support/crashReports";
 import {
@@ -25,8 +26,10 @@ import {
   RIPPLE_WIDTHS,
   SHAPES,
   COLOR_LIBRARY_LIMIT,
+  MUSIC_VOLUMES,
   type CalendarNudgeSettings,
   type ColorLibraryKey,
+  type MusicSettings,
   type ReminderSettings,
   type Settings,
 } from "../types";
@@ -115,6 +118,16 @@ function sanitizeNudges(raw: unknown): CalendarNudgeSettings {
   };
 }
 
+function sanitizeMusic(raw: unknown): MusicSettings {
+  const d = DEFAULT_SETTINGS.music;
+  const r = (raw ?? {}) as Raw;
+  return {
+    enabled: isBool(r.enabled) ? r.enabled : d.enabled,
+    volume: MUSIC_VOLUMES.some((v) => v.value === r.volume) ? (r.volume as number) : d.volume,
+    playsInSilentMode: isBool(r.playsInSilentMode) ? r.playsInSilentMode : d.playsInSilentMode,
+  };
+}
+
 /**
  * Turn whatever is in storage into a valid Settings object. Unknown keys are
  * dropped, missing keys take defaults, and out of range values are corrected,
@@ -166,6 +179,8 @@ export function sanitizeSettings(raw: unknown): Settings {
     volumeButtons: isBool(r.volumeButtons) ? r.volumeButtons : d.volumeButtons,
     pushEnabled: isBool(r.pushEnabled) ? r.pushEnabled : d.pushEnabled,
     crashReports: isBool(r.crashReports) ? r.crashReports : d.crashReports,
+    analytics: isBool(r.analytics) ? r.analytics : d.analytics,
+    music: sanitizeMusic(r.music),
   };
 }
 
@@ -286,6 +301,12 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     configureCrashReports(settings);
   }, [settings]);
+
+  // Analytics waits for the stored preference: defaults must not switch it on
+  // for someone who turned it off.
+  useEffect(() => {
+    if (loaded) configureAnalytics(settings);
+  }, [loaded, settings]);
 
   useEffect(() => {
     if (!hydrated.current) return;
