@@ -10,6 +10,7 @@
     "@react-native-firebase/analytics": "^26.4.0",
     "@react-native-firebase/app": "^26.4.0",
     "expo": "~57.0.22",
+    "expo-audio": "~57.0.5",
     "expo-background-task": "~57.0.17",
     "expo-build-properties": "~57.0.20",
     "expo-calendar": "~57.0.3",

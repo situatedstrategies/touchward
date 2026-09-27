@@ -13,7 +13,7 @@ export function UnlockSection({ theme }: { theme: Theme }) {
         <Hint theme={theme}>
           {unlocked
             ? "Every shape, feel, preset, backdrop color, calendar nudge, and volume button tap is yours. Thank you."
-            : `The free app includes the first ${FREE_COUNT} of every choice, all button and ripple colors, the navy and phone backdrops, reminders, and ${FREE_SAVED_LOOKS} saved looks. One purchase unlocks the rest: every shape, feel, and haptic preset, any backdrop color, calendar nudges, volume button taps, and an unlimited library. No subscription, no account.`}
+            : `The free app includes the first ${FREE_COUNT} of every choice, all button and ripple colors, the navy and phone backdrops, reminders, and ${FREE_SAVED_LOOKS} saved looks. One purchase unlocks the rest: every shape, feel, and haptic preset, any backdrop color, calendar nudges, volume button taps, background music, and an unlimited library. No subscription, no account.`}
         </Hint>
         <Actions>
           {!unlocked && (

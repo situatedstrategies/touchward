@@ -67,6 +67,15 @@
           }
         }
       ],
+      [
+        "expo-audio",
+        {
+          "microphonePermission": false,
+          "recordAudioAndroid": false,
+          "enableBackgroundPlayback": false,
+          "enableBackgroundRecording": false
+        }
+      ],
       "./plugins/withQuietPods.js",
       "./plugins/withoutDeprecatedSystemBarColors.js",
       "./plugins/withAndroidSigning.js",
@@ -126,7 +135,11 @@
     "android": {
       "package": "com.situatedstrategies.touchward",
       "googleServicesFile": "./google-services.json",
-      "permissions": ["android.permission.VIBRATE", "android.permission.POST_NOTIFICATIONS"],
+      "permissions": [
+        "android.permission.VIBRATE",
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
+      ],
       "adaptiveIcon": {
         "backgroundColor": "#051C55",
         "foregroundImage": "./assets/android-icon-foreground.png",
