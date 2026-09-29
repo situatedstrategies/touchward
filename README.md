@@ -56,8 +56,8 @@ hold it down, watch the ring close, and get a bigger buzz when the timer is up.
   following the ringer switch.
 - Apple Music and Spotify (unlock): the note at the top of the home screen
   opens either one (or its store page when it is not installed), and their
-  music keeps playing under the touch sounds. In the free app Touchward's audio
-  does not mix, so other music stops while it is open (iOS; see
+  music keeps playing under the touch sounds. In the free app a tap switches
+  Touchward's audio to not mix, which stops other music (iOS; see
   `src/listening/audioSession.ts`).
 - A small counter of rewards today and all time. Everything is stored on the
   device. No account, no server, and the reminders are scheduled locally, so
