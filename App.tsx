@@ -59,7 +59,7 @@ export default function App() {
         <SettingsProvider>
           <LooksProvider>
             <HomeScreen />
-            <StatusBar style="auto" />
+            <StatusBar style="auto" hidden />
           </LooksProvider>
         </SettingsProvider>
       </UnlockProvider>
