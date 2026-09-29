@@ -76,6 +76,18 @@ feature, once, forever. No subscription, no ads.
 
 reward,dopamine,haptic,habit,motivation,button,tap,ADHD,focus,ritual,vibrate,celebrate
 
+## Release notes: 1.1.0 (iOS build 6)
+
+### App Store "What's New" (4000)
+
+Touchward 1.1.0
+
+- Touch sounds: every tap and hold now plays a soft tone that matches its haptic. It follows your ringer switch.
+- Your music, your way: with the unlock, a music note at the top of the home screen opens Apple Music or Spotify, and your music keeps playing under the button.
+- A cleaner screen: the status bar is hidden and the app stays upright in portrait.
+
+Questions or ideas: Customize, More, Contact support, or touchward-dopamine.com/support.
+
 ## Release notes: 1.0.1 (build 2), first production release
 
 Google Play's release notes field allows 500 characters per language and shows
