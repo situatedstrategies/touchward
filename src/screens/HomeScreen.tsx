@@ -16,6 +16,11 @@ import { pickLook, randomLook, suggestName, type LookSettings } from "../looks/l
 import { useLooks } from "../store/looks";
 import { lockedToFree, lookToFree, FREE_SAVED_LOOKS } from "../purchases/gates";
 import { logReward } from "../analytics/analytics";
+import {
+  enableTouchSounds,
+  reassertAudioPolicy,
+  setOtherAudioAllowed,
+} from "../listening/audioSession";
 import { MusicAppsButton } from "../listening/MusicAppsButton";
 import { useSettings } from "../store/settings";
 import { useUnlock } from "../store/unlock";
@@ -114,9 +119,25 @@ export function HomeScreen() {
     (kind: "tap" | "hold") => {
       recordReward();
       logReward(kind);
+      // The tone that just played may have switched the session to mixing.
+      reassertAudioPolicy();
     },
     [recordReward],
   );
+
+  // Touch sounds for everyone; other apps' music only with the unlock. Until
+  // the store answers, music is left alone so an unlocked user never loses it.
+  useEffect(() => {
+    enableTouchSounds();
+  }, []);
+  const otherAudioAllowed = !known || unlocked;
+  useEffect(() => {
+    setOtherAudioAllowed(otherAudioAllowed);
+    const sub = AppState.addEventListener("change", (state) => {
+      if (state === "active") reassertAudioPolicy();
+    });
+    return () => sub.remove();
+  }, [otherAudioAllowed]);
 
   // External triggers all land here so they behave exactly like a finger tap.
   const triggerTap = useCallback(() => button.current?.reward("tap"), []);

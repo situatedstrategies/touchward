@@ -1,9 +1,9 @@
 import { Linking, Platform } from "react-native";
 
 /**
- * Hand-offs to the music apps people already use. Touchward plays no audio of
- * its own, so whatever Apple Music or Spotify is playing carries on in the
- * background while the button and its haptics run.
+ * Hand-offs to the music apps people already use. With the unlock, whatever
+ * Apple Music or Spotify is playing carries on under Touchward's touch sounds
+ * (see audioSession.ts).
  *
  * Each app opens through its own URL scheme. When the app is not installed
  * the open fails and the store page opens instead. openURL is used directly

@@ -28,8 +28,8 @@ function chooseMusicApp(): void {
 }
 
 /**
- * A note on the home screen that opens Apple Music or Spotify, so music from
- * either keeps playing under the button. Part of the unlock: in the free app
+ * A note on the home screen that opens Apple Music or Spotify. Part of the
+ * unlock, like playing other music alongside Touchward at all: in the free app
  * the note is dimmed and a tap shows the paywall first, then the choice.
  */
 export function MusicAppsButton({ scale, color }: { scale: number; color: string }) {

@@ -24,6 +24,7 @@ export interface PulsarPattern {
 /** The slice of Pulsar's native spec this app calls directly (see NativeRNPulsar.ts in the package). */
 interface NativePulsar {
   Pulsar_play(name: string): void;
+  Pulsar_enableSound(state: boolean): void;
   Pulsar_stopHaptics(): void;
   Pulsar_hapticSupport(): number;
   PatternComposer_parsePattern(data: PulsarPattern): number;
@@ -80,6 +81,18 @@ export function pulsarSupportLevel(): number {
     return native()?.Pulsar_hapticSupport() ?? 0;
   } catch {
     return 0;
+  }
+}
+
+/**
+ * Turn on Pulsar's sound: a synthesized tone matching each haptic, played
+ * alongside it. Debug builds have it on already; release builds start silent.
+ */
+export function enablePulsarSound(): void {
+  try {
+    native()?.Pulsar_enableSound(true);
+  } catch {
+    // Haptics still play without the tone.
   }
 }
 

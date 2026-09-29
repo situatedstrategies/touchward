@@ -42,6 +42,12 @@ PERMISSIONS AND ENTITLEMENTS, ALL OPTIONAL AND USER INITIATED
   is sent by us in this version and no token leaves the device unless the user
   sets that up. Reminders do not depend on push.
 - Haptics: Core Haptics through the Pulsar library. No permission.
+- Sound: each haptic plays a short tone (follows the ringer switch). Free,
+  the session is Solo Ambient, so other audio pauses while Touchward is in
+  front, as in most games. The unlock makes it Ambient, so the user's music
+  keeps playing, and enables the home screen music note, which opens Apple
+  Music or Spotify by URL. No background audio; other apps are unaffected
+  once Touchward leaves the foreground.
 - Volume buttons (More tab, off by default): while the app is in the
   foreground, a volume button press counts as a tap. The app parks the media
   volume at 50% while active and restores it when the app leaves the
@@ -82,7 +88,8 @@ option, all colors, reminders, and the Shortcut link; locked options show a
 padlock and open the purchase screen. Restore purchases is in Customize,
 More. To test: tap any padlocked option in Customize (for example the fourth
 shape, Square) to reach the paywall; use a sandbox tester account to buy,
-then Restore purchases to confirm it returns.
+then Restore purchases to confirm it returns. Audio: play music, open
+Touchward, tap (free: it pauses; unlocked: it keeps playing).
 
 OPEN SOURCE
 The complete source is public at github.com/situatedstrategies/touchward, so
