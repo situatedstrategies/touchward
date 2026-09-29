@@ -129,8 +129,8 @@ export function HomeScreen() {
   // Touch sounds for everyone; other apps' music only with the unlock. Until
   // the store answers, music is left alone so an unlocked user never loses it.
   useEffect(() => {
-    enableTouchSounds();
-  }, []);
+    if (loaded) enableTouchSounds(settings.touchSounds);
+  }, [loaded, settings.touchSounds]);
   const otherAudioAllowed = !known || unlocked;
   useEffect(() => {
     setOtherAudioAllowed(otherAudioAllowed);

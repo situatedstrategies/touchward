@@ -3,7 +3,8 @@ import { enablePulsarSound } from "../haptics/pulsar";
 import { loadVolumeManager } from "../hardware/volumeButtons";
 
 /**
- * Touchward's own sound is Pulsar's tone for each haptic, on for everyone.
+ * Touchward's own sound is Pulsar's tone for each haptic, on for everyone
+ * unless switched off in Customize.
  * What the unlock changes is other apps' music. Unlocked, the session is
  * ambient, which mixes: Apple Music or Spotify keeps playing under the tones.
  * In the free app a tap switches it to solo ambient and activates it, which
@@ -25,8 +26,8 @@ import { loadVolumeManager } from "../hardware/volumeButtons";
 
 let othersAllowed = true;
 
-export function enableTouchSounds(): void {
-  if (Platform.OS === "ios") enablePulsarSound();
+export function enableTouchSounds(on: boolean): void {
+  if (Platform.OS === "ios") enablePulsarSound(on);
 }
 
 function allowMixing(): void {

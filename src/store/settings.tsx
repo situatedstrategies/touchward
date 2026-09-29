@@ -165,6 +165,7 @@ export function sanitizeSettings(raw: unknown): Settings {
     reminders: sanitizeReminders(r.reminders),
     calendarNudges: sanitizeNudges(r.calendarNudges),
     volumeButtons: isBool(r.volumeButtons) ? r.volumeButtons : d.volumeButtons,
+    touchSounds: isBool(r.touchSounds) ? r.touchSounds : d.touchSounds,
     pushEnabled: isBool(r.pushEnabled) ? r.pushEnabled : d.pushEnabled,
     crashReports: isBool(r.crashReports) ? r.crashReports : d.crashReports,
     analytics: isBool(r.analytics) ? r.analytics : d.analytics,
