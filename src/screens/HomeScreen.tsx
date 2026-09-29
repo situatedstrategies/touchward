@@ -16,8 +16,7 @@ import { pickLook, randomLook, suggestName, type LookSettings } from "../looks/l
 import { useLooks } from "../store/looks";
 import { lockedToFree, lookToFree, FREE_SAVED_LOOKS } from "../purchases/gates";
 import { logReward } from "../analytics/analytics";
-import { MusicToggle } from "../music/MusicToggle";
-import { nudgeMusic } from "../music/player";
+import { MusicAppsButton } from "../listening/MusicAppsButton";
 import { useSettings } from "../store/settings";
 import { useUnlock } from "../store/unlock";
 import { onWatchReward, sendSettingsToWatch } from "../../modules/watch-sync";
@@ -115,8 +114,6 @@ export function HomeScreen() {
     (kind: "tap" | "hold") => {
       recordReward();
       logReward(kind);
-      // The haptic that just played can interrupt the audio session.
-      nudgeMusic();
     },
     [recordReward],
   );
@@ -262,7 +259,7 @@ export function HomeScreen() {
           <Text style={[styles.count, { color: theme.muted, fontSize: 15 * scale }]}>
             {stats.rewardsToday} today
           </Text>
-          <MusicToggle scale={scale} color={theme.muted} />
+          <MusicAppsButton scale={scale} color={theme.muted} />
         </Hidden>
       </View>
 

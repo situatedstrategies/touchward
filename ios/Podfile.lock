@@ -183,8 +183,6 @@ PODS:
     - Yoga
   - ExpoAsset (57.0.18):
     - ExpoModulesCore
-  - ExpoAudio (57.0.5):
-    - ExpoModulesCore
   - ExpoBackgroundTask (57.0.17):
     - ExpoModulesCore
     - ExpoTaskManager
@@ -2455,7 +2453,6 @@ DEPENDENCIES:
   - expo-dev-menu (from `../node_modules/expo-dev-menu`)
   - expo-dev-menu-interface (from `../node_modules/expo-dev-menu-interface/ios`)
   - ExpoAsset (from `../node_modules/expo-asset/ios`)
-  - ExpoAudio (from `../node_modules/expo-audio/ios`)
   - ExpoBackgroundTask (from `../node_modules/expo-background-task/ios`)
   - ExpoCalendar (from `../node_modules/expo-calendar/ios`)
   - ExpoClipboard (from `../node_modules/expo-clipboard/ios`)
@@ -2606,8 +2603,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-dev-menu-interface/ios"
   ExpoAsset:
     :path: "../node_modules/expo-asset/ios"
-  ExpoAudio:
-    :path: "../node_modules/expo-audio/ios"
   ExpoBackgroundTask:
     :path: "../node_modules/expo-background-task/ios"
   ExpoCalendar:
@@ -2839,7 +2834,6 @@ SPEC CHECKSUMS:
   expo-dev-menu: ae4a63a78e8205dd9f86ee25b14285e05bf3e1d0
   expo-dev-menu-interface: 7a59e803916fbfd1b96c75ff91ea8dddac7e722f
   ExpoAsset: a917b756b2e4fe12cef1ac3bca5fd849ddb2b919
-  ExpoAudio: edc9230b788be6f65238a53907d5c176b57a7ce0
   ExpoBackgroundTask: 7f529e66e42f892236d16511306e224abd9c0bc1
   ExpoCalendar: c1154af2fce6106addd0360455673ddcfe830b40
   ExpoClipboard: 15b8cc88075d7c50af165ed8fca0a76915903bba

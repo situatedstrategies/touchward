@@ -61,7 +61,6 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "XX0B6AB4D6975D3A519A5DXX"
             BuildableName = "TouchwardWatch.app"
-            BlueprintName = "TouchwardWatch"
             ReferencedContainer = "container:Touchward.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -78,7 +77,6 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "XX0B6AB4D6975D3A519A5DXX"
             BuildableName = "TouchwardWatch.app"
-            BlueprintName = "TouchwardWatch"
             ReferencedContainer = "container:Touchward.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

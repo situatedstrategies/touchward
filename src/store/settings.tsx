@@ -12,7 +12,6 @@ import {
 import { AppState } from "react-native";
 import { configureAnalytics } from "../analytics/analytics";
 import { isHexColor } from "../design/palette";
-import { TRACKS } from "../music/tracks";
 import { configureCrashReports } from "../support/crashReports";
 import {
   DEFAULT_SETTINGS,
@@ -27,11 +26,8 @@ import {
   RIPPLE_WIDTHS,
   SHAPES,
   COLOR_LIBRARY_LIMIT,
-  MUSIC_MIXES,
-  MUSIC_VOLUMES,
   type CalendarNudgeSettings,
   type ColorLibraryKey,
-  type MusicSettings,
   type ReminderSettings,
   type Settings,
 } from "../types";
@@ -120,26 +116,6 @@ function sanitizeNudges(raw: unknown): CalendarNudgeSettings {
   };
 }
 
-function sanitizeMusic(raw: unknown): MusicSettings {
-  const d = DEFAULT_SETTINGS.music;
-  const r = (raw ?? {}) as Raw;
-  return {
-    enabled: isBool(r.enabled) ? r.enabled : d.enabled,
-    volume: MUSIC_VOLUMES.some((v) => v.value === r.volume) ? (r.volume as number) : d.volume,
-    playsInSilentMode: isBool(r.playsInSilentMode) ? r.playsInSilentMode : d.playsInSilentMode,
-    mix: oneOf(
-      r.mix,
-      MUSIC_MIXES.map((m) => m.id),
-    )
-      ? r.mix
-      : d.mix,
-    first: oneOf(r.first, trackIds) ? r.first : d.first,
-    second: oneOf(r.second, trackIds) ? r.second : d.second,
-  };
-}
-
-const trackIds = TRACKS.map((t) => t.id);
-
 /**
  * Turn whatever is in storage into a valid Settings object. Unknown keys are
  * dropped, missing keys take defaults, and out of range values are corrected,
@@ -192,7 +168,6 @@ export function sanitizeSettings(raw: unknown): Settings {
     pushEnabled: isBool(r.pushEnabled) ? r.pushEnabled : d.pushEnabled,
     crashReports: isBool(r.crashReports) ? r.crashReports : d.crashReports,
     analytics: isBool(r.analytics) ? r.analytics : d.analytics,
-    music: sanitizeMusic(r.music),
   };
 }
 

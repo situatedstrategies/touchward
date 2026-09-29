@@ -63,37 +63,7 @@ export interface Settings {
   crashReports: boolean;
   /** Share usage analytics (feature use, sessions, app version, device model, OS) with Google Analytics for Firebase. */
   analytics: boolean;
-  /** Background music while the app is open. */
-  music: MusicSettings;
 }
-
-export interface MusicSettings {
-  /** Play music while the app is open. */
-  enabled: boolean;
-  /** 0 to 1, one of MUSIC_VOLUMES. */
-  volume: number;
-  /** Keep playing when the ringer switch is on silent. */
-  playsInSilentMode: boolean;
-  /** "pair": loop the first and second track in turn. "shuffle": all ten in a shuffled rotation. */
-  mix: MusicMix;
-  /** Track id for the first slot of the pair. */
-  first: string;
-  /** Track id for the second slot; the same as first makes a one track loop. */
-  second: string;
-}
-
-export type MusicMix = "pair" | "shuffle";
-
-export const MUSIC_MIXES: { id: MusicMix; label: string }[] = [
-  { id: "pair", label: "Two-track loop" },
-  { id: "shuffle", label: "Shuffle all" },
-];
-
-export const MUSIC_VOLUMES: { value: number; label: string }[] = [
-  { value: 0.3, label: "Quiet" },
-  { value: 0.6, label: "Medium" },
-  { value: 1, label: "Loud" },
-];
 
 export interface ReminderSettings {
   enabled: boolean;
@@ -277,12 +247,4 @@ export const DEFAULT_SETTINGS: Settings = {
   pushEnabled: false,
   crashReports: true,
   analytics: true,
-  music: {
-    enabled: false,
-    volume: 0.6,
-    playsInSilentMode: true,
-    mix: "pair",
-    first: "canopee_dusk",
-    second: "plage_violette",
-  },
 };
