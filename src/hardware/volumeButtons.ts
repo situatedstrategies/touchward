@@ -28,7 +28,8 @@ function nativeModulePresent(): boolean {
   }
 }
 
-function loadModule(): VolumeManagerModule | null {
+/** The package, or null in builds without the native module. Also used for the audio session. */
+export function loadVolumeManager(): VolumeManagerModule | null {
   if (cached !== undefined) return cached;
   if (Platform.OS === "web" || !nativeModulePresent()) {
     cached = null;
@@ -45,7 +46,7 @@ function loadModule(): VolumeManagerModule | null {
 }
 
 export function isVolumeButtonSupportAvailable(): boolean {
-  return loadModule() !== null;
+  return loadVolumeManager() !== null;
 }
 
 /** Presses closer together than this are treated as one (key repeat, double events). */
@@ -54,7 +55,7 @@ const DEBOUNCE_MS = 180;
 const WORKING_LEVEL = 0.5;
 
 export function startVolumeButtonListener(onPress: () => void): () => void {
-  const vm = loadModule();
+  const vm = loadVolumeManager();
   if (!vm) return () => {};
 
   let stopped = false;

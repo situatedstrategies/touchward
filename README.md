@@ -52,9 +52,13 @@ hold it down, watch the ring close, and get a bigger buzz when the timer is up.
   `touchward://reward` fires a tap when it opens the app, so it can be wired to
   the iPhone Action Button or Back Tap through Shortcuts, or to Quick Tap or a
   button remapper on Android.
+- Touch sounds: every tap and hold plays Pulsar's tone matching its haptic,
+  following the ringer switch.
 - Apple Music and Spotify (unlock): the note at the top of the home screen
-  opens either one (or its store page when it is not installed). Touchward plays no
-  audio of its own, so their music keeps going under the button and haptics.
+  opens either one (or its store page when it is not installed), and their
+  music keeps playing under the touch sounds. In the free app Touchward's audio
+  does not mix, so other music stops while it is open (iOS; see
+  `src/listening/audioSession.ts`).
 - A small counter of rewards today and all time. Everything is stored on the
   device. No account, no server, and the reminders are scheduled locally, so
   there is no push backend to run.
@@ -307,7 +311,7 @@ Touchward is free to download with one non consumable in-app purchase, the
 unlock (1.99 US), through RevenueCat (`src/purchases/`). The free app has the
 first three of every option, all colors, reminders, and the Shortcut link;
 everything else, plus custom backdrops, calendar nudges, volume button taps,
-the Apple Music and Spotify shortcut, and an unlimited library, needs the unlock (`gates.ts`). No subscriptions or
+playing Apple Music or Spotify alongside, and an unlimited library, needs the unlock (`gates.ts`). No subscriptions or
 accounts. Restore purchases is in Customize, More, and the unlock follows the
 store account.
 
@@ -362,8 +366,10 @@ The bundle identifier and Android package are both
   are the two sheets.
 - `src/analytics/analytics.ts`: Google Analytics for Firebase, lazily loaded,
   with the opt out and the two app events.
-- `src/listening/`: the Apple Music and Spotify hand-offs (`musicApps.ts`) and
-  the home screen note that offers them (`MusicAppsButton.tsx`).
+- `src/listening/`: the Apple Music and Spotify hand-offs (`musicApps.ts`),
+  the home screen note that offers them (`MusicAppsButton.tsx`), and the
+  audio session policy that turns on the touch sounds and mixes with other
+  music only when unlocked (`audioSession.ts`).
 - `modules/watch-sync/`: local Expo module (Swift) that mirrors settings to
   the watch and reports its rewards.
 - `targets/watch/`: the SwiftUI watch app (entry, model, outlines, view).
