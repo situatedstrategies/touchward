@@ -64,6 +64,18 @@ target 'Touchward' do
 
   post_install do |installer|
 
+    # touchward: Pulsar haptics only
+    pulsar_engine = File.join(installer.sandbox.root, 'PulsarHaptics/Sources/Pulsar/HapticEngineWrapper.swift')
+    if File.exist?(pulsar_engine)
+      source = File.read(pulsar_engine)
+      unless source.include?('playsHapticsOnly')
+        patched = source.sub("engine = try CHHapticEngine()\n", "engine = try CHHapticEngine()\n    engine?.playsHapticsOnly = true\n")
+        raise 'Pulsar haptics only: CHHapticEngine() not found' if patched == source
+        File.chmod(0644, pulsar_engine)
+        File.write(pulsar_engine, patched)
+      end
+    end
+
     # touchward: quiet third party warnings
     installer.pods_project.targets.each do |target|
       target.build_configurations.each do |bc|

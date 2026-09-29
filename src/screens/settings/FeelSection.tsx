@@ -1,3 +1,4 @@
+import { Platform } from "react-native";
 import { REWARD_MODE_SPECS } from "../../button/rewardModes";
 import { Chip } from "../../components/Chip";
 import type { Theme } from "../../design/theme";
@@ -15,7 +16,7 @@ import { isFreePattern, isFreeRewardMode, isFreeStrength } from "../../purchases
 import { useSettings } from "../../store/settings";
 import { useGate, useUnlock } from "../../store/unlock";
 import { REWARD_MODES, STRENGTHS, type PatternId, type RewardMode } from "../../types";
-import { Category, Hint, PresetPicker, Row, Section, SubLabel } from "./controls";
+import { Category, Hint, PresetPicker, Row, Section, SubLabel, ToggleRow } from "./controls";
 
 const ADVANCED_SUPPORT = 3;
 
@@ -141,6 +142,20 @@ export function FeelSection({ theme }: { theme: Theme }) {
               </Hint>
             </>
           )}
+        </Section>
+      )}
+
+      {pulsar && Platform.OS === "ios" && (
+        <Section title="Sound" theme={theme}>
+          <ToggleRow
+            label="Touch sounds"
+            value={settings.touchSounds}
+            onChange={(v) => update({ touchSounds: v })}
+            theme={theme}
+          />
+          <Hint theme={theme}>
+            A soft tone that matches each haptic. It follows the ringer switch.
+          </Hint>
         </Section>
       )}
 

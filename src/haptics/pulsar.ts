@@ -49,6 +49,10 @@ function native(): NativePulsar | null {
   } catch {
     nativeCached = null;
   }
+  // Pulsar renders a pattern's tone when the pattern is parsed, and only if
+  // sound is on at that moment, so sound goes on before anything is parsed.
+  // Muting later (enablePulsarSound(false)) only skips playback.
+  if (nativeCached && Platform.OS === "ios") enablePulsarSound(true);
   return nativeCached;
 }
 
@@ -85,12 +89,12 @@ export function pulsarSupportLevel(): number {
 }
 
 /**
- * Turn on Pulsar's sound: a synthesized tone matching each haptic, played
- * alongside it. Debug builds have it on already; release builds start silent.
+ * Turn Pulsar's sound on or off: a synthesized tone matching each haptic,
+ * played alongside it. Debug builds start with it on, release builds off.
  */
-export function enablePulsarSound(): void {
+export function enablePulsarSound(on: boolean): void {
   try {
-    native()?.Pulsar_enableSound(true);
+    (nativeCached ?? native())?.Pulsar_enableSound(on);
   } catch {
     // Haptics still play without the tone.
   }

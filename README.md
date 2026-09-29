@@ -53,7 +53,10 @@ hold it down, watch the ring close, and get a bigger buzz when the timer is up.
   the iPhone Action Button or Back Tap through Shortcuts, or to Quick Tap or a
   button remapper on Android.
 - Touch sounds: every tap and hold plays Pulsar's tone matching its haptic,
-  following the ringer switch.
+  following the ringer switch. A switch in Customize, Reward turns them off.
+  Pulsar's haptic engine is marked haptics only
+  (`plugins/withHapticsOnlyPulsar.js`), so starting it never takes the audio
+  session from other apps.
 - Apple Music and Spotify (unlock): the note at the top of the home screen
   opens either one (or its store page when it is not installed), and their
   music keeps playing under the touch sounds. In the free app a tap switches

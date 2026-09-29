@@ -57,6 +57,8 @@ export interface Settings {
   calendarNudges: CalendarNudgeSettings;
   /** Pressing a volume button while the app is open counts as a tap. */
   volumeButtons: boolean;
+  /** Play Pulsar's tone matching each haptic (iOS). */
+  touchSounds: boolean;
   /** Register this device for remote push. */
   pushEnabled: boolean;
   /** Send crash reports (error, app version, device model, OS version, settings) to support. */
@@ -244,6 +246,7 @@ export const DEFAULT_SETTINGS: Settings = {
     calendarIds: null,
   },
   volumeButtons: false,
+  touchSounds: true,
   pushEnabled: false,
   crashReports: true,
   analytics: true,
