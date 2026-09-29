@@ -16,6 +16,7 @@ import { pickLook, randomLook, suggestName, type LookSettings } from "../looks/l
 import { useLooks } from "../store/looks";
 import { lockedToFree, lookToFree, FREE_SAVED_LOOKS } from "../purchases/gates";
 import { logReward } from "../analytics/analytics";
+import { MusicAppsButton } from "../listening/MusicAppsButton";
 import { useSettings } from "../store/settings";
 import { useUnlock } from "../store/unlock";
 import { onWatchReward, sendSettingsToWatch } from "../../modules/watch-sync";
@@ -254,10 +255,11 @@ export function HomeScreen() {
             </Text>
           </Hidden>
         </View>
-        <Hidden hidden={cleared}>
+        <Hidden hidden={cleared} style={styles.topRight}>
           <Text style={[styles.count, { color: theme.muted, fontSize: 15 * scale }]}>
             {stats.rewardsToday} today
           </Text>
+          <MusicAppsButton scale={scale} color={theme.muted} />
         </Hidden>
       </View>
 
@@ -412,6 +414,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   brandRow: { flexDirection: "row", alignItems: "center", gap: 10 },
+  topRight: { flexDirection: "row", alignItems: "center", gap: 14 },
   clearToggle: { alignItems: "center", justifyContent: "center" },
   hidden: { opacity: 0 },
   brand: heading(24),

@@ -19,7 +19,8 @@ import {
  * What the free app includes. The rule is "the first three of everything":
  * the first three options in every list, all button and ripple colors, the
  * navy and phone backdrops, reminders, and the shortcut link. Everything past
- * that, plus custom backdrops, calendar nudges, volume button taps, and music,
+ * that, plus custom backdrops, calendar nudges, volume button taps, and the
+ * Apple Music and Spotify shortcut,
  * needs the unlock. When a list has three options or fewer nothing in it is locked.
  */
 export const FREE_COUNT = 3;
@@ -93,7 +94,6 @@ export function lockedToFree(settings: Settings): Partial<Settings> {
     patch.calendarNudges = { ...settings.calendarNudges, enabled: false };
   }
   if (settings.volumeButtons) patch.volumeButtons = false;
-  if (settings.music.enabled) patch.music = { ...settings.music, enabled: false };
   return patch;
 }
 

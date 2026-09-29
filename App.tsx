@@ -13,7 +13,6 @@ import { flushCrashReports, installCrashReporting } from "./src/support/crashRep
 // Defines the background calendar sync task; it must be registered at module scope.
 import "./src/notifications/calendarTask";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { MusicController } from "./src/music/MusicController";
 import { HomeScreen } from "./src/screens/HomeScreen";
 import { LooksProvider } from "./src/store/looks";
 import { SettingsProvider } from "./src/store/settings";
@@ -60,7 +59,6 @@ export default function App() {
         <SettingsProvider>
           <LooksProvider>
             <HomeScreen />
-            <MusicController />
             <StatusBar style="auto" />
           </LooksProvider>
         </SettingsProvider>

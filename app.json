@@ -67,15 +67,6 @@
           }
         }
       ],
-      [
-        "expo-audio",
-        {
-          "microphonePermission": false,
-          "recordAudioAndroid": false,
-          "enableBackgroundPlayback": false,
-          "enableBackgroundRecording": false
-        }
-      ],
       "./plugins/withQuietPods.js",
       "./plugins/withoutDeprecatedSystemBarColors.js",
       "./plugins/withAndroidSigning.js",

@@ -63,24 +63,7 @@ export interface Settings {
   crashReports: boolean;
   /** Share usage analytics (feature use, sessions, app version, device model, OS) with Google Analytics for Firebase. */
   analytics: boolean;
-  /** Background music while the app is open. */
-  music: MusicSettings;
 }
-
-export interface MusicSettings {
-  /** Play the bundled ambient set, shuffled with a crossfade, while the app is open. */
-  enabled: boolean;
-  /** 0 to 1, one of MUSIC_VOLUMES. */
-  volume: number;
-  /** Keep playing when the ringer switch is on silent. */
-  playsInSilentMode: boolean;
-}
-
-export const MUSIC_VOLUMES: { value: number; label: string }[] = [
-  { value: 0.3, label: "Quiet" },
-  { value: 0.6, label: "Medium" },
-  { value: 1, label: "Loud" },
-];
 
 export interface ReminderSettings {
   enabled: boolean;
@@ -264,5 +247,4 @@ export const DEFAULT_SETTINGS: Settings = {
   pushEnabled: false,
   crashReports: true,
   analytics: true,
-  music: { enabled: false, volume: 0.6, playsInSilentMode: true },
 };

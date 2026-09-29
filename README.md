@@ -52,9 +52,9 @@ hold it down, watch the ring close, and get a bigger buzz when the timer is up.
   `touchward://reward` fires a tap when it opens the app, so it can be wired to
   the iPhone Action Button or Back Tap through Shortcuts, or to Quick Tap or a
   button remapper on Android.
-- Music (unlock): ten short ambient pieces play in a shuffled rotation while
-  the app is open, one crossfading into the next, at a volume you pick, with a
-  choice to play or stop when the ringer is silent. Nothing plays once you leave.
+- Apple Music and Spotify (unlock): the note at the top of the home screen
+  opens either one (or its store page when it is not installed). Touchward plays no
+  audio of its own, so their music keeps going under the button and haptics.
 - A small counter of rewards today and all time. Everything is stored on the
   device. No account, no server, and the reminders are scheduled locally, so
   there is no push backend to run.
@@ -71,7 +71,6 @@ hold it down, watch the ring close, and get a bigger buzz when the timer is up.
   `@expo-google-fonts/josefin-sans`, loaded with `expo-font`) with moderate
   tracking, and Avenir Next for body text. Avenir Next is an iOS system font;
   Android falls back to bundled Nunito Sans. See `src/typography.ts`.
-- `expo-audio` for the background music (bundled AAC files in `assets/music/`).
 - `@react-native-async-storage/async-storage` for settings and the counter.
 - `expo-notifications` for scheduled reminders, `expo-linking` for the deep
   link, `react-native-volume-manager` for the volume buttons.
@@ -93,6 +92,14 @@ run the Touchward scheme). The installed app connects to Metro from
 
 Haptics need a real device. Simulators and the web build show the UI but do
 not vibrate.
+
+After a `pod install` that adds or relinks pods, clean before building
+(Product, hold Option, Clean Build Folder). Xcode's build products folder can
+keep a React framework from the earlier layout, and the linker finds it before
+the fresh one, which shows up as a wall of undefined `facebook::react` symbols
+referenced from pods such as RNSVG. Decline Xcode's "update to recommended
+settings" prompt: it turns on the debug dylib and raises the deployment
+target, and `expo prebuild` would undo both.
 
 Three features rely on native code, which is why a development build is
 required:
@@ -270,36 +277,6 @@ the argument under Edit Scheme, Run, Arguments if it goes missing. On Android
 run `adb shell setprop debug.firebase.analytics.app
 com.situatedstrategies.touchward`.
 
-## Music
-
-Customize, Reward, Sound has a music switch (part of the unlock). While it is on
-and the app is in the foreground, `src/music/player.ts` plays the ten pieces in
-`assets/music/` in a shuffled order through `expo-audio`, keeping two players
-alive only during the two second crossfade between pieces. The pieces fade in
-from and out to silence on their own, so the rotation, not a loop, is what
-makes them continuous. `MusicController` (mounted in `App.tsx`) starts and stops
-playback from settings, pauses it when the app goes to the background, and
-applies volume (Quiet, Medium, Loud) and the silent switch choice live. Music
-never plays before stored settings are loaded or before the unlock is known, so
-a refunded purchase goes quiet by itself (`lockedToFree` also turns it off).
-
-The `expo-audio` config plugin is set to add nothing: no microphone usage
-string, no Android record permission, and no background audio mode, so the
-privacy manifest and the App Store questionnaire are unchanged (the music is
-local and sends nothing). Its one native addition is Android's
-`MODIFY_AUDIO_SETTINGS`, which the module's own manifest declares anyway.
-
-Volume buttons as a tap trigger park the media volume at half and switch the
-iOS audio session to ambient, so with both on the music sits at half system
-volume and follows the ringer switch regardless of the setting; the Sound
-section says so and points at the in-app volume chips.
-
-Every track's origin and terms live in `assets/music/LICENSES.md`, and the
-credit line the app shows (`MUSIC_CREDIT` in `src/music/tracks.ts`) comes from
-there. Processing was ffmpeg: level matched to -16 LUFS and re-encoded to AAC
-128 kbps, 7.7 MB for the set. To add a piece, drop the `.m4a` in
-`assets/music/`, add its row to the license file, and add it to `TRACKS`.
-
 ## Crash reports
 
 Unhandled JavaScript errors are reported to the support inbox through the
@@ -330,7 +307,7 @@ Touchward is free to download with one non consumable in-app purchase, the
 unlock (1.99 US), through RevenueCat (`src/purchases/`). The free app has the
 first three of every option, all colors, reminders, and the Shortcut link;
 everything else, plus custom backdrops, calendar nudges, volume button taps,
-music, and an unlimited library, needs the unlock (`gates.ts`). No subscriptions or
+the Apple Music and Spotify shortcut, and an unlimited library, needs the unlock (`gates.ts`). No subscriptions or
 accounts. Restore purchases is in Customize, More, and the unlock follows the
 store account.
 
@@ -385,9 +362,8 @@ The bundle identifier and Android package are both
   are the two sheets.
 - `src/analytics/analytics.ts`: Google Analytics for Firebase, lazily loaded,
   with the opt out and the two app events.
-- `src/music/`: the track list (`tracks.ts`), the shuffled crossfading player
-  (`player.ts`), and `MusicController.tsx`, which ties it to settings.
-  `assets/music/` holds the audio and `LICENSES.md`.
+- `src/listening/`: the Apple Music and Spotify hand-offs (`musicApps.ts`) and
+  the home screen note that offers them (`MusicAppsButton.tsx`).
 - `modules/watch-sync/`: local Expo module (Swift) that mirrors settings to
   the watch and reports its rewards.
 - `targets/watch/`: the SwiftUI watch app (entry, model, outlines, view).
@@ -413,8 +389,7 @@ Four tabs. Inside each, categories keep one order: the button first, then the
 ripples or the timer, then the surroundings.
 
 - Reward: Button (press style, hold timer), Shape (button, ripples), Feel (tap
-  mode, strength and Pulsar preset; timer done pattern and preset), Sound
-  (music on or off, volume, silent switch).
+  mode, strength and Pulsar preset; timer done pattern and preset).
 - Colors: Button (resting, reward colors), Ripples (Color 1, 2, 3 or follow the
   button), Background (navy glow, match phone, or any color). Every color has a
   picker with a hue wheel, brightness slider, quick swatches, and a hex field,
@@ -438,8 +413,7 @@ ripples or the timer, then the surroundings.
   URLs. Both platforms need their Firebase config file (see Firebase and
   analytics).
 - Both: the `assets/` icons are final; unused Android permissions are blocked
-  in `app.json`. Every track in `assets/music/` has its row in
-  `assets/music/LICENSES.md` and the credit line in the app matches it.
+  in `app.json`.
 - iOS privacy: `app.json` sets `ITSAppUsesNonExemptEncryption` to false, a
   privacy manifest with no tracking and four collected data types that are not
   linked to identity (crash data, purchase history, product interaction, other
