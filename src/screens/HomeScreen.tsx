@@ -18,7 +18,8 @@ import { lockedToFree, lookToFree, FREE_SAVED_LOOKS } from "../purchases/gates";
 import { logReward } from "../analytics/analytics";
 import {
   enableTouchSounds,
-  reassertAudioPolicy,
+  onForeground,
+  onTouchSound,
   setOtherAudioAllowed,
 } from "../listening/audioSession";
 import { MusicAppsButton } from "../listening/MusicAppsButton";
@@ -119,8 +120,8 @@ export function HomeScreen() {
     (kind: "tap" | "hold") => {
       recordReward();
       logReward(kind);
-      // The tone that just played may have switched the session to mixing.
-      reassertAudioPolicy();
+      // Mix with other music when unlocked; in the free app a tap stops it.
+      onTouchSound();
     },
     [recordReward],
   );
@@ -134,7 +135,7 @@ export function HomeScreen() {
   useEffect(() => {
     setOtherAudioAllowed(otherAudioAllowed);
     const sub = AppState.addEventListener("change", (state) => {
-      if (state === "active") reassertAudioPolicy();
+      if (state === "active") onForeground();
     });
     return () => sub.remove();
   }, [otherAudioAllowed]);

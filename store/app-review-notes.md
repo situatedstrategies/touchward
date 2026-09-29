@@ -43,8 +43,8 @@ PERMISSIONS AND ENTITLEMENTS, ALL OPTIONAL AND USER INITIATED
   sets that up. Reminders do not depend on push.
 - Haptics: Core Haptics through the Pulsar library. No permission.
 - Sound: each haptic plays a short tone (follows the ringer switch). Free,
-  the session is Solo Ambient, so other audio pauses while Touchward is in
-  front, as in most games. The unlock makes it Ambient, so the user's music
+  a tap sets the session to Solo Ambient, so other audio pauses while
+  Touchward is in front, as in most games. The unlock makes it Ambient, so the user's music
   keeps playing, and enables the home screen music note, which opens Apple
   Music or Spotify by URL. No background audio; other apps are unaffected
   once Touchward leaves the foreground.
