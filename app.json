@@ -12,7 +12,8 @@
         "expo-build-properties",
         {
           "ios": {
-            "useFrameworks": "static"
+            "useFrameworks": "static",
+            "enableSceneSupport": true
           },
           "android": {
             "enableMinifyInReleaseBuilds": true,
