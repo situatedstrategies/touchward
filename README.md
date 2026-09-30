@@ -333,6 +333,17 @@ eas build --platform android
 The bundle identifier and Android package are both
 `com.situatedstrategies.touchward` (see `app.json`).
 
+iOS builds must adopt the UIKit scene life cycle: the iOS 27 SDK (Xcode 27,
+which EAS now uses by default) refuses to launch an app that still starts
+React Native from the app delegate, and App Store Connect rejects the upload
+as a crash on launch. `app.json` turns on `ios.enableSceneSupport` in
+`expo-build-properties`, which needs Expo 57.0.23 or newer: the app delegate
+conforms to `ExpoReactNativeFactoryProvider`, Expo's `EXExpoAppSceneDelegate`
+creates the window and starts React Native, and `Info.plist` carries the
+`UIApplicationSceneManifest`. Expo SDK 58 does this in its template, so the
+property can go when the SDK is upgraded. To build with Xcode 26 instead,
+set `build.<profile>.image` in `eas.json` to a `macos-...-xcode-26.x` image.
+
 ## Project layout
 
 - `App.tsx`: fonts, splash screen, providers, and the root screen.
