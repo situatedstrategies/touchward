@@ -76,7 +76,15 @@ feature, once, forever. No subscription, no ads.
 
 reward,dopamine,haptic,habit,motivation,button,tap,ADHD,focus,ritual,vibrate,celebrate
 
-## Release notes: 1.1.0 (iOS build 7)
+## Release notes: 1.1.0 (iOS build 7, Android versionCode 15)
+
+### Google Play release notes (500)
+
+Touchward 1.1.0
+
+- A cleaner screen: the status bar is hidden and the app stays in portrait.
+- With the unlock, a music note on the home screen opens Spotify or Apple Music, and your music keeps playing under the button.
+- Small fixes.
 
 ### App Store "What's New" (4000)
 
