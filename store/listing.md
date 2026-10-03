@@ -76,7 +76,7 @@ feature, once, forever. No subscription, no ads.
 
 reward,dopamine,haptic,habit,motivation,button,tap,ADHD,focus,ritual,vibrate,celebrate
 
-## Release notes: 1.1.0 (iOS build 7, Android versionCode 15)
+## Release notes: 1.1.0 (iOS build 8, Android versionCode 15)
 
 ### Google Play release notes (500)
 
