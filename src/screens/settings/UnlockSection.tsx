@@ -1,3 +1,4 @@
+import { MUSIC_APP_NAMES } from "../../listening/musicApps";
 import type { Theme } from "../../design/theme";
 import { FREE_COUNT, FREE_SAVED_LOOKS } from "../../purchases/gates";
 import { useUnlock } from "../../store/unlock";
@@ -13,7 +14,7 @@ export function UnlockSection({ theme }: { theme: Theme }) {
         <Hint theme={theme}>
           {unlocked
             ? "Every shape, feel, preset, backdrop color, calendar nudge, volume button tap, and your own music alongside is yours. Thank you."
-            : `The free app includes the first ${FREE_COUNT} of every choice, all button and ripple colors, the navy and phone backdrops, reminders, and ${FREE_SAVED_LOOKS} saved looks. One purchase unlocks the rest: every shape, feel, and haptic preset, any backdrop color, calendar nudges, volume button taps, your Apple Music or Spotify playing alongside, and an unlimited library. No subscription, no account.`}
+            : `The free app includes the first ${FREE_COUNT} of every choice, all button and ripple colors, the navy and phone backdrops, reminders, and ${FREE_SAVED_LOOKS} saved looks. One purchase unlocks the rest: every shape, feel, and haptic preset, any backdrop color, calendar nudges, volume button taps, your ${MUSIC_APP_NAMES} playing alongside, and an unlimited library. No subscription, no account.`}
         </Hint>
         <Actions>
           {!unlocked && (

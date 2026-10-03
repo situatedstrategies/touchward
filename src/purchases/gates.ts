@@ -20,7 +20,7 @@ import {
  * the first three options in every list, all button and ripple colors, the
  * navy and phone backdrops, reminders, and the shortcut link. Everything past
  * that, plus custom backdrops, calendar nudges, volume button taps, and
- * playing Apple Music or Spotify alongside (audioSession.ts), needs the
+ * playing other music alongside (audioSession.ts), needs the
  * unlock. When a list has three options or fewer nothing in it is locked.
  */
 export const FREE_COUNT = 3;

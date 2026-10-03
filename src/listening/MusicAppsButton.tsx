@@ -1,7 +1,7 @@
 import { ActionSheetIOS, Alert, Platform, Pressable } from "react-native";
 import Svg, { Circle, Path } from "react-native-svg";
 import { useGate, useUnlock } from "../store/unlock";
-import { MUSIC_APPS, openMusicApp } from "./musicApps";
+import { MUSIC_APPS, MUSIC_APP_NAMES, openMusicApp } from "./musicApps";
 
 const ICON_SIZE = 22;
 
@@ -28,7 +28,7 @@ function chooseMusicApp(): void {
 }
 
 /**
- * A note on the home screen that opens Apple Music or Spotify. Part of the
+ * A note on the home screen that opens the music apps for the platform. Part of the
  * unlock, like playing other music alongside Touchward at all: in the free app
  * the note is dimmed and a tap shows the paywall first, then the choice.
  */
@@ -42,7 +42,7 @@ export function MusicAppsButton({ scale, color }: { scale: number; color: string
       hitSlop={12}
       accessibilityRole="button"
       accessibilityLabel={
-        unlocked ? "Open Apple Music or Spotify" : "Open Apple Music or Spotify (unlock)"
+        unlocked ? `Open ${MUSIC_APP_NAMES}` : `Open ${MUSIC_APP_NAMES} (unlock)`
       }
       style={({ pressed }) => ({ opacity: pressed ? 0.6 : unlocked ? 1 : 0.55 })}
     >

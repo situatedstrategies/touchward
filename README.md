@@ -57,7 +57,7 @@ hold it down, watch the ring close, and get a bigger buzz when the timer is up.
   Pulsar's haptic engine is marked haptics only
   (`plugins/withHapticsOnlyPulsar.js`), so starting it never takes the audio
   session from other apps.
-- Apple Music and Spotify (unlock): the note at the top of the home screen
+- Apple Music (iOS) or YouTube Music (Android), and Spotify (unlock): the note at the top of the home screen
   opens either one (or its store page when it is not installed), and their
   music keeps playing under the touch sounds. In the free app a tap switches
   Touchward's audio to not mix, which stops other music (iOS; see
@@ -314,7 +314,7 @@ Touchward is free to download with one non consumable in-app purchase, the
 unlock (1.99 US), through RevenueCat (`src/purchases/`). The free app has the
 first three of every option, all colors, reminders, and the Shortcut link;
 everything else, plus custom backdrops, calendar nudges, volume button taps,
-playing Apple Music or Spotify alongside, and an unlimited library, needs the unlock (`gates.ts`). No subscriptions or
+playing Apple Music, YouTube Music or Spotify alongside, and an unlimited library, needs the unlock (`gates.ts`). No subscriptions or
 accounts. Restore purchases is in Customize, More, and the unlock follows the
 store account.
 
@@ -380,7 +380,7 @@ set `build.<profile>.image` in `eas.json` to a `macos-...-xcode-26.x` image.
   are the two sheets.
 - `src/analytics/analytics.ts`: Google Analytics for Firebase, lazily loaded,
   with the opt out and the two app events.
-- `src/listening/`: the Apple Music and Spotify hand-offs (`musicApps.ts`),
+- `src/listening/`: the Apple Music / YouTube Music and Spotify hand-offs (`musicApps.ts`),
   the home screen note that offers them (`MusicAppsButton.tsx`), and the
   audio session policy that turns on the touch sounds and mixes with other
   music only when unlocked (`audioSession.ts`).

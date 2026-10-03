@@ -83,7 +83,7 @@ reward,dopamine,haptic,habit,motivation,button,tap,ADHD,focus,ritual,vibrate,cel
 Touchward 1.1.0
 
 - A cleaner screen: the status bar is hidden and the app stays in portrait.
-- With the unlock, a music note on the home screen opens Spotify or Apple Music, and your music keeps playing under the button.
+- With the unlock, a music note on the home screen opens YouTube Music or Spotify, and your music keeps playing under the button.
 - Small fixes.
 
 ### App Store "What's New" (4000)
