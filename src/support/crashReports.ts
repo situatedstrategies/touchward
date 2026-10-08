@@ -4,6 +4,7 @@ import * as Device from "expo-device";
 import { Platform } from "react-native";
 import { CRASH_API } from "../links";
 import { pickLook } from "../looks/looks";
+import { noteProblem } from "../review/storeReview";
 import type { Settings } from "../types";
 
 /**
@@ -116,6 +117,9 @@ export async function flushCrashReports(): Promise<void> {
 
 /** Report a handled error now (for example a rejected promise). */
 export function reportError(error: unknown): void {
+  // Whether or not the report is sent, an error is a reason not to ask for a
+  // rating for a while.
+  noteProblem();
   if (!enabled) return;
   const report = describe(error, false);
   send(report).then((ok) => {
@@ -135,6 +139,7 @@ export function installCrashReporting(): void {
   if (utils) {
     const previous = utils.getGlobalHandler();
     utils.setGlobalHandler((error, isFatal) => {
+      noteProblem();
       if (enabled) {
         const report = describe(error, isFatal === true);
         if (isFatal) enqueue(report).catch(() => {});

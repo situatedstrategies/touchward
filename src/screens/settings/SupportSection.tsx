@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Linking, Text } from "react-native";
 import type { Theme } from "../../design/theme";
 import { PRIVACY_URL, SOURCE_URL, TERMS_URL } from "../../links";
+import { openStoreReviewPage } from "../../review/storeReview";
 import { useSettings } from "../../store/settings";
 import { SupportScreen } from "../SupportScreen";
 import { Actions, Category, Hint, Section, TextButton, ToggleRow, styles } from "./controls";
@@ -72,6 +73,14 @@ export function SupportSection({ theme }: { theme: Theme }) {
           if you paid once, it is yours on every device signed in to the same store account.
         </Hint>
         <Actions>
+          {/* The store's own review page. The rating sheet appears on its own
+              after real use and cannot be summoned (storeReview.ts), so anyone
+              who wants to leave a review needs a door that always opens. */}
+          <TextButton
+            label="Rate Touchward"
+            onPress={() => openStoreReviewPage().catch(() => {})}
+            theme={theme}
+          />
           <TextButton
             label="Privacy policy"
             onPress={() => openLink(PRIVACY_URL)}

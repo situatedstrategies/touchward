@@ -85,3 +85,12 @@ export function logReward(source: RewardSource): void {
 export function logUnlock(source: "paywall" | "restore"): void {
   log("unlock", { source });
 }
+
+/**
+ * The app asked the platform for its rating sheet after a reward. Whether the
+ * sheet appeared is not knowable; read this against the rating counts in App
+ * Store Connect and the Play Console (src/review/storeReview.ts).
+ */
+export function logReviewPrompt(source: "tap" | "hold"): void {
+  log("review_prompt", { source });
+}

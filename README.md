@@ -224,7 +224,32 @@ support inbox through Resend. That endpoint needs the
 Variables and Secrets, Add variable, type Secret). A secret in the account
 level Secrets Store is not visible to the Worker unless bound. Until it is set, the form falls back to the mail app, addressed to
 the same inbox. The About section links to `/privacy` and `/terms` on the site,
-opened in an in-app browser, and shows the version.
+opened in an in-app browser, shows the version, and has "Rate Touchward", which
+opens the App Store review form or the Play listing.
+
+## Rating prompt
+
+The platforms' own rating sheet (StoreKit on iOS, Play In-App Review on
+Android, through `expo-store-review`), with the app choosing only the moment
+(`src/review/storeReview.ts`). It is asked for a second or so after a reward
+from the phone, once the install is a week old, has been opened on three
+separate days, and has given at least twenty rewards, in a session with no
+crash, with no sheet of ours open. A crash or a support message holds it for
+thirty days; it is never asked for more than once per 120 days or more than
+three times on one device. There is no question of our own in front of it
+(Google forbids one), no custom text, and no way to know whether it appeared:
+Apple caps it at three per year and Google applies a quota it does not
+publish. The `review_prompt` analytics event counts the asks; compare it with
+the rating counts in App Store Connect and the Play Console. It is not a push
+notification: a push cannot open the sheet, and Apple treats a rating push as
+marketing that needs its own opt-in.
+
+The state lives in AsyncStorage under `touchward.review.v1`. To try the
+trigger without waiting a week, lower the constants at the top of
+`storeReview.ts` in a local build. iOS shows the sheet every time in a debug
+build and never in TestFlight; Android shows it only for a build installed
+from Play (internal testing counts) and only if the account has not already
+rated the app.
 
 ## Support
 
@@ -271,9 +296,11 @@ dependencies run `npx pod-install` (or `npx expo run:ios`) to refresh
 `Podfile.lock`.
 
 What gets measured (`src/analytics/analytics.ts`): Firebase's automatic events
-(first open, sessions, app updates) plus two of the app's own: `reward` with a
-`source` of `tap`, `hold`, or `watch`, and `unlock` with a `source` of
-`paywall` or `restore`. Nothing that identifies the person is sent; the counter
+(first open, sessions, app updates) plus three of the app's own: `reward` with
+a `source` of `tap`, `hold`, or `watch`, `unlock` with a `source` of `paywall`
+or `restore`, and `review_prompt` with a `source` of `tap` or `hold` when the
+app asks the platform for its rating sheet (see Rating prompt below). Nothing
+that identifies the person is sent; the counter
 and every setting stay on the device. "Share usage analytics" in Customize,
 More, Support turns collection off, and turning it off also resets the app
 instance identifier. Events show up in the Firebase console under Analytics,
@@ -379,7 +406,9 @@ set `build.<profile>.image` in `eas.json` to a `macos-...-xcode-26.x` image.
   draws a still; `screens/SaveLookSheet.tsx` and `screens/LibraryScreen.tsx`
   are the two sheets.
 - `src/analytics/analytics.ts`: Google Analytics for Firebase, lazily loaded,
-  with the opt out and the two app events.
+  with the opt out and the three app events.
+- `src/review/storeReview.ts`: the rating prompt's rules, its storage, and
+  the store review page link.
 - `src/listening/`: the Apple Music / YouTube Music and Spotify hand-offs (`musicApps.ts`),
   the home screen note that offers them (`MusicAppsButton.tsx`), and the
   audio session policy that turns on the touch sounds and mixes with other
