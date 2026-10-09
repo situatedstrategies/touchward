@@ -16,6 +16,7 @@ import { pickLook, randomLook, suggestName, type LookSettings } from "../looks/l
 import { useLooks } from "../store/looks";
 import { lockedToFree, lookToFree, FREE_SAVED_LOOKS } from "../purchases/gates";
 import { logReward } from "../analytics/analytics";
+import { noteReviewLaunch, requestReviewAfterReward } from "../review/storeReview";
 import {
   enableTouchSounds,
   onForeground,
@@ -116,12 +117,33 @@ export function HomeScreen() {
     if (Object.keys(patch).length > 0) update(patch);
   }, [loaded, known, unlocked, settings, update]);
 
+  // The rate-and-review sheet keys on a reward from the phone (not the watch:
+  // nobody is looking at the phone then). Refs, so onReward stays stable and
+  // the check reads what is true when the delay runs out, not at the tap.
+  const rewardsAllTime = useRef(stats.rewardsAllTime);
+  useEffect(() => {
+    rewardsAllTime.current = stats.rewardsAllTime;
+  }, [stats.rewardsAllTime]);
+  const sheetOpen = useRef(false);
+  useEffect(() => {
+    sheetOpen.current = settingsOpen || saveOpen || libraryOpen;
+  }, [settingsOpen, saveOpen, libraryOpen]);
+  useEffect(() => {
+    if (loaded) noteReviewLaunch().catch(() => {});
+  }, [loaded]);
+
   const onReward = useCallback(
     (kind: "tap" | "hold") => {
       recordReward();
       logReward(kind);
       // Mix with other music when unlocked; in the free app a tap stops it.
       onTouchSound();
+      requestReviewAfterReward({
+        source: kind,
+        // The counter has not re-rendered yet, so count this reward by hand.
+        rewardsAllTime: rewardsAllTime.current + 1,
+        isSheetOpen: () => sheetOpen.current,
+      });
     },
     [recordReward],
   );

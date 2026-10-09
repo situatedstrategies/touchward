@@ -16,6 +16,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Chip } from "../components/Chip";
 import type { Theme } from "../design/theme";
 import { body, bodySemibold, heading } from "../design/typography";
+import { noteProblem } from "../review/storeReview";
 import { sendSupportMessage } from "../support/supportMessages";
 
 /**
@@ -71,6 +72,9 @@ export function SupportScreen({ visible, onClose, theme }: Props) {
     }
     setError(null);
     setStatus("sending");
+    // Whatever the message says, someone writing to support is not someone
+    // to ask for a rating this month.
+    noteProblem();
     const sentNow = await sendSupportMessage({
       topic,
       message: message.trim(),

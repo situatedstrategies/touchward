@@ -9,5 +9,8 @@ export const SUPPORT_API = `${SITE_URL}/api/support`;
 /** The site's Worker route that emails crash reports to the support inbox. */
 export const CRASH_API = `${SITE_URL}/api/crash`;
 export const SOURCE_URL = "https://github.com/situatedstrategies/touchward";
+/** Store identifiers, for the "Rate Touchward" link (src/review/storeReview.ts). */
+export const APP_STORE_ID = "6811709293";
+export const PLAY_PACKAGE_NAME = "com.situatedstrategies.touchward";
 /** Opening this link fires a tap. Wire it to a shortcut, the Action Button, or a remapper. */
 export const REWARD_LINK = "touchward://reward";
