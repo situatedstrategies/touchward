@@ -8,6 +8,7 @@ import { ColorSection } from "./ColorSection";
 import { CounterSection } from "./CounterSection";
 import { FeelSection } from "./FeelSection";
 import { NotificationSection } from "./NotificationSection";
+import { PlayGamesSection } from "./PlayGamesSection";
 import { ShapeSection } from "./ShapeSection";
 import { SupportSection } from "./SupportSection";
 import { TriggerSection } from "./TriggerSection";
@@ -87,6 +88,7 @@ export function SettingsScreen({ visible, onClose, theme }: Props) {
               <UnlockSection theme={theme} />
               <TriggerSection theme={theme} />
               <CounterSection theme={theme} />
+              <PlayGamesSection theme={theme} />
               <SupportSection theme={theme} />
             </>
           )}

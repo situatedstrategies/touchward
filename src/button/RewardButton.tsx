@@ -9,12 +9,20 @@ import {
   type Ref,
 } from "react";
 import { Animated, Easing, Pressable, StyleSheet, View } from "react-native";
-import { playReward, prepareReward, stopHaptics, tick } from "../haptics/engine";
+import {
+  BERSERK_MS,
+  playBerserk,
+  playReward,
+  prepareBerserk,
+  prepareReward,
+  stopHaptics,
+  tick,
+} from "../haptics/engine";
 import { getPattern } from "../haptics/patterns";
-import { colorVariants, lighten, withAlpha } from "../design/palette";
+import { colorVariants, hsvToHex, lighten, withAlpha } from "../design/palette";
 import { RIPPLE_WIDTHS, type Settings } from "../types";
 import { RippleField, type ActiveRipple } from "./RippleField";
-import { REWARD_MODE_SPECS } from "./rewardModes";
+import { REWARD_MODE_SPECS, type RippleModeSpec } from "./rewardModes";
 import { ShapeCore } from "./ShapeCore";
 import { StandingBands } from "./StandingBands";
 import { TimerRing } from "./TimerRing";
@@ -25,10 +33,24 @@ const TAP_THRESHOLD_MS = 250;
 const RETURN_DELAY_MS = 900;
 /** In the Original mode the core is smaller so its three rings have room. */
 const BANDS_CORE_RATIO = 0.4;
+/** Berserk: a new color, ripple, and shake this often, and this many ripples may stack. */
+const BERSERK_STEP_MIN_MS = 60;
+const BERSERK_STEP_MAX_MS = 140;
+const BERSERK_RIPPLE_MAX = 8;
+const BERSERK_SHAKE_PX = 9;
 
-/** Lets the screen trigger a reward from outside: a deep link, a notification, a side button. */
+/** Any bright, saturated color: a random hue at full value. */
+function vividColor(): string {
+  return hsvToHex({ h: Math.random() * 360, s: 0.75 + Math.random() * 0.25, v: 1 });
+}
+
+/**
+ * Lets the screen trigger a reward from outside: a deep link, a notification,
+ * a side button. `berserk` is the every-500-rewards burst.
+ */
 export interface RewardButtonHandle {
   reward: (kind: "tap" | "hold") => void;
+  berserk: () => void;
 }
 
 interface Props {
@@ -82,6 +104,12 @@ export function RewardButton({ settings, size, onReward, ref }: Props) {
   const returnTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const burstTimers = useRef(new Set<ReturnType<typeof setTimeout>>());
   const [holding, setHolding] = useState(false);
+  // The berserk burst: its own timers, a shake offset, and a flag that also
+  // keeps the ripple field on screen in Original mode.
+  const berserkTimers = useRef(new Set<ReturnType<typeof setTimeout>>());
+  const berserkActive = useRef(false);
+  const [berserk, setBerserk] = useState(false);
+  const shake = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
 
   // Ripples in flight. Each removes itself when its animation finishes.
   const [ripples, setRipples] = useState<ActiveRipple[]>([]);
@@ -108,6 +136,7 @@ export function RewardButton({ settings, size, onReward, ref }: Props) {
       strength: settings.hapticStrength,
       pulses: rewardMode.pulses,
     });
+    prepareBerserk();
   }, [settings.tapPreset, rewardMode, settings.hapticStrength]);
 
   useEffect(
@@ -115,6 +144,8 @@ export function RewardButton({ settings, size, onReward, ref }: Props) {
       if (returnTimer.current) clearTimeout(returnTimer.current);
       for (const t of burstTimers.current) clearTimeout(t);
       burstTimers.current.clear();
+      for (const t of berserkTimers.current) clearTimeout(t);
+      berserkTimers.current.clear();
       stopHaptics();
     },
     [],
@@ -173,6 +204,35 @@ export function RewardButton({ settings, size, onReward, ref }: Props) {
     [scale],
   );
 
+  /** One ripple in flight. Older rings make room once `max` is reached. */
+  const pushRipple = useCallback(
+    (color: string, spec: RippleModeSpec, max: number) => {
+      setRipples((list) => {
+        const next = [
+          ...list,
+          { id: nextRippleId.current++, color, mode: spec, linger: rippleLinger, widthFactor },
+        ];
+        return next.length > max ? next.slice(next.length - max) : next;
+      });
+    },
+    [rippleLinger, widthFactor],
+  );
+
+  /** In Original mode, one wave of brightness and swell through the standing rings. */
+  const rollBands = useCallback(
+    (duration: number) => {
+      pulse.stopAnimation();
+      pulse.setValue(0);
+      Animated.timing(pulse, {
+        toValue: 1,
+        duration,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }).start();
+    },
+    [pulse],
+  );
+
   /**
    * Every reward sends ripples out: one per tap, or a short burst in the Double
    * and Wave modes. In Original mode a wave also rolls through the standing
@@ -181,16 +241,7 @@ export function RewardButton({ settings, size, onReward, ref }: Props) {
    */
   const emitRipples = useCallback(
     (kind: "tap" | "hold", buttonColor: string) => {
-      if (bands) {
-        pulse.stopAnimation();
-        pulse.setValue(0);
-        Animated.timing(pulse, {
-          toValue: 1,
-          duration: rewardMode.duration,
-          easing: Easing.out(Easing.cubic),
-          useNativeDriver: true,
-        }).start();
-      }
+      if (bands) rollBands(rewardMode.duration);
       const spec =
         kind === "hold" ? { ...rewardMode, spread: rewardMode.spread * 1.25 } : rewardMode;
       const palette = rippleFollowButton ? [] : rippleColors;
@@ -201,44 +252,91 @@ export function RewardButton({ settings, size, onReward, ref }: Props) {
       const tints = single ? colorVariants(first, Math.max(spec.count, 1)) : [];
       const colorAt = (i: number) =>
         i === 0 ? first : single ? tints[i] : (pickNext(palette, rippleColorIndex) ?? first);
-      const push = (i: number) => {
-        const color = colorAt(i);
-        setRipples((list) => {
-          const next = [
-            ...list,
-            {
-              id: nextRippleId.current++,
-              color,
-              mode: spec,
-              linger: rippleLinger,
-              widthFactor,
-            },
-          ];
-          // Older rings make room once the limit is reached.
-          return next.length > rippleMax ? next.slice(next.length - rippleMax) : next;
-        });
-      };
-      push(0);
+      pushRipple(colorAt(0), spec, rippleMax);
       for (let i = 1; i < spec.count; i++) {
         const timer = setTimeout(() => {
           burstTimers.current.delete(timer);
-          push(i);
+          pushRipple(colorAt(i), spec, rippleMax);
         }, i * spec.gap);
         burstTimers.current.add(timer);
       }
     },
     [
       bands,
-      pulse,
+      rollBands,
       pickNext,
+      pushRipple,
       rippleColors,
       rippleFollowButton,
       rewardMode,
-      rippleLinger,
       rippleMax,
-      widthFactor,
     ],
   );
+
+  /**
+   * The berserk burst, every 500 rewards. For BERSERK_MS the phone buzzes like
+   * crazy (playBerserk) while the button jumps to a new vivid color, shakes,
+   * pops, and throws a ripple in another random color every few dozen
+   * milliseconds, in whichever ripple motion comes up. Ordinary taps still
+   * work during the burst; when it ends the button settles back to the color
+   * it had before.
+   */
+  const runBerserk = useCallback(() => {
+    if (berserkActive.current) return;
+    berserkActive.current = true;
+    setBerserk(true);
+    playBerserk();
+    const colorBefore = currentColor.current;
+    const started = Date.now();
+    const motions = Object.values(REWARD_MODE_SPECS).filter((s) => s.kind === "ripple");
+    const later = (fn: () => void, ms: number) => {
+      const timer = setTimeout(() => {
+        berserkTimers.current.delete(timer);
+        fn();
+      }, ms);
+      berserkTimers.current.add(timer);
+    };
+    const finish = () => {
+      berserkActive.current = false;
+      setBerserk(false);
+      Animated.spring(shake, {
+        toValue: { x: 0, y: 0 },
+        speed: 20,
+        bounciness: 6,
+        useNativeDriver: true,
+      }).start();
+      animateTo(colorBefore, 600);
+    };
+    const step = () => {
+      if (Date.now() - started >= BERSERK_MS) {
+        finish();
+        return;
+      }
+      animateTo(vividColor(), 70);
+      if (Math.random() < 0.5) pop(1.04 + Math.random() * 0.18);
+      const motion = motions[Math.floor(Math.random() * motions.length)] ?? rewardMode;
+      pushRipple(
+        vividColor(),
+        { ...motion, spread: motion.spread * (0.7 + Math.random() * 0.9) },
+        BERSERK_RIPPLE_MAX,
+      );
+      if (bands && Math.random() < 0.3) rollBands(rewardMode.duration * 0.6);
+      Animated.timing(shake, {
+        toValue: {
+          x: (Math.random() * 2 - 1) * BERSERK_SHAKE_PX,
+          y: (Math.random() * 2 - 1) * BERSERK_SHAKE_PX,
+        },
+        duration: 45,
+        easing: Easing.linear,
+        useNativeDriver: true,
+      }).start();
+      later(
+        step,
+        BERSERK_STEP_MIN_MS + Math.random() * (BERSERK_STEP_MAX_MS - BERSERK_STEP_MIN_MS),
+      );
+    };
+    step();
+  }, [animateTo, bands, pop, pushRipple, rewardMode, rollBands, shake]);
 
   // The three standing rings: Color 1, 2, 3, or tints of one color.
   const bandColors = useMemo(() => {
@@ -291,7 +389,7 @@ export function RewardButton({ settings, size, onReward, ref }: Props) {
     ],
   );
 
-  useImperativeHandle(ref, () => ({ reward }), [reward]);
+  useImperativeHandle(ref, () => ({ reward, berserk: runBerserk }), [reward, runBerserk]);
 
   const drainRing = useCallback(
     (duration: number) => {
@@ -382,11 +480,14 @@ export function RewardButton({ settings, size, onReward, ref }: Props) {
   const coreSize = bands ? Math.round(size * BANDS_CORE_RATIO) : size;
   const ringSize = coreSize + 36;
   const showRing = mode !== "tap";
+  // Original mode has no ripple field of its own; the berserk burst borrows
+  // one, and it stays until the last of its ripples has faded.
+  const showRipples = !bands || berserk || ripples.length > 0;
 
   return (
     <View style={[styles.wrap, { width: ringSize, height: ringSize }]}>
-      <View style={styles.layer} pointerEvents="none">
-        {bands ? (
+      {bands && (
+        <View style={styles.layer} pointerEvents="none">
           <StandingBands
             shape={shape}
             rippleShape={rippleShape}
@@ -396,7 +497,10 @@ export function RewardButton({ settings, size, onReward, ref }: Props) {
             mode={rewardMode}
             widthFactor={widthFactor}
           />
-        ) : (
+        </View>
+      )}
+      {showRipples && (
+        <View style={styles.layer} pointerEvents="none">
           <RippleField
             shape={shape}
             rippleShape={rippleShape}
@@ -404,8 +508,8 @@ export function RewardButton({ settings, size, onReward, ref }: Props) {
             ripples={ripples}
             onDone={removeRipple}
           />
-        )}
-      </View>
+        </View>
+      )}
       {showRing && (
         <View style={styles.layer} pointerEvents="none">
           <TimerRing
@@ -428,7 +532,9 @@ export function RewardButton({ settings, size, onReward, ref }: Props) {
         accessibilityState={{ busy: holding }}
         hitSlop={12}
       >
-        <Animated.View style={{ transform: [{ scale }] }}>
+        <Animated.View
+          style={{ transform: [{ translateX: shake.x }, { translateY: shake.y }, { scale }] }}
+        >
           <ShapeCore shape={shape} size={coreSize} fill={fill} />
         </Animated.View>
       </Pressable>

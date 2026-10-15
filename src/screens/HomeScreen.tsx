@@ -16,6 +16,9 @@ import { pickLook, randomLook, suggestName, type LookSettings } from "../looks/l
 import { useLooks } from "../store/looks";
 import { lockedToFree, lookToFree, FREE_SAVED_LOOKS } from "../purchases/gates";
 import { logReward } from "../analytics/analytics";
+import { unlockAchievement } from "../games/achievements";
+import { BERSERK_EVERY, berserkMilestone, rewardsToNextBerserk } from "../games/milestones";
+import { BERSERK_MS } from "../haptics/engine";
 import { noteReviewLaunch, requestReviewAfterReward } from "../review/storeReview";
 import {
   enableTouchSounds,
@@ -50,6 +53,11 @@ const WATCH_SYNC_DELAY_MS = 600;
 
 /** Shortest side at or above this is laid out as a tablet. */
 const TABLET_MIN_SIDE = 700;
+
+/** The milestone tap's own reward lands first; the burst follows this much later. */
+const BERSERK_DELAY_MS = 350;
+/** The milestone banner outlasts the burst by this much. */
+const BERSERK_BANNER_EXTRA_MS = 1200;
 
 const PROMPTS = {
   both: "Did the thing? Tap it. Or hold it.",
@@ -131,6 +139,42 @@ export function HomeScreen() {
   useEffect(() => {
     if (loaded) noteReviewLaunch().catch(() => {});
   }, [loaded]);
+
+  // Every BERSERK_EVERY rewards, all time, the button goes berserk. The count
+  // is watched rather than the tap, so a reward from the watch, a link, or a
+  // notification that lands on the milestone counts too. The first value
+  // after loading only sets the baseline, so an old count never fires it.
+  const lastMilestone = useRef<number | null>(null);
+  const [berserkBanner, setBerserkBanner] = useState<number | null>(null);
+  // Kept in a ref, not the effect's cleanup: a tap during the short delay
+  // must not cancel the burst it just earned.
+  const berserkTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  useEffect(() => {
+    if (!loaded) return;
+    const milestone = berserkMilestone(stats.rewardsAllTime);
+    const previous = lastMilestone.current;
+    lastMilestone.current = milestone;
+    if (stats.rewardsAllTime === 1) unlockAchievement("firstReward");
+    if (previous === null || milestone <= previous) return;
+    const count = stats.rewardsAllTime;
+    berserkTimers.current.push(
+      setTimeout(() => {
+        button.current?.berserk();
+        setBerserkBanner(count);
+      }, BERSERK_DELAY_MS),
+      setTimeout(
+        () => setBerserkBanner((shown) => (shown === count ? null : shown)),
+        BERSERK_DELAY_MS + BERSERK_MS + BERSERK_BANNER_EXTRA_MS,
+      ),
+    );
+    unlockAchievement("berserk");
+  }, [loaded, stats.rewardsAllTime]);
+  useEffect(
+    () => () => {
+      for (const t of berserkTimers.current) clearTimeout(t);
+    },
+    [],
+  );
 
   const onReward = useCallback(
     (kind: "tap" | "hold") => {
@@ -300,9 +344,18 @@ export function HomeScreen() {
           </Hidden>
         </View>
         <Hidden hidden={cleared} style={styles.topRight}>
-          <Text style={[styles.count, { color: theme.muted, fontSize: 15 * scale }]}>
-            {stats.rewardsToday} today
-          </Text>
+          <View
+            style={styles.counter}
+            accessible
+            accessibilityLabel={`${stats.rewardsToday} rewards today, ${rewardsToNextBerserk(stats.rewardsAllTime)} to the next berserk`}
+          >
+            <Text style={[styles.count, { color: theme.text, fontSize: 36 * scale }]}>
+              {stats.rewardsToday}
+            </Text>
+            <Text style={[styles.countLabel, { color: theme.muted, fontSize: 12 * scale }]}>
+              today · {rewardsToNextBerserk(stats.rewardsAllTime)} to berserk
+            </Text>
+          </View>
           <MusicAppsButton scale={scale} color={theme.muted} />
         </Hidden>
       </View>
@@ -310,6 +363,19 @@ export function HomeScreen() {
       <View style={styles.middle}>
         {loaded && (
           <RewardButton ref={button} settings={settings} size={size} onReward={onReward} />
+        )}
+        {berserkBanner !== null && (
+          <View style={styles.banner} pointerEvents="none" accessibilityLiveRegion="polite">
+            <Text style={[styles.bannerCount, { color: theme.text, fontSize: 44 * scale }]}>
+              {berserkBanner}
+            </Text>
+            <Text style={[styles.bannerLabel, { color: theme.text, fontSize: 18 * scale }]}>
+              taps. Berserk!
+            </Text>
+            <Text style={[styles.bannerHint, { color: theme.muted, fontSize: 13 * scale }]}>
+              Next one at {berserkBanner + BERSERK_EVERY}
+            </Text>
+          </View>
         )}
       </View>
 
@@ -462,8 +528,14 @@ const styles = StyleSheet.create({
   clearToggle: { alignItems: "center", justifyContent: "center" },
   hidden: { opacity: 0 },
   brand: heading(24),
-  count: { ...body(15), fontVariant: ["tabular-nums"] },
+  counter: { alignItems: "flex-end" },
+  count: { ...heading(36, 0.02), fontVariant: ["tabular-nums"], lineHeight: 40 },
+  countLabel: { ...body(12), fontVariant: ["tabular-nums"] },
   middle: { flex: 1, alignItems: "center", justifyContent: "center" },
+  banner: { position: "absolute", top: 0, left: 0, right: 0, alignItems: "center" },
+  bannerCount: { ...heading(44), fontVariant: ["tabular-nums"] },
+  bannerLabel: { ...bodySemibold(18), marginTop: 2 },
+  bannerHint: { ...body(13), marginTop: 4 },
   prompt: { ...body(16), marginBottom: 16, textAlign: "center" },
   bottom: { alignItems: "center" },
   toolbar: { flexDirection: "row", flexWrap: "wrap", justifyContent: "center", gap: 8 },

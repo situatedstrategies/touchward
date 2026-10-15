@@ -62,9 +62,18 @@ hold it down, watch the ring close, and get a bigger buzz when the timer is up.
   music keeps playing under the touch sounds. In the free app a tap switches
   Touchward's audio to not mix, which stops other music (iOS; see
   `src/listening/audioSession.ts`).
-- A small counter of rewards today and all time. Everything is stored on the
-  device. No account, no server, and the reminders are scheduled locally, so
-  there is no push backend to run.
+- A counter of rewards today, big at the top of the screen, with the taps left
+  until the next milestone; the all time total is in Customize, More.
+  Everything is stored on the device. No account, no server, and the
+  reminders are scheduled locally, so there is no push backend to run.
+- Berserk: every 500 rewards, all time, the button goes berserk for about
+  three seconds (`BERSERK_MS` in `src/haptics/engine.ts`): with Pulsar, a
+  full-tilt rumble with a random preset fired on top every 70 to 180 ms,
+  otherwise a run of random pulses; on screen the button jumps between vivid
+  colors, shakes, pops, and throws ripples in random colors and motions
+  (`runBerserk` in `src/button/RewardButton.tsx`). The milestone is watched
+  on the all time count (`src/games/milestones.ts`), so a reward from the
+  watch or a link counts too.
 
 ## Stack
 
@@ -344,6 +353,39 @@ everything else, plus custom backdrops, calendar nudges, volume button taps,
 playing Apple Music, YouTube Music or Spotify alongside, and an unlimited library, needs the unlock (`gates.ts`). No subscriptions or
 accounts. Restore purchases is in Customize, More, and the unlock follows the
 store account.
+
+## Google Play Games Services
+
+Android builds carry Play Games Services v2 through `expo-play-games-kit`
+(its config plugin writes the `com.google.android.gms.games.APP_ID`
+meta-data and the matching string resource; the SDK itself,
+`play-services-games-v2`, is bundled by the module). `src/games/playGames.ts`
+loads the module lazily like the other optional native modules and treats a
+build without an APP_ID as "no Play Games", so the section under Customize,
+More appears only when it can work. Game Center is left off on iOS
+(`iosGameCenterEntitlement: false`) until the capability is enabled in App
+Store Connect.
+
+Setup, once per Play Console project:
+
+1. Grow users, Play Games Services, Setup and management, Configuration:
+   create the project (or link the Firebase cloud project) and copy the
+   Project ID, the 12 or more digit number under the game name. Put it in
+   `app.json` as `androidAppId` for the `expo-play-games-kit` plugin, then run
+   `npx expo prebuild --platform android` so `strings.xml` carries it.
+2. Credentials: one Android credential per signing certificate, with the
+   package `com.situatedstrategies.touchward`. Production uses the Play App
+   Signing key fingerprint (Test and release, Setup, App signing); development
+   builds use the debug keystore's SHA-1
+   (`5E:8F:16:06:2E:A3:CD:2C:4A:0D:54:78:76:BA:A6:F3:8C:AB:F6:25`).
+3. Testers: add your own Google account, or sign-in fails until the Play
+   Games project is published. Publish it (Publish Game) before the app
+   release that first uses it.
+4. Achievements: create them in Play Console and paste their ids into
+   `src/games/achievements.ts`. Ids left empty are skipped.
+
+The in-app section explains what sign-in shares (player name and avatar).
+The Play Data safety form needs the same addition once Play Games ships.
 
 ## Build store binaries
 
