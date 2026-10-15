@@ -214,11 +214,36 @@ https://touchward-dopamine.com
   linked to the user. Not used for tracking. Purpose: App Functionality.
 - Everything else: not collected.
 
-Google Play Data safety form, the same facts: Crash logs (collected, not
-shared, app functionality, optional since the user can turn it off) and
-Purchase history (collected, shared with RevenueCat as a service provider for
-app functionality, required for the unlock). No account, no encryption in
-transit claim beyond HTTPS, deletion by deleting the app.
+Google Play Data safety form. Google counts data as "collected" only when
+it leaves the device, so calendar events, the counter, and the settings are
+not listed; a transfer to a service provider acting for us (Resend, Firebase,
+RevenueCat, Expo's push service) is "collected", not "shared".
+
+- Overview: collects user data, yes. Encrypted in transit, yes (HTTPS).
+  Deletion request mechanism, no: nothing collected is tied to a person or
+  an account, so there is nothing to find and delete; uninstalling removes
+  everything on the device. No account creation.
+- Crash logs (App info and performance): collected, not shared, optional
+  (Customize, More, "Send crash reports"), purpose App functionality. Error
+  text, stack, app version, device model, OS version, the look settings.
+- App interactions (App activity): collected, not shared, optional
+  ("Share usage analytics"), purpose Analytics. Google Analytics for
+  Firebase events: rewards, unlocks, review prompts, sessions, screens.
+- Device or other IDs: collected, not shared, required, purposes App
+  functionality and Analytics. The RevenueCat app user id (random, created
+  at launch for the unlock), the Firebase app instance id (reset when
+  analytics is turned off), and, only with push turned on, the device push
+  token sent to Expo's push service.
+- Purchase history (Financial info): collected, not shared, required,
+  purpose App functionality. The App Store or Play receipt, through
+  RevenueCat, which confirms and restores the unlock.
+- Other in-app messages (Messages): collected, not shared, optional,
+  purpose App functionality. What is typed into the support form, with the
+  device model and app version.
+- Not collected: name, email, location, calendar events, photos, contacts,
+  files, health data. Google Play Games sign-in is run by Google Play
+  services; the app shows the player name and avatar on the device and
+  sends neither anywhere.
 
 ## Age rating
 
