@@ -9,12 +9,12 @@ Touchward
 
 ## Subtitle (30)
 
-Tap when you did the thing.
+Tap. Count. Go berserk.
 
 ## Promotional text (170)
 
-You did the thing. Tap the button and get a little buzz back. Free to start,
-one unlock for everything. No account, no ads, nothing to sign in to.
+You did the thing. Tap, feel the buzz, watch your count climb. Every 500
+taps the button goes berserk. Free to start, one unlock for everything.
 
 ## Description (4000)
 
@@ -26,6 +26,17 @@ win, or just giving yourself a moment.
 Tap it. Or hold it: a timer traces the outline of the button while you
 press, and when it completes you get a bigger reward. Choose tap only, hold
 only, or both.
+
+Keep score
+
+- Every tap counts. A big counter at the top of the screen shows today's
+  taps and how many are left until the next milestone.
+- Every 500 taps, all time, the button goes berserk: for a few seconds your
+  phone buzzes like crazy while the button shakes, pops, and runs through
+  random colors and ripples. Then it settles down and the countdown starts
+  again.
+- Your all time total lives in Customize, More, along with the next
+  milestone. Reset it whenever you want a fresh run.
 
 Make it yours
 
@@ -74,7 +85,28 @@ feature, once, forever. No subscription, no ads.
 
 ## Keywords (100)
 
-reward,dopamine,haptic,habit,motivation,button,tap,ADHD,focus,ritual,vibrate,celebrate
+reward,dopamine,haptic,habit,motivation,button,tap,ADHD,focus,ritual,vibrate,celebrate,game
+
+## Release notes: 1.2.0 (Android versionCode 16)
+
+### Google Play release notes (500)
+
+Touchward 1.2.0
+
+- Keep score: a big counter at the top of the screen, and the taps left until your next milestone.
+- Every 500 taps the button goes berserk: a few seconds of wild buzzing, shaking, and random colors and ripples.
+- Google Play Games sign-in under Customize, More, so milestones can follow your Google account.
+- Small fixes.
+
+### App Store "What's New" (4000)
+
+Touchward 1.2.0
+
+- Keep score: the counter at the top of the screen is bigger, and it shows how many taps are left until your next milestone.
+- Every 500 taps, all time, the button goes berserk: a few seconds of wild buzzing while the button shakes, pops, and runs through random colors and ripples. Then it settles down and the countdown starts again.
+- Small fixes.
+
+Questions or ideas: Customize, More, Contact support, or touchward-dopamine.com/support.
 
 ## Release notes: 1.1.0 (iOS build 8, Android versionCode 15)
 
@@ -205,7 +237,7 @@ Apple Watch, the Action Button, or time sensitive delivery.
 
 ### Short description (80)
 
-Free dopamine reward button. Tap when you did the thing and feel the buzz.
+Tap when you did the thing. Feel the buzz, count every tap, go berserk at 500.
 
 Alternatives:
 
@@ -229,6 +261,14 @@ TAP IT, OR HOLD IT
 Tap for a quick reward. Or press and hold: a timer traces the outline of the
 button while you press, and when it completes you get a bigger one. Choose tap
 only, hold only, or both.
+
+KEEP SCORE
+Every tap counts. A big counter at the top of the screen shows today's taps and
+how many are left until the next milestone. Every 500 taps, all time, the
+button goes berserk: for a few seconds your phone buzzes like crazy while the
+button shakes, pops, and runs through random colors and ripples. Then it
+settles down and the countdown starts again. Sign in to Google Play Games
+under Customize, More, and your milestones can follow your Google account.
 
 MAKE IT YOURS
 
@@ -262,10 +302,11 @@ TAP FROM ANYWHERE
   Quick Tap or a button remapper for a one gesture reward.
 
 PRIVATE BY DESIGN
-No account and nothing to sign in to. Your settings and your counter stay on
-your phone. Calendar events are read only to schedule nudges and are never
-stored or sent anywhere. The app never asks for your name or email, and there
-is no advertising and no tracking. If the app crashes, an anonymous report
+No account of its own and nothing you have to sign in to. Your settings and
+your counter stay on your phone; Google Play Games sign-in is optional and
+shares only your player name and avatar with the app. Calendar events are read
+only to schedule nudges and are never stored or sent anywhere. The app never
+asks for your name or email, and there is no advertising and no tracking. If the app crashes, an anonymous report
 helps us fix it, and you can turn that off in settings.
 
 FREE TO START, ONE UNLOCK FOR EVERYTHING

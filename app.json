@@ -2,7 +2,7 @@
   "expo": {
     "name": "Touchward",
     "slug": "touchward",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "scheme": "touchward",
@@ -51,6 +51,13 @@
         }
       ],
       "expo-background-task",
+      [
+        "expo-play-games-kit",
+        {
+          "androidAppId": "000000000000",
+          "iosGameCenterEntitlement": false
+        }
+      ],
       "@bacons/apple-targets",
       [
         "@react-native-firebase/app",
@@ -142,7 +149,7 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "versionCode": 15,
+      "versionCode": 16,
       "blockedPermissions": [
         "android.permission.WRITE_CALENDAR",
         "android.permission.READ_EXTERNAL_STORAGE",

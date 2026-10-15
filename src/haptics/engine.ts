@@ -12,6 +12,7 @@ import {
   playPulsarPattern,
   playPulsarPreset,
   preparePulsarPattern,
+  pulsarPresetNames,
   stopPulsar,
   type PulsarPattern,
 } from "./pulsar";
@@ -119,6 +120,84 @@ function harden(pulses: Pulse[], strength: number): Pulse[] {
   });
 }
 
+/**
+ * The berserk rumble: three seconds of the motor at full tilt, its amplitude
+ * and sharpness lurching every 150 ms, with a hard tap on every lurch. One
+ * fixed pattern, so Pulsar parses it once and the cache stays small; the
+ * randomness comes from the presets fired on top of it.
+ */
+export const BERSERK_MS = 3200;
+const BERSERK_STEP_MS = 150;
+const BERSERK_RUMBLE: PulsarPattern = (() => {
+  const steps = Math.floor(BERSERK_MS / BERSERK_STEP_MS);
+  const amplitude = [];
+  const frequency = [];
+  const discretePattern = [];
+  for (let i = 0; i < steps; i++) {
+    const time = i * BERSERK_STEP_MS;
+    amplitude.push({ time, value: i % 2 === 0 ? 1 : 0.55 });
+    frequency.push({ time, value: ((i * 7) % 10) / 10 });
+    discretePattern.push({ time, amplitude: 1, frequency: i % 3 === 0 ? 0.2 : 0.9 });
+  }
+  amplitude.push({ time: BERSERK_MS, value: 0 });
+  frequency.push({ time: BERSERK_MS, value: 0.5 });
+  return { discretePattern, continuousPattern: { amplitude, frequency } };
+})();
+
+const berserkTimers = new Set<ReturnType<typeof setTimeout>>();
+
+/** Parse the berserk rumble ahead of time (see preparePulsarPattern). */
+export function prepareBerserk(): void {
+  if (isPulsarAvailable()) preparePulsarPattern(BERSERK_RUMBLE, 1);
+}
+
+/**
+ * Every 500 rewards: the phone buzzes like crazy for BERSERK_MS. With Pulsar,
+ * the rumble above plus a random preset every 70 to 180 ms on top of it.
+ * Without it, a run of random pulses through the built-in haptics. Taps that
+ * land during the burst play as usual over it; `stopBerserk` ends it early.
+ */
+export function playBerserk(): void {
+  stopBerserk();
+  if (isPulsarAvailable()) {
+    playPulsarPattern(BERSERK_RUMBLE, 1);
+    const names = pulsarPresetNames();
+    const started = Date.now();
+    const next = () => {
+      const timer = setTimeout(
+        () => {
+          berserkTimers.delete(timer);
+          if (Date.now() - started >= BERSERK_MS) return;
+          if (names.length > 0)
+            playPulsarPreset(names[Math.floor(Math.random() * names.length)]);
+          next();
+        },
+        70 + Math.random() * 110,
+      );
+      berserkTimers.add(timer);
+    };
+    next();
+    return;
+  }
+  const pulses: Pulse[] = [];
+  let total = 0;
+  while (total < BERSERK_MS) {
+    const pulse: Pulse = {
+      ms: 30 + Math.floor(Math.random() * 80),
+      gap: 15 + Math.floor(Math.random() * 55),
+      intensity: Math.random() < 0.7 ? "heavy" : "medium",
+    };
+    pulses.push(pulse);
+    total += pulse.ms + pulse.gap;
+  }
+  playPulses(pulses);
+}
+
+export function stopBerserk(): void {
+  for (const t of berserkTimers) clearTimeout(t);
+  berserkTimers.clear();
+}
+
 /** A barely-there tick, used for "that did nothing" feedback like an early release. */
 export function tick(): void {
   Haptics.selectionAsync().catch(() => {});
@@ -127,5 +206,6 @@ export function tick(): void {
 export function stopHaptics(): void {
   current?.cancel();
   current = null;
+  stopBerserk();
   stopPulsar();
 }
