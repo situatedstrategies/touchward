@@ -54,7 +54,7 @@
       [
         "expo-play-games-kit",
         {
-          "androidAppId": "000000000000",
+          "androidAppId": "803930726716",
           "iosGameCenterEntitlement": false
         }
       ],
