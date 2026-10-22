@@ -347,7 +347,7 @@ describe analytics as well.
 ## Pricing
 
 Touchward is free to download with one non consumable in-app purchase, the
-unlock (1.99 US), through RevenueCat (`src/purchases/`). The free app has the
+unlock (1.99 US), through RevenueCat (`src/purchases/`). Keep `react-native-purchases` and `react-native-purchases-ui` at 10.15.1 or later: the native paywall in 10.10.0 (purchases-android 10.21.1) crashed on Android 13 with a NullPointerException in `PaywallActivity.getArgs`, a platform bug RevenueCat worked around in purchases-android 10.22.1 (their PR 4260); the first production crash report on 1.1.0 (15) came in on October 22nd 2026. The free app has the
 first three of every option, all colors, reminders, and the Shortcut link;
 everything else, plus custom backdrops, calendar nudges, volume button taps,
 playing Apple Music, YouTube Music or Spotify alongside, and an unlimited library, needs the unlock (`gates.ts`). No subscriptions or
