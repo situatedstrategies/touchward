@@ -96,7 +96,7 @@ Touchward 1.2.0
 - Keep score: a big counter at the top of the screen, and the taps left until your next milestone.
 - Every 500 taps the button goes berserk: a few seconds of wild buzzing, shaking, and random colors and ripples.
 - Google Play Games sign-in under Customize, More, so milestones can follow your Google account.
-- Small fixes.
+- Fixes a crash when opening the unlock screen on Android 13.
 
 ### App Store "What's New" (4000)
 
