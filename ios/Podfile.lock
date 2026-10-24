@@ -245,6 +245,8 @@ PODS:
     - ExpoModulesCore
   - ExpoSplashScreen (57.0.9):
     - ExpoModulesCore
+  - ExpoStoreReview (57.0.3):
+    - ExpoModulesCore
   - ExpoSystemUI (57.0.4):
     - ExpoModulesCore
   - ExpoTaskManager (57.0.21):
@@ -321,6 +323,8 @@ PODS:
     - nanopb/encode (= 3.30910.0)
   - nanopb/decode (3.30910.0)
   - nanopb/encode (3.30910.0)
+  - PlayGamesKit (0.2.2):
+    - ExpoModulesCore
   - PromisesObjC (2.4.1)
   - Pulsar (1.7.0):
     - hermes-engine
@@ -346,11 +350,11 @@ PODS:
     - ReactNativeDependencies
     - Yoga
   - PulsarHaptics (1.4.0)
-  - PurchasesHybridCommon (19.0.0):
-    - RevenueCat (= 5.89.0)
-  - PurchasesHybridCommonUI (19.0.0):
-    - PurchasesHybridCommon (= 19.0.0)
-    - RevenueCatUI (= 5.89.0)
+  - PurchasesHybridCommon (19.14.1):
+    - RevenueCat (= 5.96.1)
+  - PurchasesHybridCommonUI (19.14.1):
+    - PurchasesHybridCommon (= 19.14.1)
+    - RevenueCatUI (= 5.96.1)
   - RCTDeprecation (0.86.3)
   - RCTRequired (0.86.3)
   - RCTSwiftUI (0.86.3)
@@ -2243,9 +2247,9 @@ PODS:
     - React-utils (= 0.86.3)
     - ReactNativeDependencies
   - ReactNativeDependencies (0.86.3)
-  - RevenueCat (5.89.0)
-  - RevenueCatUI (5.89.0):
-    - RevenueCat (= 5.89.0)
+  - RevenueCat (5.96.1)
+  - RevenueCatUI (5.96.1):
+    - RevenueCat (= 5.96.1)
   - RNCAsyncStorage (2.2.0):
     - hermes-engine
     - RCTRequired
@@ -2315,11 +2319,11 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - RNPaywalls (10.10.0):
-    - PurchasesHybridCommonUI (= 19.0.0)
+  - RNPaywalls (10.15.1):
+    - PurchasesHybridCommonUI (= 19.14.1)
     - React-Core
-  - RNPurchases (10.10.0):
-    - PurchasesHybridCommon (= 19.0.0)
+  - RNPurchases (10.15.1):
+    - PurchasesHybridCommon (= 19.14.1)
     - React-Core
   - RNSVG (15.15.4):
     - hermes-engine
@@ -2470,6 +2474,7 @@ DEPENDENCIES:
   - ExpoModulesWorkletsAdapter (from `../node_modules/expo-modules-core`)
   - ExpoNotifications (from `../node_modules/expo-notifications/ios`)
   - ExpoSplashScreen (from `../node_modules/expo-splash-screen/ios`)
+  - ExpoStoreReview (from `../node_modules/expo-store-review/ios`)
   - ExpoSystemUI (from `../node_modules/expo-system-ui/ios`)
   - ExpoTaskManager (from `../node_modules/expo-task-manager/ios`)
   - ExpoWebBrowser (from `../node_modules/expo-web-browser/ios`)
@@ -2477,6 +2482,7 @@ DEPENDENCIES:
   - EXUpdatesInterface (from `../node_modules/expo-updates-interface/ios`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - hermes-engine (from `../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)
+  - PlayGamesKit (from `../node_modules/expo-play-games-kit/ios`)
   - Pulsar (from `../node_modules/react-native-pulsar`)
   - RCTDeprecation (from `../node_modules/react-native/ReactApple/Libraries/RCTFoundation/RCTDeprecation`)
   - RCTRequired (from `../node_modules/react-native/Libraries/Required`)
@@ -2637,6 +2643,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-notifications/ios"
   ExpoSplashScreen:
     :path: "../node_modules/expo-splash-screen/ios"
+  ExpoStoreReview:
+    :path: "../node_modules/expo-store-review/ios"
   ExpoSystemUI:
     :path: "../node_modules/expo-system-ui/ios"
   ExpoTaskManager:
@@ -2652,6 +2660,8 @@ EXTERNAL SOURCES:
   hermes-engine:
     :podspec: "../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec"
     :tag: hermes-v250829098.0.17
+  PlayGamesKit:
+    :path: "../node_modules/expo-play-games-kit/ios"
   Pulsar:
     :path: "../node_modules/react-native-pulsar"
   RCTDeprecation:
@@ -2851,6 +2861,7 @@ SPEC CHECKSUMS:
   ExpoModulesWorkletsAdapter: 8404c9f1ec57171c027d56a0b98dfd740d303488
   ExpoNotifications: d432d5b2904f700a6a2dc29eca52e531c4cc1611
   ExpoSplashScreen: e771da4f26d550ea4fd067d8fb942657e47bb846
+  ExpoStoreReview: a70a18f8ec77262d6c63a6578ce4de3b3ee8ddf0
   ExpoSystemUI: 05ee8d4aaba1b6af330f3621e19b39ff9f21e718
   ExpoTaskManager: ede265f5b4a6e075b422eb4d45c8cb393b0dc465
   ExpoWebBrowser: a4d7c382116fbe33c1ec7f60293f02b7e97042e4
@@ -2867,11 +2878,12 @@ SPEC CHECKSUMS:
   hermes-engine: 63c5db7d529c36335fada6582fd293ae2a105d77
   Mute: 20135a96076f140cc82bfc8b810e2d6150d8ec7e
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
+  PlayGamesKit: 78abc94ef23604ff17fd5ee15671b0e2ffb4a497
   PromisesObjC: 752c3227f599e3467650e47ea36f433eeb10c273
   Pulsar: a2237146bb5042412e095f7567b62c3adcd384c3
   PulsarHaptics: 62d13e9ef63535263f110a925e587d5d027dc683
-  PurchasesHybridCommon: 526db4f4895166e57ae866b3daeb0025030f84bd
-  PurchasesHybridCommonUI: 25e6a479383af677f7a9760c7a297af624d5186e
+  PurchasesHybridCommon: 81e6091516e7b1b1a980fc3a5c1cacc38e7249c2
+  PurchasesHybridCommonUI: ce92788c58a601b0632f8b77e3cb2f059943807b
   RCTDeprecation: 96f68ebf33f8762466b01d57d6e873c4f30efb07
   RCTRequired: 166eed8ad6d8440e73e56d09a9090366609823d2
   RCTSwiftUI: e818198d11928a78c2b2afe281d072171dab617f
@@ -2946,13 +2958,13 @@ SPEC CHECKSUMS:
   ReactCodegen: 64e64ffc25f418a6fc794c307f874da090e20345
   ReactCommon: 02f6a489d5eb4ab79d7deba5cd4434e0ba351a07
   ReactNativeDependencies: 6738e602b46fd24aa453cd58267ec3bb8bf29d27
-  RevenueCat: 5e390c204dafb3ceeff76ade29bf295b952e6681
-  RevenueCatUI: cfceb1e303473d6ed7541058366e9354bb9a75c6
+  RevenueCat: 443ec5cf3d378f2f1d4b09f94f7395277e9229b4
+  RevenueCatUI: f1ca5a24d46f022bb8aa8c375b47bd614ecf5fb6
   RNCAsyncStorage: d90e523830fa7705f8c61632479abde871bc792f
   RNFBAnalytics: d926ce74a905f99a6992f212e89b1b299da7ea07
   RNFBApp: 00190274babd8165002ef0a80c7207d3140ba3ca
-  RNPaywalls: e58b38ca7f80744be671547c2e65f8da957f3a88
-  RNPurchases: 11d5e6e80a5b1ae278e4ed385db196fa384e7503
+  RNPaywalls: 268f1c151098edc59fd8abe5b0ac47af04f5e1ae
+  RNPurchases: 6b311cd020bfdd04d34305c7544f8ba88f9937e3
   RNSVG: 68c366b996064ea99cee1e55da62b8feafb33a78
   RNWorklets: 43af89f696342f91118a2f1f3a879056e2f47331
   UMAppLoader: d69910810f31d2e2cfd49706e89ad372161b0561
