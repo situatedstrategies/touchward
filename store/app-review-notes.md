@@ -13,6 +13,8 @@ TEST
 1. Tap the button. Hold it 5 seconds for a bigger reward.
 2. Customize (bottom row): Reward, Colors, Notify, More.
 3. Random, Save, Library: generate and keep looks.
+4. Customize, More, Counter: today and all-time taps, and taps left until the next berserk burst. Every 500 taps the button goes berserk for a few seconds (stronger haptics, shaking, random colors and ripples). Counts stay on the phone; Reset counter clears them.
+5. Rating: Apple's SKStoreReviewController sheet may appear after real use (install a week old, three days of use, twenty rewards). A Rate link in Customize, More opens the App Store listing.
 
 PERMISSIONS (optional, user initiated)
 
@@ -33,6 +35,8 @@ PRIVACY
 - Crash reports to our inbox, opt out in More, Support.
 - Support form: message, device model, app version.
 - Purchases: StoreKit, verified by RevenueCat.
+- Counter and milestones: stored on the phone only.
+- No sign in of any kind on iOS (Google Play Games sign in is Android only).
 - https://touchward-dopamine.com/privacy
 
 PURCHASE
