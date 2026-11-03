@@ -118,7 +118,7 @@ export function UnlockProvider({ children }: { children: ReactNode }) {
     Alert.alert(
       value ? "Restored" : "Nothing to restore",
       value
-        ? "Everything is unlocked on this phone."
+        ? "Ads are off on this phone."
         : "No Touchward purchase was found on this store account.",
     );
   }, [available, apply]);
@@ -138,23 +138,14 @@ export function useUnlock(): UnlockContextValue {
 }
 
 /**
- * For settings controls: run the change when it is free or unlocked, otherwise
- * show the paywall and run it only if the purchase goes through.
+ * For settings controls. This used to show the paywall for a locked choice
+ * and apply the change only if the purchase went through. Since November 2026
+ * every choice is free (ads pay for the app; the purchase only removes them),
+ * so the change always runs. The shape is kept so the call sites, which pass
+ * the old "is this free" answer, did not all have to move at once.
  */
 export function useGate(): (free: boolean, change: () => void) => void {
-  const { unlocked, presentPaywall } = useUnlock();
-  return useCallback(
-    (free, change) => {
-      if (free || unlocked) {
-        change();
-        return;
-      }
-      presentPaywall()
-        .then((ok) => {
-          if (ok) change();
-        })
-        .catch(() => {});
-    },
-    [unlocked, presentPaywall],
-  );
+  return useCallback((_free, change) => {
+    change();
+  }, []);
 }

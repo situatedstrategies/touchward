@@ -16,6 +16,7 @@ import { pickLook, randomLook, suggestName, type LookSettings } from "../looks/l
 import { useLooks } from "../store/looks";
 import { lockedToFree, lookToFree, FREE_SAVED_LOOKS } from "../purchases/gates";
 import { logReward } from "../analytics/analytics";
+import { noteForeground, noteRewardForAds } from "../ads/ads";
 import { unlockAchievement } from "../games/achievements";
 import { BERSERK_EVERY, berserkMilestone, rewardsToNextBerserk } from "../games/milestones";
 import { BERSERK_MS } from "../haptics/engine";
@@ -180,8 +181,10 @@ export function HomeScreen() {
     (kind: "tap" | "hold") => {
       recordReward();
       logReward(kind);
-      // Mix with other music when unlocked; in the free app a tap stops it.
       onTouchSound();
+      // The free app's interstitial, when the policy in ads/policy.ts says
+      // the moment is right; nothing happens while ad-free.
+      noteRewardForAds({ unlocked, sheetOpen: sheetOpen.current });
       requestReviewAfterReward({
         source: kind,
         // The counter has not re-rendered yet, so count this reward by hand.
@@ -189,19 +192,21 @@ export function HomeScreen() {
         isSheetOpen: () => sheetOpen.current,
       });
     },
-    [recordReward],
+    [recordReward, unlocked],
   );
 
-  // Touch sounds for everyone; other apps' music only with the unlock. Until
-  // the store answers, music is left alone so an unlocked user never loses it.
+  // Touch sounds and other apps' music for everyone.
   useEffect(() => {
     if (loaded) enableTouchSounds(settings.touchSounds);
   }, [loaded, settings.touchSounds]);
-  const otherAudioAllowed = !known || unlocked;
+  const otherAudioAllowed = true;
   useEffect(() => {
     setOtherAudioAllowed(otherAudioAllowed);
     const sub = AppState.addEventListener("change", (state) => {
-      if (state === "active") onForeground();
+      if (state === "active") {
+        onForeground();
+        noteForeground();
+      }
     });
     return () => sub.remove();
   }, [otherAudioAllowed]);

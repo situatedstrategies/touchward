@@ -3,12 +3,11 @@ import type { Theme } from "../../design/theme";
 import { isVolumeButtonSupportAvailable } from "../../hardware/volumeButtons";
 import { REWARD_LINK } from "../../links";
 import { useSettings } from "../../store/settings";
-import { useGate, useUnlock } from "../../store/unlock";
+import { useGate } from "../../store/unlock";
 import { Actions, Category, Code, Hint, Section, TextButton, ToggleRow } from "./controls";
 
 export function TriggerSection({ theme }: { theme: Theme }) {
   const { settings, update } = useSettings();
-  const { unlocked } = useUnlock();
   const gate = useGate();
   const volumeSupported = isVolumeButtonSupportAvailable();
 
@@ -16,11 +15,7 @@ export function TriggerSection({ theme }: { theme: Theme }) {
     <Category title="Triggers" theme={theme}>
       <Section title="Volume buttons" theme={theme}>
         <ToggleRow
-          label={
-            unlocked
-              ? "Volume buttons tap the button"
-              : "Volume buttons tap the button (unlock)"
-          }
+          label="Volume buttons tap the button"
           value={settings.volumeButtons && volumeSupported}
           onChange={(v) => gate(!v, () => update({ volumeButtons: v }))}
           theme={theme}

@@ -16,16 +16,16 @@ import {
 } from "../types";
 
 /**
- * What the free app includes. The rule is "the first three of everything":
- * the first three options in every list, all button and ripple colors, the
- * navy and phone backdrops, reminders, and the shortcut link. Everything past
- * that, plus custom backdrops, calendar nudges, volume button taps, and
- * playing other music alongside (audioSession.ts), needs the
- * unlock. When a list has three options or fewer nothing in it is locked.
+ * What the free app includes: everything. Since November 2026 Touchward is
+ * ad-supported, and the one purchase (entitlement "full") only turns the ads
+ * off. The free-tier rule used to be "the first three of everything"; these
+ * helpers stay so the call sites keep reading the same way, and all of them
+ * now answer "free". The thresholds are infinite rather than removed so that
+ * a future change of mind is one number, not an archaeology dig.
  */
-export const FREE_COUNT = 3;
+export const FREE_COUNT = Number.POSITIVE_INFINITY;
 /** How many looks the free app keeps in the library. */
-export const FREE_SAVED_LOOKS = 3;
+export const FREE_SAVED_LOOKS = Number.POSITIVE_INFINITY;
 
 function firstFree<T>(list: readonly T[], match: (item: T) => boolean): boolean {
   const index = list.findIndex(match);
@@ -44,9 +44,8 @@ export const isFreeRippleWidth = (id: Settings["rippleWidth"]) =>
 export const isFreeLinger = (value: number) =>
   firstFree(RIPPLE_LINGERS, (l) => l.value === value);
 export const isFreeRippleMax = (n: number) => n <= FREE_COUNT;
-/** Navy and the phone's own look are free; any color is not. */
-export const isFreeBackdrop = (backdrop: string) =>
-  backdrop === "navy" || backdrop === "system";
+/** Every backdrop, custom colors included. */
+export const isFreeBackdrop = (_backdrop: string) => true;
 
 /** The first three Pulsar presets in the picker's order. Null (the mode's own haptic) is free. */
 export function isFreePreset(name: string | null): boolean {
@@ -81,19 +80,14 @@ export function lockedToFree(settings: Settings): Partial<Settings> {
   if (!isFreeRewardMode(settings.rewardMode)) patch.rewardMode = d.rewardMode;
   if (!isFreePattern(settings.holdPattern)) patch.holdPattern = PATTERN_IDS[0];
   if (!isFreeStrength(settings.hapticStrength))
-    patch.hapticStrength = STRENGTHS[FREE_COUNT - 1].value;
+    patch.hapticStrength = STRENGTHS[STRENGTHS.length - 1].value;
   if (!isFreeRippleShape(settings.rippleShape)) patch.rippleShape = d.rippleShape;
   if (!isFreeRippleWidth(settings.rippleWidth)) patch.rippleWidth = d.rippleWidth;
   if (!isFreeLinger(settings.rippleLinger))
-    patch.rippleLinger = RIPPLE_LINGERS[FREE_COUNT - 1].value;
-  if (!isFreeRippleMax(settings.rippleMax)) patch.rippleMax = FREE_COUNT;
+    patch.rippleLinger = RIPPLE_LINGERS[RIPPLE_LINGERS.length - 1].value;
   if (!isFreeBackdrop(settings.backdrop)) patch.backdrop = d.backdrop;
   if (!isFreePreset(settings.tapPreset)) patch.tapPreset = null;
   if (!isFreePreset(settings.holdPreset)) patch.holdPreset = null;
-  if (settings.calendarNudges.enabled) {
-    patch.calendarNudges = { ...settings.calendarNudges, enabled: false };
-  }
-  if (settings.volumeButtons) patch.volumeButtons = false;
   return patch;
 }
 
@@ -107,8 +101,8 @@ export function lookToFree(look: LookSettings): LookSettings {
     rippleWidth: isFreeRippleWidth(look.rippleWidth) ? look.rippleWidth : RIPPLE_WIDTHS[0].id,
     rippleLinger: isFreeLinger(look.rippleLinger)
       ? look.rippleLinger
-      : RIPPLE_LINGERS[FREE_COUNT - 1].value,
-    rippleMax: Math.min(look.rippleMax, FREE_COUNT),
+      : RIPPLE_LINGERS[RIPPLE_LINGERS.length - 1].value,
+    rippleMax: look.rippleMax,
     backdrop: isFreeBackdrop(look.backdrop)
       ? look.backdrop
       : Math.random() < 0.5
@@ -116,7 +110,7 @@ export function lookToFree(look: LookSettings): LookSettings {
         : "system",
     hapticStrength: isFreeStrength(look.hapticStrength)
       ? look.hapticStrength
-      : STRENGTHS[FREE_COUNT - 1].value,
+      : STRENGTHS[STRENGTHS.length - 1].value,
     tapPreset: isFreePreset(look.tapPreset) ? look.tapPreset : null,
   };
 }

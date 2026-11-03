@@ -170,7 +170,6 @@ export function ColorSection({ theme }: { theme: Theme }) {
           <Chip
             label="Color"
             selected={customBackdrop}
-            locked={!unlocked}
             onPress={() =>
               gate(false, () => {
                 if (!isHexColor(settings.backdrop))

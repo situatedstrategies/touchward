@@ -2,7 +2,7 @@
   "expo": {
     "name": "Touchward",
     "slug": "touchward",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "scheme": "touchward",
@@ -75,6 +75,17 @@
           }
         }
       ],
+      [
+        "react-native-google-mobile-ads",
+        {
+          "androidAppId": "ca-app-pub-2443535982979230~6375631181",
+          "iosAppId": "ca-app-pub-2443535982979230~6732529843",
+          "userTrackingUsageDescription": "Touchward is free because of ads. Allowing tracking lets the ads be more relevant; saying no keeps them, just less relevant.",
+          "skAdNetworkItems": [
+            "cstr6suwn9.skadnetwork"
+          ]
+        }
+      ],
       "./plugins/withQuietPods.js",
       "./plugins/withHapticsOnlyPulsar.js",
       "./plugins/withoutDeprecatedSystemBarColors.js",
@@ -97,7 +108,7 @@
         "TouchwardDataAccessNote": "Touchward requests access to calendar events and notifications solely to provide its features on this device. Calendar data is read at runtime to schedule local notifications and is not retained. The app stores locally: its own settings; the reward counter (today's and all-time tap counts, which drive the milestone countdown and the berserk burst every 500 taps, a few seconds of stronger haptics, shaking, and random colors on the button); and the dates it last asked for a rating. Counts can be reset in Customize and are never uploaded. The rating request is Apple's own SKStoreReviewController sheet, asked for only after real use (an install at least a week old, opened on three days, twenty or more rewards, never within thirty days of a crash or support message, at most once per 120 days), and the Rate link in Customize opens the App Store listing; the app sends nothing for either. Four things can leave the device, none with personal identifiers: messages you send through the support form (what you type, plus device model and app version) and, unless turned off in the app, crash reports (the error, app version, device model, OS version, and the app's settings), both to the Touchward support inbox; unless turned off in the app, usage analytics through Google Analytics for Firebase (rewards given, unlocks, rating prompts requested, session counts, app version, device model, OS version, language, and country, tied to a random app instance identifier, with no advertising identifier); and, for the optional one time unlock, the App Store purchase receipt and a random app generated identifier to RevenueCat, which confirms and restores the purchase. The iOS app has no sign in of any kind; the Google Play Games sign in exists only in the Android build. No name, email, or account exists to link any of it to.",
         "TouchwardEncryptionNote": "Touchward contains no custom or proprietary encryption. Network requests (the optional support form, push token registration, crash reports, purchases, usage analytics, and opening App Store or music links) use HTTPS through the operating system's standard networking stack, which is exempt encryption under U.S. export rules. ITSAppUsesNonExemptEncryption is therefore false."
       },
-      "buildNumber": "10",
+      "buildNumber": "11",
       "privacyManifests": {
         "NSPrivacyTracking": false,
         "NSPrivacyTrackingDomains": [],
@@ -122,13 +133,17 @@
             "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeProductInteraction",
             "NSPrivacyCollectedDataTypeLinked": false,
             "NSPrivacyCollectedDataTypeTracking": false,
-            "NSPrivacyCollectedDataTypePurposes": ["NSPrivacyCollectedDataTypePurposeAnalytics"]
+            "NSPrivacyCollectedDataTypePurposes": [
+              "NSPrivacyCollectedDataTypePurposeAnalytics"
+            ]
           },
           {
             "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeOtherUsageData",
             "NSPrivacyCollectedDataTypeLinked": false,
             "NSPrivacyCollectedDataTypeTracking": false,
-            "NSPrivacyCollectedDataTypePurposes": ["NSPrivacyCollectedDataTypePurposeAnalytics"]
+            "NSPrivacyCollectedDataTypePurposes": [
+              "NSPrivacyCollectedDataTypePurposeAnalytics"
+            ]
           }
         ]
       },
@@ -149,7 +164,7 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "versionCode": 16,
+      "versionCode": 17,
       "blockedPermissions": [
         "android.permission.WRITE_CALENDAR",
         "android.permission.READ_EXTERNAL_STORAGE",
@@ -167,6 +182,9 @@
     "owner": "omaas",
     "description": "A sensory reward button: tap it when you did the thing.",
     "primaryColor": "#2C66FF",
-    "platforms": ["ios", "android"]
+    "platforms": [
+      "ios",
+      "android"
+    ]
   }
 }

@@ -23,7 +23,7 @@
 	<key>CFBundlePackageType</key>
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.2.0</string>
+	<string>1.2.1</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -43,7 +43,11 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>10</string>
+	<string>11</string>
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-2443535982979230~6732529843</string>
+	<key>GADDelayAppMeasurementInit</key>
+	<false/>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSMinimumSystemVersion</key>
@@ -73,10 +77,19 @@
 	<string>Allow $(PRODUCT_NAME) to access your reminders</string>
 	<key>NSUserNotificationsUsageDescription</key>
 	<string>Touchward schedules reminders and calendar nudges on this phone so you remember to tap. Notifications are created locally; nothing about them is stored by the app beyond your settings or sent anywhere.</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>Touchward is free because of ads. Allowing tracking lets the ads be more relevant; saying no keeps them, just less relevant.</string>
 	<key>RCTMetroPort</key>
 	<string>$(RCT_METRO_PORT)</string>
 	<key>RCTNewArchEnabled</key>
 	<true/>
+	<key>SKAdNetworkItems</key>
+	<array>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>cstr6suwn9.skadnetwork</string>
+		</dict>
+	</array>
 	<key>TouchwardDataAccessNote</key>
 	<string>Touchward requests access to calendar events and notifications solely to provide its features on this device. Calendar data is read at runtime to schedule local notifications and is not retained. The app stores locally: its own settings; the reward counter (today's and all-time tap counts, which drive the milestone countdown and the berserk burst every 500 taps, a few seconds of stronger haptics, shaking, and random colors on the button); and the dates it last asked for a rating. Counts can be reset in Customize and are never uploaded. The rating request is Apple's own SKStoreReviewController sheet, asked for only after real use (an install at least a week old, opened on three days, twenty or more rewards, never within thirty days of a crash or support message, at most once per 120 days), and the Rate link in Customize opens the App Store listing; the app sends nothing for either. Four things can leave the device, none with personal identifiers: messages you send through the support form (what you type, plus device model and app version) and, unless turned off in the app, crash reports (the error, app version, device model, OS version, and the app's settings), both to the Touchward support inbox; unless turned off in the app, usage analytics through Google Analytics for Firebase (rewards given, unlocks, rating prompts requested, session counts, app version, device model, OS version, language, and country, tied to a random app instance identifier, with no advertising identifier); and, for the optional one time unlock, the App Store purchase receipt and a random app generated identifier to RevenueCat, which confirms and restores the purchase. The iOS app has no sign in of any kind; the Google Play Games sign in exists only in the Android build. No name, email, or account exists to link any of it to.</string>
 	<key>TouchwardEncryptionNote</key>
@@ -114,7 +127,7 @@
 	<key>UIStatusBarHidden</key>
 	<true/>
 	<key>UIStatusBarStyle</key>
-	<string></string>
+	<string>UIStatusBarStyleDefault</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

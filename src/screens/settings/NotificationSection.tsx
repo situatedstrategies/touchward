@@ -161,7 +161,7 @@ export function NotificationSection({ theme, visible }: { theme: Theme; visible:
     <Category title="Notifications" theme={theme}>
       <Section title="After calendar events" theme={theme}>
         <ToggleRow
-          label={unlocked ? "Nudge me after events end" : "Nudge me after events end (unlock)"}
+          label="Nudge me after events end"
           value={nudges.enabled}
           onChange={(v) => gate(!v, () => void toggleNudges(v))}
           theme={theme}

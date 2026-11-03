@@ -3,8 +3,8 @@
   "EX_DEV_CLIENT_NETWORK_INSPECTOR": "true",
   "expo.inlineModules.watchedDirectories": "[]",
   "expo.inlineModules.xcodeProjectTargets": "{\"mainTarget\":\"Touchward\",\"targets\":[]}",
+  "ios.useFrameworks": "static",
   "ios.forceStaticLinking": "[]",
   "apple.privacyManifestAggregationEnabled": "true",
-  "EXPO_USE_PRECOMPILED_MODULES": "true",
-  "ios.useFrameworks": "static"
+  "EXPO_USE_PRECOMPILED_MODULES": "true"
 }

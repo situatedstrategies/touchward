@@ -42,9 +42,9 @@ export function MusicAppsButton({ scale, color }: { scale: number; color: string
       hitSlop={12}
       accessibilityRole="button"
       accessibilityLabel={
-        unlocked ? `Open ${MUSIC_APP_NAMES}` : `Open ${MUSIC_APP_NAMES} (unlock)`
+        `Open ${MUSIC_APP_NAMES}`
       }
-      style={({ pressed }) => ({ opacity: pressed ? 0.6 : unlocked ? 1 : 0.55 })}
+      style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
     >
       <Svg width={size} height={size} viewBox="0 0 24 24">
         {/* Two beamed eighth notes */}

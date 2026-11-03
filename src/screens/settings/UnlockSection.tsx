@@ -1,30 +1,47 @@
-import { MUSIC_APP_NAMES } from "../../listening/musicApps";
+import { useEffect, useState } from "react";
 import type { Theme } from "../../design/theme";
-import { FREE_COUNT, FREE_SAVED_LOOKS } from "../../purchases/gates";
+import { privacyOptionsRequired, showPrivacyOptions } from "../../ads/ads";
 import { useUnlock } from "../../store/unlock";
 import { Actions, Category, Hint, Section, TextButton } from "./controls";
 
-/** The one-time unlock: what it opens up, a button to buy it, and a way to restore it. */
+/** The one purchase: ads off, forever. A button to buy it, a way to restore it, and the ad privacy form where the law requires one. */
 export function UnlockSection({ theme }: { theme: Theme }) {
   const { unlocked, presentPaywall, restore } = useUnlock();
+  const [privacyChoices, setPrivacyChoices] = useState(false);
+
+  useEffect(() => {
+    if (unlocked) return;
+    let cancelled = false;
+    privacyOptionsRequired()
+      .then((required) => {
+        if (!cancelled) setPrivacyChoices(required);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [unlocked]);
 
   return (
-    <Category title="Unlock" theme={theme}>
-      <Section title={unlocked ? "Everything is unlocked" : "One-time unlock"} theme={theme}>
+    <Category title="Ads" theme={theme}>
+      <Section title={unlocked ? "Ads are off" : "Remove ads"} theme={theme}>
         <Hint theme={theme}>
           {unlocked
-            ? "Every shape, feel, preset, backdrop color, calendar nudge, volume button tap, and your own music alongside is yours. Thank you."
-            : `The free app includes the first ${FREE_COUNT} of every choice, all button and ripple colors, the navy and phone backdrops, reminders, and ${FREE_SAVED_LOOKS} saved looks. One purchase unlocks the rest: every shape, feel, and haptic preset, any backdrop color, calendar nudges, volume button taps, your ${MUSIC_APP_NAMES} playing alongside, and an unlimited library. No subscription, no account.`}
+            ? "Thank you. Every shape, feel, preset, backdrop, nudge and trigger is yours, with no ads, on every phone signed into this store account."
+            : "Everything in Touchward is free, and an ad now and then between rewards pays for it. One purchase turns the ads off for good. No subscription, no account."}
         </Hint>
         <Actions>
           {!unlocked && (
+            <TextButton label="Remove ads" onPress={() => void presentPaywall()} theme={theme} />
+          )}
+          <TextButton label="Restore purchase" onPress={() => void restore()} theme={theme} />
+          {!unlocked && privacyChoices && (
             <TextButton
-              label="Unlock everything"
-              onPress={() => void presentPaywall()}
+              label="Ad privacy choices"
+              onPress={() => void showPrivacyOptions()}
               theme={theme}
             />
           )}
-          <TextButton label="Restore purchase" onPress={() => void restore()} theme={theme} />
         </Actions>
       </Section>
     </Category>
