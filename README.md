@@ -57,11 +57,17 @@ hold it down, watch the ring close, and get a bigger buzz when the timer is up.
   Pulsar's haptic engine is marked haptics only
   (`plugins/withHapticsOnlyPulsar.js`), so starting it never takes the audio
   session from other apps.
-- Apple Music (iOS) or YouTube Music (Android), and Spotify (unlock): the note at the top of the home screen
+- Apple Music (iOS) or YouTube Music (Android), and Spotify: the note at the top of the home screen
   opens either one (or its store page when it is not installed), and their
-  music keeps playing under the touch sounds. In the free app a tap switches
-  Touchward's audio to not mix, which stops other music (iOS; see
+  music keeps playing under the touch sounds (iOS audio session handling in
   `src/listening/audioSession.ts`).
+- Ads, in the free app only: a full-screen interstitial between rewards,
+  never in the first 90 seconds after the app comes to the foreground, never
+  more than one every five minutes, and only after another 120 rewards
+  (`src/ads/policy.ts`, pure and tested; `src/ads/ads.ts` is the adapter over
+  `react-native-google-mobile-ads` with Google's User Messaging Platform
+  consent form where the law requires one). The one purchase turns the ads off
+  and the SDK never starts for an unlocked phone. See Pricing and ads below.
 - A counter of rewards today, big at the top of the screen, with the taps left
   until the next milestone; the all time total is in Customize, More.
   Everything is stored on the device. No account, no server, and the
@@ -299,8 +305,11 @@ without it the events have nowhere to land.
 On iOS the Firebase SDK is installed through CocoaPods with static frameworks
 (`expo-build-properties` sets `ios.useFrameworks` to `static`, the
 `@react-native-firebase/app` plugin sets `disableSPM`) and Analytics is built
-without the advertising identifier (`withoutAdIdSupport`), so AdSupport is
-never linked and the app stays a non tracking app. After changing native
+without the advertising identifier (`withoutAdIdSupport`): Analytics itself
+never reads it. Since 1.2.1 the Google Mobile Ads SDK does, for the ads in the
+free app, with the App Tracking Transparency prompt on iOS and Google's consent
+form where required, so the app is no longer a "no tracking" app on either
+store form (see Pricing and ads). After changing native
 dependencies run `npx pod-install` (or `npx expo run:ios`) to refresh
 `Podfile.lock`.
 
@@ -344,15 +353,29 @@ form needs the matching answers (App interactions, Device or other IDs). The
 manifest in `app.json` declares all four, and the site's privacy policy has to
 describe analytics as well.
 
-## Pricing
+## Pricing and ads
 
-Touchward is free to download with one non consumable in-app purchase, the
-unlock (1.99 US), through RevenueCat (`src/purchases/`). Keep `react-native-purchases` and `react-native-purchases-ui` at 10.15.1 or later: the native paywall in 10.10.0 (purchases-android 10.21.1) crashed on Android 13 with a NullPointerException in `PaywallActivity.getArgs`, a platform bug RevenueCat worked around in purchases-android 10.22.1 (their PR 4260); the first production crash report on 1.1.0 (15) came in on October 22nd 2026. The free app has the
-first three of every option, all colors, reminders, and the Shortcut link;
-everything else, plus custom backdrops, calendar nudges, volume button taps,
-playing Apple Music, YouTube Music or Spotify alongside, and an unlimited library, needs the unlock (`gates.ts`). No subscriptions or
-accounts. Restore purchases is in Customize, More, and the unlock follows the
-store account.
+Since 1.2.1 (November 2026) every feature is free and the app is paid for by
+ads: a full-screen interstitial now and then between rewards (policy in
+`src/ads/policy.ts`). The one non consumable in-app purchase, 1.99 US through
+RevenueCat (`src/purchases/`, entitlement `full`), turns the ads off for good
+and nothing else; Customize, More, Ads holds Remove ads, Restore purchase and,
+where Google's consent form applies, Ad privacy choices. The gates in
+`gates.ts` all answer "free" (the thresholds are infinite, not removed), so
+`useGate` applies every change straight away and the padlock code paths in
+`Chip`, `LockIcon` and `LibraryScreen` are unreachable.
+
+Google AdMob ids: app ids in `app.json` (the config plugin writes them into
+the native projects), interstitial units in `src/ads/config.ts`; development
+builds use Google's sample units. The publisher is authorised by
+https://touchward-dopamine.com/app-ads.txt, served by the site repository; AdMob
+reads it from the developer website on both store listings and limits serving
+until it verifies. `store/listing.md` has the store-side checklist (Play's Ads
+declaration and Data safety rows, App Store Connect's privacy answers).
+
+Keep Keep `react-native-purchases` and `react-native-purchases-ui` at 10.15.1 or later: the native paywall in 10.10.0 (purchases-android 10.21.1) crashed on Android 13 with a NullPointerException in `PaywallActivity.getArgs`, a platform bug RevenueCat worked around in purchases-android 10.22.1 (their PR 4260); the first production crash report on 1.1.0 (15) came in on October 22nd 2026. No subscriptions or
+accounts. Restore purchase is in Customize, More, Ads, and the purchase
+follows the store account.
 
 ## Google Play Games Services
 
@@ -506,9 +529,11 @@ ripples or the timer, then the surroundings.
 - Both: the `assets/` icons are final; unused Android permissions are blocked
   in `app.json`.
 - iOS privacy: `app.json` sets `ITSAppUsesNonExemptEncryption` to false, a
-  privacy manifest with no tracking and four collected data types that are not
-  linked to identity (crash data, purchase history, product interaction, other
-  usage data), usage strings
+  privacy manifest that declares tracking (the Google Mobile Ads SDK behind
+  the App Tracking Transparency prompt) and six collected data types that are
+  not linked to identity (crash data, purchase history, product interaction,
+  other usage data, and, for third-party advertising, device ID and
+  advertising data; the SDK's own manifest adds its domains), usage strings
   that say calendar and notification access is used only to provide the
   feature and that nothing read is stored or sent, and two plain language
   Info.plist notes (`TouchwardDataAccessNote`, `TouchwardEncryptionNote`) that
@@ -548,3 +573,11 @@ or commit messages. Use periods, hyphens, and colons.
 - Notification-only rewards: play the haptic from the "I did it" button
   without opening the app (needs a notification service extension on iOS).
 - Apple Watch and Wear OS companions, where the haptics are strongest.
+- A rewarded ad as a second way to go ad-free for a day, for people who will
+  never buy anything but will watch one ad on purpose.
+- A daily total on the lock screen (Live Activity on iOS, a widget on
+  Android), so the count is visible without opening the app.
+- Named counters: tap for "water" or "pages" and see each total, still with
+  one button and no list to maintain.
+- Share the berserk burst as a short clip, since the 500 milestone is the
+  thing people tell each other about.

@@ -5,15 +5,15 @@ import { loadVolumeManager } from "../hardware/volumeButtons";
 /**
  * Touchward's own sound is Pulsar's tone for each haptic, on for everyone
  * unless switched off in Customize.
- * What the unlock changes is other apps' music. Unlocked, the session is
- * ambient, which mixes: Apple Music, YouTube Music or Spotify keeps playing under the tones.
- * In the free app a tap switches it to solo ambient and activates it, which
- * does not mix and stops other music. Both follow the ringer switch.
+ * Other apps' music mixes with the tones for everyone: the session is
+ * ambient, so Apple Music, YouTube Music or Spotify keeps playing under them
+ * (since 1.2.1, when every feature became free and the one purchase came to
+ * mean ad-free only). The solo-ambient path below, which takes the audio on
+ * a tap, is kept for a build that passes `setOtherAudioAllowed(false)`; the
+ * home screen passes true. Both follow the ringer switch.
  *
- * Only a tap in the free app ever stops other music. Launch, a change in the
- * unlock, and returning to the foreground only ever allow mixing, so a moment
- * where the unlock reads wrong (before the store settles) cannot cut off a
- * paying user's music.
+ * Launch and returning to the foreground only ever allow mixing, so nothing
+ * here can cut off a person's music by surprise.
  *
  * Pulsar sets its own mixing category when its sound is enabled and again the
  * first time a tone plays, and the volume button listener sets ambient, so
@@ -37,13 +37,13 @@ function allowMixing(): void {
     .catch(() => {});
 }
 
-/** Unlocked (or not yet known): let other music play. Free: stop it on the next tap. */
+/** True (the shipped setting): let other music play. False: stop it on the next tap. */
 export function setOtherAudioAllowed(allowed: boolean): void {
   othersAllowed = allowed;
   if (allowed) allowMixing();
 }
 
-/** The app is back in front: keep mixing when allowed; the free app waits for a tap. */
+/** The app is back in front: keep mixing when allowed. */
 export function onForeground(): void {
   if (othersAllowed) allowMixing();
 }

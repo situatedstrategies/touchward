@@ -28,9 +28,10 @@ function chooseMusicApp(): void {
 }
 
 /**
- * A note on the home screen that opens the music apps for the platform. Part of the
- * unlock, like playing other music alongside Touchward at all: in the free app
- * the note is dimmed and a tap shows the paywall first, then the choice.
+ * A note on the home screen that opens the music apps for the platform. Free
+ * for everyone since 1.2.1, like playing other music alongside Touchward; the
+ * gate call is kept so the call site reads like the others and applies the
+ * action straight away.
  */
 export function MusicAppsButton({ scale, color }: { scale: number; color: string }) {
   const { unlocked } = useUnlock();

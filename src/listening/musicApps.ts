@@ -2,7 +2,7 @@ import { Linking, Platform } from "react-native";
 
 /**
  * Hand-offs to the music apps people already use: Apple Music and Spotify on
- * iOS, YouTube Music and Spotify on Android. With the unlock, whatever is
+ * iOS, YouTube Music and Spotify on Android. Free for everyone: whatever is
  * playing carries on under Touchward's touch sounds (see audioSession.ts).
  *
  * Each app opens through its own URL scheme. When the app is not installed

@@ -80,12 +80,36 @@ your phone. Calendar data is read only to schedule nudges and is never stored
 or sent. The app never asks for your email or your name. If it crashes, an
 anonymous report helps us fix it, and you can turn that off.
 
-Touchward is free to download. One in-app purchase of 1.99 unlocks every
-feature, once, forever. No subscription, no ads.
+Touchward is free to download and every feature is free to use. An ad
+shows now and then between rewards, never in the first minute and a half and
+never more than one every five minutes. One in-app purchase of 1.99 turns the
+ads off, once, forever. No subscription.
 
 ## Keywords (100)
 
 reward,dopamine,haptic,habit,motivation,button,tap,ADHD,focus,ritual,vibrate,celebrate,game
+
+## Release notes: 1.2.1 (iOS build 11, Android versionCode 17)
+
+### Google Play release notes (500)
+
+Touchward 1.2.1
+
+- Every feature is now free: all shapes, reward modes, haptic presets, backdrops, calendar nudges, volume button taps and an unlimited library.
+- An ad shows now and then between rewards, never in the first minute and a half and never more than one every five minutes.
+- One purchase of 1.99 turns the ads off for good. Already bought the unlock? Ads are already off for you.
+- Your music keeps playing under the button for everyone.
+
+### App Store "What's New" (4000)
+
+Touchward 1.2.1
+
+- Every feature is now free. All eight shapes, all seven reward modes, every haptic strength and preset, custom backdrops, calendar nudges, volume button taps and an unlimited library are yours from the first tap.
+- Touchward is now supported by ads: a full-screen ad shows now and then between rewards, never in the first minute and a half after you open the app and never more than one every five minutes.
+- One purchase of 1.99 turns the ads off for good. If you bought the unlock before, ads are already off for you, on every phone signed in to your account.
+- Your music keeps playing under the button for everyone.
+
+Questions or ideas: Customize, More, Contact support, or touchward-dopamine.com/support.
 
 ## Release notes: 1.2.0 (Android versionCode 16)
 
@@ -210,9 +234,24 @@ https://touchward-dopamine.com
 
 - Data collected: Crash Data. Not linked to the user. Not used for tracking.
   Purpose: App Functionality.
-- Data collected: Purchase History (the unlock, through RevenueCat). Not
-  linked to the user. Not used for tracking. Purpose: App Functionality.
-- Everything else: not collected.
+- Data collected: Purchase History (the ad-free purchase, through
+  RevenueCat). Not linked to the user. Not used for tracking. Purpose: App
+  Functionality.
+- Data collected: Product Interaction and Other Usage Data (Google Analytics
+  for Firebase). Not linked to the user. Not used for tracking. Purpose:
+  Analytics.
+- Data collected, since 1.2.1, by the Google Mobile Ads SDK in the free app:
+  Device ID (the advertising identifier, when the person allows tracking in
+  the App Tracking Transparency prompt) and Advertising Data. Not linked to
+  the user. Used for tracking: yes, when consent is given. Purpose:
+  Third-Party Advertising. Google's current list for the SDK is at
+  developers.google.com/admob/ios/data-disclosure; check it before each
+  submission and match the questionnaire to it.
+- Tracking: yes. The app shows the App Tracking Transparency prompt before
+  personalised ads; the privacy manifest in app.json declares
+  NSPrivacyTracking true.
+- Everything else: not collected. The purchase turns the ad SDK off
+  entirely, so an ad-free phone sends none of the advertising rows.
 
 Google Play Data safety form. Google counts data as "collected" only when
 it leaves the device, so calendar events, the counter, and the settings are
@@ -229,11 +268,16 @@ RevenueCat, Expo's push service) is "collected", not "shared".
 - App interactions (App activity): collected, not shared, optional
   ("Share usage analytics"), purpose Analytics. Google Analytics for
   Firebase events: rewards, unlocks, review prompts, sessions, screens.
-- Device or other IDs: collected, not shared, required, purposes App
-  functionality and Analytics. The RevenueCat app user id (random, created
-  at launch for the unlock), the Firebase app instance id (reset when
-  analytics is turned off), and, only with push turned on, the device push
-  token sent to Expo's push service.
+- Device or other IDs: collected, shared, required, purposes App
+  functionality, Analytics and Advertising or marketing. The RevenueCat app
+  user id (random, created at launch for the ad-free purchase), the Firebase
+  app instance id (reset when analytics is turned off), the device push token
+  sent to Expo's push service only with push turned on, and, in the free app,
+  the Android advertising ID sent to Google AdMob to pick and measure an ad
+  ("shared", because AdMob uses it for its own purposes). The AD_ID
+  permission is declared by the ads SDK.
+- Advertising or marketing is also the purpose to tick for App interactions,
+  since AdMob measures ad views and taps.
 - Purchase history (Financial info): collected, not shared, required,
   purpose App functionality. The App Store or Play receipt, through
   RevenueCat, which confirms and restores the unlock.
@@ -244,6 +288,38 @@ RevenueCat, Expo's push service) is "collected", not "shared".
   files, health data. Google Play Games sign-in is run by Google Play
   services; the app shows the player name and avatar on the device and
   sends neither anywhere.
+
+## Google Play Console: ads setup (do this with the 1.2.1 upload)
+
+The 1.2.1 build is the first one with ads, so the Play listing has to say so
+before it goes out. In Play Console, for Touchward:
+
+1. Policy and programs, App content, Ads: "Yes, my app contains ads." Play
+   shows the "Contains ads" label on the listing from then on.
+2. App content, Data safety: add Advertising or marketing as a purpose, mark
+   Device or other IDs as shared with Google AdMob, and keep the rows above
+   in step with this file. The ads SDK declares the
+   com.google.android.gms.permission.AD_ID permission, which the form asks
+   about ("Does your app use advertising ID?": yes).
+3. App content, Target audience and content: 18 and over or 13 and over, not
+   children, because the ad requests are not child-directed and the UMP
+   consent form is for adults. Keep the app out of the Families program.
+4. Store listing, Store settings: the developer website must be
+   https://touchward-dopamine.com, where app-ads.txt lives. AdMob reads the
+   file from that address; a different domain in the listing means AdMob
+   never verifies it and serving stays "limited".
+5. AdMob, Apps, Touchward (Android), App settings: link the app to the Play
+   listing once 1.2.1 is live, then App settings, app-ads.txt, Check for
+   updates. Do the same for the iOS app record against the App Store
+   listing.
+6. Release notes: the 1.2.1 notes above mention the ads and the purchase, so
+   a person reading "What's new" is not surprised.
+
+App Store Connect, for the same build: App Privacy answers as in the
+questionnaire above (Tracking: yes; Device ID and Advertising Data for
+third-party advertising), and the in-app purchase renamed from "Unlock
+everything" to "Remove ads" with the same product id, so the receipt keeps
+restoring for people who bought it earlier.
 
 ## Age rating
 
@@ -267,7 +343,7 @@ Tap when you did the thing. Feel the buzz, count every tap, go berserk at 500.
 Alternatives:
 
 - Tap when you did the thing. A glowing button that buzzes back. Free.
-- You did the thing. Tap the button, feel the buzz. Private, no account, no ads.
+- You did the thing. Tap the button, feel the buzz. Free, no account needed.
 
 ### Full description (4000)
 
@@ -331,15 +407,18 @@ No account of its own and nothing you have to sign in to. Your settings and
 your counter stay on your phone; Google Play Games sign-in is optional and
 shares only your player name and avatar with the app. Calendar events are read
 only to schedule nudges and are never stored or sent anywhere. The app never
-asks for your name or email, and there is no advertising and no tracking. If the app crashes, an anonymous report
-helps us fix it, and you can turn that off in settings.
+asks for your name or email. If the app crashes, an anonymous report helps us
+fix it, and you can turn that off in settings.
 
-FREE TO START, ONE UNLOCK FOR EVERYTHING
-Touchward is free. The button, the buzz, the counter, every color, reminders,
-and the first three of every option are yours from the first tap. One in-app
-purchase of 1.99 unlocks the rest: all shapes and reward modes, every strength
+FREE, WITH ADS YOU CAN TURN OFF
+Everything in Touchward is free: every shape and reward mode, every strength
 and haptic preset, custom backgrounds, calendar nudges, volume button taps, and
-an unlimited library. Once, forever. No subscription, no ads.
+an unlimited library. A full-screen ad shows now and then between rewards,
+never in the first minute and a half and never more than one every five
+minutes. One in-app purchase of 1.99 turns the ads off, once, forever. No
+subscription. Ads come through Google AdMob; where the law requires it, the
+app asks before showing personalised ads, and you can change your answer under
+Customize, More, Ad privacy choices.
 
 OPEN SOURCE
 The complete source code is public, so every claim above can be checked:
