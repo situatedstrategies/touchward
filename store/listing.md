@@ -289,6 +289,28 @@ RevenueCat, Expo's push service) is "collected", not "shared".
   services; the app shows the player name and avatar on the device and
   sends neither anywhere.
 
+## RevenueCat: products, entitlement and offering (owner, November 3rd 2026)
+
+What the 1.2.1 code depends on (`src/purchases/config.ts`,
+`src/purchases/purchases.ts`) and what to change for the 0.99 price:
+
+- **Entitlement `full`**: keep the identifier exactly; the app checks it by
+  name and nothing else unlocks ad-free. Attach every Remove ads product to
+  it, old and new.
+- **Products**: the non-consumable unlock on each store, retitled "Remove
+  ads" and repriced to 0.99 US in App Store Connect and Play Console (prices
+  are never set in RevenueCat). If a store will not reprice the existing
+  product the way you want, create a new non-consumable at 0.99, attach it to
+  `full`, and keep the old one attached so earlier buyers still restore.
+- **Offering `touchward_full`**, marked Current: one Lifetime package
+  (`$rc_lifetime`) holding the Remove ads product on both stores. The app
+  reads that package, shows the store's price in its own alert, and buys it
+  through the store sheet; a Lifetime package pointing at the old product
+  sells the old price.
+- **Dashboard paywall**: no longer opened by the app except as a fallback
+  when the offering cannot be read; if you keep one, its copy is "Remove
+  ads", the price, "once", no feature list.
+
 ## Google Play Console: ads setup (do this with the 1.2.1 upload)
 
 The 1.2.1 build is the first one with ads, so the Play listing has to say so
