@@ -291,6 +291,22 @@ RevenueCat, Expo's push service) is "collected", not "shared".
 
 ## RevenueCat: products, entitlement and offering (owner, November 3rd 2026)
 
+Dashboard state as of November 3rd 2026, done by the owner: App Store
+Connect `touchward_full` is $0.99, renamed "Remove ads" (in review with iOS
+1.2.1, which still needs a build and the renewed developer agreement). Play
+`touchward_full` renamed "Remove ads"; about fifty regions are $0.99, the US
+and about 120 others stay $1.99 until the Play price experiment is ended and
+they are repriced. RevenueCat: the Play product is attached to `full` and
+sits in the Lifetime package beside the iOS product. Still open: RevenueCat
+cannot check the Play product ("Could not check") until the Touchward Play
+app has Google service account credentials in RevenueCat, so Play purchases
+are not validated until then; and the product descriptions still describe
+the old unlock (copy below).
+
+Product description, for both stores and the RevenueCat package (under 80
+characters): "Turns the ads off for good. Every feature is already free."
+
+
 What the 1.2.1 code depends on (`src/purchases/config.ts`,
 `src/purchases/purchases.ts`) and what to change for the 0.99 price:
 
