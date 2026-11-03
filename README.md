@@ -357,9 +357,15 @@ describe analytics as well.
 
 Since 1.2.1 (November 2026) every feature is free and the app is paid for by
 ads: a full-screen interstitial now and then between rewards (policy in
-`src/ads/policy.ts`). The one non consumable in-app purchase, 1.99 US through
-RevenueCat (`src/purchases/`, entitlement `full`), turns the ads off for good
-and nothing else; Customize, More, Ads holds Remove ads, Restore purchase and,
+`src/ads/policy.ts`). The one non consumable in-app purchase, 0.99 US (repriced from 1.99 on
+November 3rd 2026; the app shows the store's own price string) through
+RevenueCat (`src/purchases/`, entitlement `full`, the non-subscription package
+of offering `touchward_full`), turns the ads off for good and nothing else.
+The paywall is the app's own alert ("Remove ads", the store price, "once")
+followed by the store's purchase sheet (`presentPaywall` in
+`src/store/unlock.tsx`, `purchaseRemoveAds` in `src/purchases/purchases.ts`);
+RevenueCat's dashboard paywall is only a fallback when the offering cannot be
+read, so its copy no longer has to be kept in step by hand. Also: Customize, More, Ads holds Remove ads, Restore purchase and,
 where Google's consent form applies, Ad privacy choices. The gates in
 `gates.ts` all answer "free" (the thresholds are infinite, not removed), so
 `useGate` applies every change straight away and the padlock code paths in

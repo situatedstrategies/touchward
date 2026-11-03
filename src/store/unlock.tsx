@@ -11,10 +11,12 @@ import {
 import { Alert } from "react-native";
 import { logUnlock } from "../analytics/analytics";
 import {
+  fetchRemoveAdsPackage,
   fetchUnlocked,
   isPurchasingAvailable,
   onUnlockedChange,
   presentUnlockPaywall,
+  purchaseRemoveAds,
   restorePurchases,
   type PaywallOutcome,
 } from "../purchases/purchases";
@@ -81,9 +83,29 @@ export function UnlockProvider({ children }: { children: ReactNode }) {
     };
   }, [available, apply]);
 
+  // The paywall is the app's own words plus the store's own sheet: one
+  // product, one price, no feature list, because every feature is free and
+  // the purchase only turns the ads off. The dashboard paywall is a fallback
+  // for a build that cannot read the offering.
   const presentPaywall = useCallback(async () => {
     if (unlocked) return true;
-    const outcome: PaywallOutcome = await presentUnlockPaywall();
+    const pkg = available ? await fetchRemoveAdsPackage() : null;
+    const outcome: PaywallOutcome = pkg
+      ? await new Promise<PaywallOutcome>((resolve) => {
+          Alert.alert(
+            "Remove ads",
+            `Everything in Touchward is free. ${pkg.product.priceString}, once, turns the ads off for good on every phone signed in to this store account. No subscription.`,
+            [
+              { text: "Not now", style: "cancel", onPress: () => resolve("cancelled") },
+              {
+                text: `Remove ads for ${pkg.product.priceString}`,
+                onPress: () => void purchaseRemoveAds(pkg).then(resolve),
+              },
+            ],
+            { cancelable: true, onDismiss: () => resolve("cancelled") },
+          );
+        })
+      : await presentUnlockPaywall();
     if (outcome === "unlocked") {
       apply(true);
       logUnlock("paywall");
@@ -98,7 +120,7 @@ export function UnlockProvider({ children }: { children: ReactNode }) {
       Alert.alert("Something went wrong", "The store did not respond. Please try again.");
     }
     return false;
-  }, [unlocked, apply]);
+  }, [unlocked, available, apply]);
 
   const restore = useCallback(async () => {
     if (!available) {

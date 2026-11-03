@@ -1,5 +1,5 @@
 import { NativeModules, Platform } from "react-native";
-import { ENTITLEMENT_ID, RC_API_KEYS } from "./config";
+import { ENTITLEMENT_ID, OFFERING_ID, RC_API_KEYS } from "./config";
 
 /**
  * A thin adapter over react-native-purchases and react-native-purchases-ui.
@@ -97,9 +97,53 @@ export function onUnlockedChange(listener: (unlocked: boolean) => void): () => v
 
 export type PaywallOutcome = "unlocked" | "cancelled" | "error" | "unavailable";
 
+type Package = import("react-native-purchases").PurchasesPackage;
+
 /**
- * Show the offering's paywall unless the entitlement is already active.
- * Resolves once the sheet is gone.
+ * The one product for sale: the non-subscription package of the offering
+ * (the store's "Remove ads", entitlement "full"). Null when the SDK is
+ * unavailable or the offering carries no such package.
+ */
+export async function fetchRemoveAdsPackage(): Promise<Package | null> {
+  if (!configurePurchases()) return null;
+  const mod = loadPurchases();
+  if (!mod) return null;
+  try {
+    const offerings = await mod.default.getOfferings();
+    const offering = offerings.all[OFFERING_ID] ?? offerings.current;
+    const packages = offering?.availablePackages ?? [];
+    return (
+      packages.find((p) => p.packageType === mod.PACKAGE_TYPE.LIFETIME) ??
+      packages.find((p) => !p.product.subscriptionPeriod) ??
+      null
+    );
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Buy the Remove ads package through the store's own sheet, which shows the
+ * price and takes the confirmation. "cancelled" when the person backs out of
+ * that sheet; "unlocked" once the entitlement is active.
+ */
+export async function purchaseRemoveAds(pkg: Package): Promise<PaywallOutcome> {
+  const mod = loadPurchases();
+  if (!mod) return "unavailable";
+  try {
+    const { customerInfo } = await mod.default.purchasePackage(pkg);
+    return hasEntitlement(customerInfo) ? "unlocked" : "error";
+  } catch (e) {
+    const err = e as { userCancelled?: boolean };
+    return err?.userCancelled ? "cancelled" : "error";
+  }
+}
+
+/**
+ * Fallback only: RevenueCat's dashboard paywall for the offering. The app no
+ * longer opens it on purpose (the copy there is outside the repository and
+ * drifted from the ads model); unlock.tsx asks the store directly through
+ * purchaseRemoveAds and comes here only when no package could be read.
  */
 export async function presentUnlockPaywall(): Promise<PaywallOutcome> {
   if (!configurePurchases()) return "unavailable";

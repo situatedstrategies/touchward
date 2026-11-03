@@ -40,6 +40,6 @@ PRIVACY
 - https://touchward-dopamine.com/privacy
 
 PURCHASE
-One non consumable, "Remove ads" (1.99 US, product id unchanged from the earlier "Unlock everything"). Customize, More, Ads, Remove ads; buy with a sandbox account, then Restore purchase on the same screen. Every feature is free with or without it; the purchase only turns the ads off.
+One non consumable, "Remove ads" (0.99 US, product id unchanged from the earlier "Unlock everything"). Customize, More, Ads, Remove ads; buy with a sandbox account, then Restore purchase on the same screen. Every feature is free with or without it; the purchase only turns the ads off.
 
 Contact: support@touchward-dopamine.com

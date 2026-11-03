@@ -82,7 +82,7 @@ anonymous report helps us fix it, and you can turn that off.
 
 Touchward is free to download and every feature is free to use. An ad
 shows now and then between rewards, never in the first minute and a half and
-never more than one every five minutes. One in-app purchase of 1.99 turns the
+never more than one every five minutes. One in-app purchase of 0.99 turns the
 ads off, once, forever. No subscription.
 
 ## Keywords (100)
@@ -97,7 +97,7 @@ Touchward 1.2.1
 
 - Every feature is now free: all shapes, reward modes, haptic presets, backdrops, calendar nudges, volume button taps and an unlimited library.
 - An ad shows now and then between rewards, never in the first minute and a half and never more than one every five minutes.
-- One purchase of 1.99 turns the ads off for good. Already bought the unlock? Ads are already off for you.
+- One purchase of 0.99 turns the ads off for good. Already bought the unlock? Ads are already off for you.
 - Your music keeps playing under the button for everyone.
 
 ### App Store "What's New" (4000)
@@ -106,7 +106,7 @@ Touchward 1.2.1
 
 - Every feature is now free. All eight shapes, all seven reward modes, every haptic strength and preset, custom backdrops, calendar nudges, volume button taps and an unlimited library are yours from the first tap.
 - Touchward is now supported by ads: a full-screen ad shows now and then between rewards, never in the first minute and a half after you open the app and never more than one every five minutes.
-- One purchase of 1.99 turns the ads off for good. If you bought the unlock before, ads are already off for you, on every phone signed in to your account.
+- One purchase of 0.99 turns the ads off for good. If you bought the unlock before, ads are already off for you, on every phone signed in to your account.
 - Your music keeps playing under the button for everyone.
 
 Questions or ideas: Customize, More, Contact support, or touchward-dopamine.com/support.
@@ -318,8 +318,9 @@ before it goes out. In Play Console, for Touchward:
 App Store Connect, for the same build: App Privacy answers as in the
 questionnaire above (Tracking: yes; Device ID and Advertising Data for
 third-party advertising), and the in-app purchase renamed from "Unlock
-everything" to "Remove ads" with the same product id, so the receipt keeps
-restoring for people who bought it earlier.
+everything" to "Remove ads" with the same product id and repriced to 0.99 US
+(owner, November 3rd 2026), so the receipt keeps restoring for people who
+bought it earlier.
 
 ## Age rating
 
@@ -415,7 +416,7 @@ Everything in Touchward is free: every shape and reward mode, every strength
 and haptic preset, custom backgrounds, calendar nudges, volume button taps, and
 an unlimited library. A full-screen ad shows now and then between rewards,
 never in the first minute and a half and never more than one every five
-minutes. One in-app purchase of 1.99 turns the ads off, once, forever. No
+minutes. One in-app purchase of 0.99 turns the ads off, once, forever. No
 subscription. Ads come through Google AdMob; where the law requires it, the
 app asks before showing personalised ads, and you can change your answer under
 Customize, More, Ad privacy choices.
