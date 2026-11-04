@@ -110,7 +110,7 @@
       },
       "buildNumber": "12",
       "privacyManifests": {
-        "NSPrivacyTracking": true,
+        "NSPrivacyTracking": false,
         "NSPrivacyTrackingDomains": [],
         "NSPrivacyCollectedDataTypes": [
           {
@@ -148,7 +148,7 @@
           {
             "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeDeviceID",
             "NSPrivacyCollectedDataTypeLinked": false,
-            "NSPrivacyCollectedDataTypeTracking": true,
+            "NSPrivacyCollectedDataTypeTracking": false,
             "NSPrivacyCollectedDataTypePurposes": [
               "NSPrivacyCollectedDataTypePurposeThirdPartyAdvertising"
             ]
@@ -156,7 +156,7 @@
           {
             "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeAdvertisingData",
             "NSPrivacyCollectedDataTypeLinked": false,
-            "NSPrivacyCollectedDataTypeTracking": true,
+            "NSPrivacyCollectedDataTypeTracking": false,
             "NSPrivacyCollectedDataTypePurposes": [
               "NSPrivacyCollectedDataTypePurposeThirdPartyAdvertising"
             ]
