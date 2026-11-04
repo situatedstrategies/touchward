@@ -44,11 +44,35 @@ export function areAdsAvailable(): boolean {
 let prepared: Promise<boolean> | null = null;
 
 /**
+ * Apple's App Tracking Transparency prompt, iOS only, shown once: the system
+ * remembers the answer. Asked here rather than left to Google's consent flow,
+ * which only shows it when the IDFA message is switched on in the AdMob
+ * console, so the prompt no longer depends on a console setting. Declining
+ * still serves ads, without the advertising identifier. The module is loaded
+ * lazily like the ads SDK, so a build without it (Expo Go) skips the prompt.
+ */
+async function requestTrackingPermission(): Promise<void> {
+  if (Platform.OS !== "ios") return;
+  try {
+    const att =
+      require("expo-tracking-transparency") as typeof import("expo-tracking-transparency");
+    const { status } = await att.getTrackingPermissionsAsync();
+    if (status !== "undetermined") return;
+    // iOS only shows the sheet while the app is active; a short wait covers
+    // the first frame after a cold start.
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    await att.requestTrackingPermissionsAsync();
+  } catch {
+    // Treated as not allowed; the SDK serves non-personalised ads.
+  }
+}
+
+/**
  * Gather consent where the law requires it (Google's User Messaging Platform
- * shows its form on the first launch in the EEA and UK, and the App Tracking
- * Transparency prompt on iOS), then start the SDK. Resolves true when an ad
- * may be requested. Called only once an ad is about to be needed, so an
- * unlocked customer never sees the consent form.
+ * shows its form on the first launch in the EEA and UK), ask Apple's tracking
+ * permission on iOS, then start the SDK. Resolves true when an ad may be
+ * requested. Called only once an ad is about to be needed, so an unlocked
+ * customer never sees the consent form or the prompt.
  */
 export function prepareAds(): Promise<boolean> {
   if (!areAdsAvailable()) return Promise.resolve(false);
@@ -62,6 +86,7 @@ export function prepareAds(): Promise<boolean> {
       // The form could not be shown (offline, or no form published); the SDK
       // decides below whether ads may still be requested.
     }
+    await requestTrackingPermission();
     try {
       const info = await mod.AdsConsent.getConsentInfo();
       if (!info.canRequestAds) return false;
