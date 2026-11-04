@@ -22,6 +22,12 @@
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "ios": {
+        "ascAppId": "6811709293",
+        "appleTeamId": "4964KRMB5H",
+        "bundleIdentifier": "com.situatedstrategies.touchward"
+      }
+    }
   }
 }
