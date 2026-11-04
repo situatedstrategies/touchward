@@ -90,7 +90,8 @@
       "./plugins/withHapticsOnlyPulsar.js",
       "./plugins/withoutDeprecatedSystemBarColors.js",
       "./plugins/withAndroidSigning.js",
-      "./plugins/withR8Optimize.js"
+      "./plugins/withR8Optimize.js",
+      "./plugins/withNoEmptyTrackingDomains.js"
     ],
     "ios": {
       "supportsTablet": true,
@@ -111,7 +112,6 @@
       "buildNumber": "12",
       "privacyManifests": {
         "NSPrivacyTracking": false,
-        "NSPrivacyTrackingDomains": [],
         "NSPrivacyCollectedDataTypes": [
           {
             "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeCrashData",
