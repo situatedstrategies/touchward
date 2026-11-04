@@ -247,9 +247,13 @@ https://touchward-dopamine.com
   Third-Party Advertising. Google's current list for the SDK is at
   developers.google.com/admob/ios/data-disclosure; check it before each
   submission and match the questionnaire to it.
-- Tracking: yes. The app shows the App Tracking Transparency prompt before
-  personalised ads; the privacy manifest in app.json declares
-  NSPrivacyTracking true.
+- Tracking: yes. The app asks the App Tracking Transparency permission itself
+  (src/ads/ads.ts, after Google's consent form and before the ads SDK starts),
+  so leave the IDFA explainer message off in AdMob's Privacy and messaging or
+  people see two prompts. The app's own privacy manifest in app.json declares
+  NSPrivacyTracking false (App Store Connect rejects true with no tracking
+  domains, ITMS-91064, November 3rd 2026); the Google Mobile Ads SDK's own
+  manifest declares its tracking, which is what the questionnaire answers.
 - Everything else: not collected. The purchase turns the ad SDK off
   entirely, so an ad-free phone sends none of the advertising rows.
 
