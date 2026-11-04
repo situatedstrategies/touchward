@@ -79,7 +79,7 @@
         "react-native-google-mobile-ads",
         {
           "androidAppId": "ca-app-pub-2443535982979230~6375631181",
-          "iosAppId": "ca-app-pub-2443535982979230~6732529843",
+          "iosAppId": "ca-app-pub-2443535982979230~5889330814",
           "userTrackingUsageDescription": "Touchward is free because of ads. Allowing tracking lets the ads be more relevant; saying no keeps them, just less relevant.",
           "skAdNetworkItems": [
             "cstr6suwn9.skadnetwork"
