@@ -70,7 +70,7 @@ async function requestTrackingPermission(): Promise<void> {
 /**
  * Gather consent where the law requires it (Google's User Messaging Platform
  * shows its form on the first launch in the EEA and UK), ask Apple's tracking
- * permission on iOS, then start the SDK. Resolves true when an ad may be
+ * permission on iOS when ads may be requested, then start the SDK. Resolves true when an ad may be
  * requested. Called only once an ad is about to be needed, so an unlocked
  * customer never sees the consent form or the prompt.
  */
@@ -86,10 +86,13 @@ export function prepareAds(): Promise<boolean> {
       // The form could not be shown (offline, or no form published); the SDK
       // decides below whether ads may still be requested.
     }
-    await requestTrackingPermission();
     try {
       const info = await mod.AdsConsent.getConsentInfo();
+      // Apple's tracking prompt only where an ad can actually load: someone
+      // who declined Google's consent form gets no ads, so asking to track
+      // them for ads would be pointless and misleading.
       if (!info.canRequestAds) return false;
+      await requestTrackingPermission();
       await mod.default().initialize();
       return true;
     } catch {
