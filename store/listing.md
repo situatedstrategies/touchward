@@ -212,8 +212,10 @@ Touchward is free, with one 1.99 in-app purchase that unlocks everything. No sub
   push but no registration address is set, so no tokens leave the device.
 - Crash reports and the in-app support form post to the site Worker at
   touchward-dopamine.com and reach the support inbox through Resend.
-- App Store privacy questionnaire and the privacy manifest both declare Crash
-  Data only, not linked, not for tracking.
+- The App Store privacy label is itemised under "App Store privacy
+  questionnaire" below (published November 5th 2026); the app's own privacy
+  manifest declares NSPrivacyTracking false, and the Google Mobile Ads SDK's
+  manifest covers its own collection.
 - Known limits: Avenir Next falls back to Nunito Sans on Android; Pulsar
   presets need a device with a rich haptic motor; the Apple Watch app is iOS
   only; push notifications are opt in and unused by the app itself.
@@ -254,6 +256,26 @@ https://touchward-dopamine.com
   NSPrivacyTracking false (App Store Connect rejects true with no tracking
   domains, ITMS-91064, November 3rd 2026); the Google Mobile Ads SDK's own
   manifest declares its tracking, which is what the questionnaire answers.
+- Published in App Store Connect on November 5th 2026, matching the above
+  and Google's AdMob list:
+
+  | Data type | Purposes | Linked | Tracking |
+  | --- | --- | --- | --- |
+  | Coarse Location | Third-Party Advertising, Analytics | No | Yes |
+  | Customer Support | App Functionality | No | No |
+  | Device ID | App Functionality, Analytics, Third-Party Advertising | No | Yes |
+  | Purchase History | App Functionality | No | No |
+  | Product Interaction | Analytics, Third-Party Advertising | No | Yes |
+  | Advertising Data | Third-Party Advertising, Analytics | No | Yes |
+  | Other Usage Data | Analytics | No | No |
+  | Crash Data | App Functionality, Analytics, Third-Party Advertising | No | No |
+  | Performance Data | App Functionality, Analytics, Third-Party Advertising | No | Yes |
+  | Other Diagnostic Data | App Functionality, Analytics | No | No |
+
+  Privacy Policy URL https://touchward-dopamine.com/privacy, User Privacy
+  Choices URL https://touchward-dopamine.com/support#privacy. Until
+  November 5th both read "https://touchward-dopamine/support", without .com,
+  which does not resolve.
 - Everything else: not collected. The purchase turns the ad SDK off
   entirely, so an ad-free phone sends none of the advertising rows.
 
