@@ -64,7 +64,8 @@ async function requestTrackingPermission(): Promise<void> {
     await new Promise((resolve) => setTimeout(resolve, 300));
     await att.requestTrackingPermissionsAsync();
   } catch {
-    // Treated as not allowed; the SDK serves non-personalised ads.
+    // Treated as not allowed; the SDK serves ads without the advertising
+    // identifier.
   }
 }
 
@@ -163,11 +164,12 @@ let foregroundAt = Date.now();
 function loadNext(): void {
   const mod = loadAds();
   if (!mod || ad) return;
-  const next = mod.InterstitialAd.createForAdRequest(unitId(), {
-    // Pair the SDK's own consent answer with a conservative default: no
-    // personalised ads unless consent said yes.
-    requestNonPersonalizedAdsOnly: true,
-  });
+  // No request options: the SDK follows the person's own answers. Google's
+  // consent form decides personalisation where it applies, and on iOS the
+  // advertising identifier is there only if the tracking prompt was allowed.
+  // Until 1.2.3 every request was forced non personalised, which made the
+  // prompt's "more relevant" promise untrue.
+  const next = mod.InterstitialAd.createForAdRequest(unitId());
   const unsubLoaded = next.addAdEventListener(mod.AdEventType.LOADED, () => {
     loaded = true;
   });

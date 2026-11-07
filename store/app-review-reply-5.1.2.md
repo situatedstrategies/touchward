@@ -80,6 +80,16 @@ anyone has answered the prompt. With it on, that waits until the SDK is
 started, which is after the prompt, so the review notes can say plainly that
 nothing used for tracking is collected first.
 
+And it drops `requestNonPersonalizedAdsOnly: true` from the ad request. In
+1.2.2 every ad was forced non personalised, so the prompt's promise that
+allowing tracking "lets the ads be more relevant" could never come true. Now
+the SDK follows each person's answers: Google's consent form where it
+applies, and on iOS the advertising identifier only after the prompt is
+allowed. On Android outside the EEA and UK, where no consent form applies,
+ads can now be personalised with the Android advertising ID, which the Play
+Data safety form already declares (Device or other IDs, Advertising or
+marketing).
+
 Before submitting 1.2.3:
 
 1. Bump the version to 1.2.3 in `app.json` and build with EAS.

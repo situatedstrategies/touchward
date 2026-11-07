@@ -70,7 +70,8 @@ hold it down, watch the ring close, and get a bigger buzz when the timer is up.
   tracking prompt come at the first reward once the store has confirmed the
   phone is on the free app (`askAdPermissions`); the SDK itself, including
   its own app measurement (`delayAppMeasurementInit` in `app.json`), starts
-  only when the first ad is about to load (`prepareAds`). The one purchase turns
+  only when the first ad is about to load (`prepareAds`). Ad requests carry no
+  options, so personalisation follows those answers. The one purchase turns
   the ads off, and an unlocked phone never sees the prompt or starts the SDK.
   See Pricing and ads below.
 - A counter of rewards today, big at the top of the screen, with the taps left

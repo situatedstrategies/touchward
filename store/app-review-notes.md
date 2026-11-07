@@ -34,7 +34,7 @@ WATCH: a companion with the button, mirroring reminders over WatchConnectivity.
 
 PRIVACY
 
-- Ads (free app only): Google Mobile Ads SDK, an interstitial between rewards, never in the first 90 seconds and never more than one every 5 minutes. The App Tracking Transparency prompt appears after the first tap (see TRACKING PROMPT); declining keeps the ads, non personalised. Nothing is linked to identity. After the purchase the SDK never starts.
+- Ads (free app only): Google Mobile Ads SDK, an interstitial between rewards, never in the first 90 seconds and never more than one every 5 minutes. The App Tracking Transparency prompt appears after the first tap (see TRACKING PROMPT); declining keeps the ads, without the advertising identifier. Nothing is linked to identity. After the purchase the SDK never starts.
 - Google Analytics for Firebase (feature use, sessions, device, OS), opt out in More, Support.
 - Crash reports to our inbox, opt out in More, Support.
 - Support form: message, device model, app version.
