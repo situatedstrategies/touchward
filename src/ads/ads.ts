@@ -1,4 +1,4 @@
-import { NativeModules, Platform } from "react-native";
+import { AppState, NativeModules, Platform } from "react-native";
 import { AD_UNIT_IDS } from "./config";
 import { AD_POLICY, shouldShowInterstitial } from "./policy";
 
@@ -41,6 +41,7 @@ export function areAdsAvailable(): boolean {
   return loadAds() !== null && unitId().length > 0;
 }
 
+let permissions: Promise<boolean> | null = null;
 let prepared: Promise<boolean> | null = null;
 
 /**
@@ -69,15 +70,18 @@ async function requestTrackingPermission(): Promise<void> {
 
 /**
  * Gather consent where the law requires it (Google's User Messaging Platform
- * shows its form on the first launch in the EEA and UK), ask Apple's tracking
- * permission on iOS when ads may be requested, then start the SDK. Resolves true when an ad may be
- * requested. Called only once an ad is about to be needed, so an unlocked
- * customer never sees the consent form or the prompt.
+ * shows its form in the EEA and UK), then ask Apple's tracking permission on
+ * iOS when ads may be requested. Resolves true when an ad may be requested.
+ * Runs once per launch, at the first reward of a free session (see
+ * noteRewardForAds): the person has just felt what the button does, and App
+ * Review finds the prompt on the first tap instead of the hundredth. The ads
+ * SDK itself is not started here; prepareAds does that when an ad is about to
+ * be needed, so nothing is collected for ads before the prompt is answered.
  */
-export function prepareAds(): Promise<boolean> {
+export function askAdPermissions(): Promise<boolean> {
   if (!areAdsAvailable()) return Promise.resolve(false);
-  if (prepared) return prepared;
-  prepared = (async () => {
+  if (permissions) return permissions;
+  permissions = (async () => {
     const mod = loadAds();
     if (!mod) return false;
     try {
@@ -88,11 +92,33 @@ export function prepareAds(): Promise<boolean> {
     }
     try {
       const info = await mod.AdsConsent.getConsentInfo();
-      // Apple's tracking prompt only where an ad can actually load: someone
-      // who declined Google's consent form gets no ads, so asking to track
-      // them for ads would be pointless and misleading.
+      // Apple's tracking prompt only where an ad can actually load: when
+      // Google's consent step leaves no ad to request, asking to track for
+      // ads would be pointless and misleading.
       if (!info.canRequestAds) return false;
       await requestTrackingPermission();
+      return true;
+    } catch {
+      return false;
+    }
+  })();
+  return permissions;
+}
+
+/**
+ * Consent and the tracking answer first (askAdPermissions, already settled for
+ * anyone past their first reward), then start the SDK. Resolves true when an
+ * ad may be requested. Called only once an ad is about to be needed, so an
+ * unlocked customer's phone never starts the SDK.
+ */
+export function prepareAds(): Promise<boolean> {
+  if (!areAdsAvailable()) return Promise.resolve(false);
+  if (prepared) return prepared;
+  prepared = (async () => {
+    const mod = loadAds();
+    if (!mod) return false;
+    if (!(await askAdPermissions())) return false;
+    try {
       await mod.default().initialize();
       return true;
     } catch {
@@ -173,12 +199,25 @@ export function noteForeground(): void {
 }
 
 /**
- * Call after every reward, with whether the app is unlocked and whether a
- * sheet is open. Counts the reward and, when the policy allows, shows the
- * interstitial that was loaded ahead of time. Returns true when an ad went up.
+ * Call after every reward, with whether the app is unlocked, whether the
+ * store has confirmed that answer this launch, and whether a sheet is open.
+ * Counts the reward and, when the policy allows, shows the interstitial that
+ * was loaded ahead of time. Returns true when an ad went up.
  */
-export function noteRewardForAds(opts: { unlocked: boolean; sheetOpen: boolean }): boolean {
+export function noteRewardForAds(opts: {
+  unlocked: boolean;
+  unlockKnown: boolean;
+  sheetOpen: boolean;
+}): boolean {
   if (opts.unlocked || !areAdsAvailable()) return false;
+  // Consent and Apple's tracking prompt at the first reward, but only once
+  // the store has confirmed this phone has no ad-free purchase (so a paying
+  // customer is never asked), with no sheet in the way, and while the app is
+  // in the foreground (iOS shows the tracking sheet only to an active app).
+  // Until all three hold, the next reward tries again.
+  if (opts.unlockKnown && !opts.sheetOpen && AppState.currentState === "active") {
+    void askAdPermissions();
+  }
   rewardsSinceAd += 1;
   const now = Date.now();
   // Load ahead once the user is close, so the ad is ready at the moment.
