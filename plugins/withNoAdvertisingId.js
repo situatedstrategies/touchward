@@ -21,9 +21,16 @@ module.exports = function withNoAdvertisingId(config) {
     if (!app) return config;
     app["meta-data"] = app["meta-data"] ?? [];
     for (const { name, value } of META) {
+      // The Firebase Analytics module's own manifest sets both keys to true, so
+      // the merger needs an explicit override or the build fails.
+      const attrs = {
+        "android:name": name,
+        "android:value": value,
+        "tools:replace": "android:value",
+      };
       const existing = app["meta-data"].find((m) => m.$["android:name"] === name);
-      if (existing) existing.$["android:value"] = value;
-      else app["meta-data"].push({ $: { "android:name": name, "android:value": value } });
+      if (existing) Object.assign(existing.$, attrs);
+      else app["meta-data"].push({ $: attrs });
     }
     return config;
   });
