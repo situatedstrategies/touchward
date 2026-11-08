@@ -169,8 +169,11 @@ runs every time the app comes to the foreground.
 
 ## iPad and Apple Watch
 
-- iPad: the same app, laid out larger. Any device whose shorter side is 700
-  points or more gets a bigger button and type; everything else is identical.
+- iPad and the unfolded iPhone Duo: the same app, laid out larger. Any device
+  whose shorter side is 650 points or more gets a bigger button and type (every
+  iPad, and the Duo's inner display at about 669 points); everything else is
+  identical. The layout reads the window size live, so folding and unfolding
+  switch it on the spot.
 - Apple Watch: a native SwiftUI companion in `targets/watch/`, built into the
   iOS app by `@bacons/apple-targets` and installed on a paired watch with it.
   It is only the button: the same shape, colors, ripples, and Original rings as

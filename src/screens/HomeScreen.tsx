@@ -57,8 +57,12 @@ const CLEAR_ICON_SHADOW_STROKE = 13;
 /** A settings change reaches the watch after this pause, so drags send once. */
 const WATCH_SYNC_DELAY_MS = 600;
 
-/** Shortest side at or above this is laid out as a tablet. */
-const TABLET_MIN_SIDE = 700;
+/**
+ * Shortest side at or above this is laid out as a tablet: every iPad, and the
+ * unfolded iPhone Duo (about 669 points across). The largest folded phone is
+ * 440 points wide, so nothing phone sized crosses it.
+ */
+const TABLET_MIN_SIDE = 650;
 
 /** The milestone tap's own reward lands first; the burst follows this much later. */
 const BERSERK_DELAY_MS = 350;
