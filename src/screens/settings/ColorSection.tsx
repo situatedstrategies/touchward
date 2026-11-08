@@ -2,6 +2,7 @@ import { Chip } from "../../components/Chip";
 import { ColorField } from "../../components/ColorField";
 import { BACKDROP_COLORS, isHexColor } from "../../design/palette";
 import type { Theme } from "../../design/theme";
+import { isFreeBackdrop } from "../../purchases/gates";
 import { useSettings } from "../../store/settings";
 import { useGate, useUnlock } from "../../store/unlock";
 import {
@@ -25,8 +26,11 @@ const MAX_REWARD_COLORS = 8;
 
 export function ColorSection({ theme }: { theme: Theme }) {
   const { settings, update } = useSettings();
-  const { unlocked } = useUnlock();
+  const { unlocked, presentPaywall } = useUnlock();
   const gate = useGate();
+  // Every color is part of the look, so editing one is a Full feature.
+  const locked = !unlocked;
+  const openPaywall = () => void presentPaywall();
 
   const setTapColor = (index: number, hex: string) => {
     const next = [...settings.tapColors];
@@ -81,6 +85,8 @@ export function ColorSection({ theme }: { theme: Theme }) {
           onChange={(hex) => update({ idleColor: hex })}
           theme={theme}
           library={libraryFor("idleColor")}
+          locked={locked}
+          onLockedPress={openPaywall}
         />
         <SubLabel theme={theme}>On each reward</SubLabel>
         {settings.tapColors.map((c, i) => (
@@ -91,6 +97,8 @@ export function ColorSection({ theme }: { theme: Theme }) {
             onChange={(hex) => setTapColor(i, hex)}
             theme={theme}
             library={libraryFor("tapColors")}
+            locked={locked}
+            onLockedPress={openPaywall}
             action={
               settings.tapColors.length > 1
                 ? { label: "Remove", onPress: () => removeTapColor(i) }
@@ -100,7 +108,11 @@ export function ColorSection({ theme }: { theme: Theme }) {
         ))}
         {settings.tapColors.length < MAX_REWARD_COLORS && (
           <Actions>
-            <TextButton label="Add a reward color" onPress={addTapColor} theme={theme} />
+            <TextButton
+              label="Add a reward color"
+              onPress={() => gate(false, addTapColor)}
+              theme={theme}
+            />
           </Actions>
         )}
         <Hint theme={theme}>
@@ -110,13 +122,13 @@ export function ColorSection({ theme }: { theme: Theme }) {
         <ToggleRow
           label="Shuffle the order"
           value={settings.randomColors}
-          onChange={(v) => update({ randomColors: v })}
+          onChange={(v) => gate(false, () => update({ randomColors: v }))}
           theme={theme}
         />
         <ToggleRow
           label="Snap back to the resting color"
           value={settings.returnToIdle}
-          onChange={(v) => update({ returnToIdle: v })}
+          onChange={(v) => gate(false, () => update({ returnToIdle: v }))}
           theme={theme}
         />
       </Section>
@@ -125,7 +137,7 @@ export function ColorSection({ theme }: { theme: Theme }) {
         <ToggleRow
           label="Follow the button color"
           value={settings.rippleFollowButton}
-          onChange={(v) => update({ rippleFollowButton: v })}
+          onChange={(v) => gate(false, () => update({ rippleFollowButton: v }))}
           theme={theme}
         />
         {settings.rippleFollowButton ? (
@@ -143,6 +155,8 @@ export function ColorSection({ theme }: { theme: Theme }) {
                 onChange={(hex) => setRippleColor(i, hex)}
                 theme={theme}
                 library={libraryFor("rippleColors")}
+                locked={locked}
+                onLockedPress={openPaywall}
               />
             ))}
             <Hint theme={theme}>
@@ -164,12 +178,14 @@ export function ColorSection({ theme }: { theme: Theme }) {
           <Chip
             label="Match phone"
             selected={settings.backdrop === "system"}
-            onPress={() => update({ backdrop: "system" })}
+            locked={!unlocked && !isFreeBackdrop("system")}
+            onPress={() => gate(isFreeBackdrop("system"), () => update({ backdrop: "system" }))}
             theme={theme}
           />
           <Chip
             label="Color"
             selected={customBackdrop}
+            locked={locked}
             onPress={() =>
               gate(false, () => {
                 if (!isHexColor(settings.backdrop))
@@ -198,6 +214,8 @@ export function ColorSection({ theme }: { theme: Theme }) {
               onChange={(hex) => update({ backdrop: hex })}
               theme={theme}
               library={libraryFor("backdrop")}
+              locked={locked}
+              onLockedPress={openPaywall}
             />
           </>
         )}

@@ -1,6 +1,5 @@
 import { ActionSheetIOS, Alert, Platform, Pressable } from "react-native";
 import Svg, { Circle, Path } from "react-native-svg";
-import { useGate, useUnlock } from "../store/unlock";
 import { MUSIC_APPS, MUSIC_APP_NAMES, openMusicApp } from "./musicApps";
 
 const ICON_SIZE = 22;
@@ -29,22 +28,16 @@ function chooseMusicApp(): void {
 
 /**
  * A note on the home screen that opens the music apps for the platform. Free
- * for everyone since 1.2.1, like playing other music alongside Touchward; the
- * gate call is kept so the call site reads like the others and applies the
- * action straight away.
+ * for everyone, like playing other music alongside Touchward.
  */
 export function MusicAppsButton({ scale, color }: { scale: number; color: string }) {
-  const { unlocked } = useUnlock();
-  const gate = useGate();
   const size = ICON_SIZE * scale;
   return (
     <Pressable
-      onPress={() => gate(false, chooseMusicApp)}
+      onPress={chooseMusicApp}
       hitSlop={12}
       accessibilityRole="button"
-      accessibilityLabel={
-        `Open ${MUSIC_APP_NAMES}`
-      }
+      accessibilityLabel={`Open ${MUSIC_APP_NAMES}`}
       style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
     >
       <Svg width={size} height={size} viewBox="0 0 24 24">

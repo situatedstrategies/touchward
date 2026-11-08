@@ -8,7 +8,7 @@ interface Props {
   selected: boolean;
   onPress: () => void;
   theme: Theme;
-  /** Needs the unlock. Drawn muted with a padlock; pressing it opens the paywall. */
+  /** Needs Touchward Full. Drawn muted with a padlock; pressing it opens the paywall. */
   locked?: boolean;
 }
 
@@ -19,7 +19,7 @@ export function Chip({ label, selected, onPress, theme, locked = false }: Props)
       onPress={onPress}
       accessibilityRole="button"
       accessibilityState={{ selected }}
-      accessibilityHint={locked ? "Needs the unlock" : undefined}
+      accessibilityHint={locked ? "Needs Touchward Full" : undefined}
       style={({ pressed }) => [
         styles.chip,
         {

@@ -13,6 +13,7 @@ import { AppState } from "react-native";
 import { configureAnalytics } from "../analytics/analytics";
 import { isHexColor } from "../design/palette";
 import { configureCrashReports } from "../support/crashReports";
+import { localDayKey } from "./dailyCap";
 import {
   DEFAULT_SETTINGS,
   MAX_STRENGTH,
@@ -74,8 +75,9 @@ interface SettingsContextValue {
 
 const SettingsContext = createContext<SettingsContextValue | null>(null);
 
+/** The phone's local calendar day; the daily count and the free app's limit reset when it changes. */
 function today(): string {
-  return new Date().toISOString().slice(0, 10);
+  return localDayKey();
 }
 
 function freshStats(): Stats {

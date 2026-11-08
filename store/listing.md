@@ -80,14 +80,35 @@ your phone. Calendar data is read only to schedule nudges and is never stored
 or sent. The app never asks for your email or your name. If it crashes, an
 anonymous report helps us fix it, and you can turn that off.
 
-Touchward is free to download and every feature is free to use. An ad
-shows now and then between rewards, never in the first minute and a half and
-never more than one every five minutes. One in-app purchase of 0.99 turns the
-ads off, once, forever. No subscription.
+Touchward is free to download: 100 rewards a day with the default look, and
+no ads. Touchward Full is one in-app purchase of 0.49, once: no daily limit
+and every shape, color, mode and haptic. No subscription.
 
 ## Keywords (100)
 
 reward,dopamine,haptic,habit,motivation,button,tap,ADHD,focus,ritual,vibrate,celebrate,game
+
+## Release notes: 1.2.3 (iOS build 13, Android versionCode 19)
+
+### Google Play release notes (500)
+
+Touchward 1.2.3
+
+- No more ads. I tried them for two weeks and they did not belong in a button you tap to feel good.
+- Free with a daily limit: 100 rewards a day with the default look.
+- Touchward Full, one purchase of 0.49: no daily limit and every shape, color, mode and haptic. If you bought the earlier unlock or the ad-free purchase, you already have it.
+- Your music keeps playing under the button.
+
+### App Store "What's New" (4000)
+
+Touchward 1.2.3
+
+- No more ads. I tried them for two weeks and they did not belong in a button you tap to feel good. The app no longer asks to track you, either.
+- Touchward is free with a daily limit: 100 rewards a day, counted on your phone's calendar day, with the default look. When you reach it, the button rests until tomorrow.
+- Touchward Full is one purchase of 0.49, once: no daily limit, and every shape, ripple, reward mode, haptic preset, color and backdrop in Customize. If you bought the earlier unlock or the ad-free purchase, you already have Full, on every phone signed in to your account. Restore purchase is in Customize, More.
+- Your music keeps playing under the button.
+
+Questions or ideas: Customize, More, Contact support, or touchward-dopamine.com/support.
 
 ## Release notes: 1.2.1 (iOS build 11, Android versionCode 17)
 
@@ -213,9 +234,11 @@ Touchward is free, with one 1.99 in-app purchase that unlocks everything. No sub
 - Crash reports and the in-app support form post to the site Worker at
   touchward-dopamine.com and reach the support inbox through Resend.
 - The App Store privacy label is itemised under "App Store privacy
-  questionnaire" below (published November 5th 2026); the app's own privacy
-  manifest declares NSPrivacyTracking false, and the Google Mobile Ads SDK's
-  manifest covers its own collection.
+  questionnaire" below: Tracking: No and no advertising rows, to be
+  republished with 1.2.3 (the label published on November 5th 2026 still
+  carries the advertising rows of the ads build). The app's privacy manifest
+  declares NSPrivacyTracking false with no tracking domains; there is no
+  advertising SDK.
 - Known limits: Avenir Next falls back to Nunito Sans on Android; Pulsar
   presets need a device with a rich haptic motor; the Apple Watch app is iOS
   only; push notifications are opt in and unused by the app itself.
@@ -234,50 +257,47 @@ https://touchward-dopamine.com
 
 ## App Store privacy questionnaire
 
+Answers for 1.2.3 and later. The ads build (1.2.1 and 1.2.2) added
+advertising rows and Tracking: yes; republish the label with this build so it
+reads as below.
+
+- Tracking: No. The app has no advertising SDK, never reads the advertising
+  identifier (Firebase Analytics is built without it), and never shows the
+  App Tracking Transparency prompt. The privacy manifest says the same:
+  NSPrivacyTracking false, and no tracking domains key at all (App Store
+  Connect rejects an empty one, ITMS-91064; plugins/withNoEmptyTrackingDomains.js
+  strips the empty array Expo's prebuild writes).
 - Data collected: Crash Data. Not linked to the user. Not used for tracking.
-  Purpose: App Functionality.
-- Data collected: Purchase History (the ad-free purchase, through
-  RevenueCat). Not linked to the user. Not used for tracking. Purpose: App
-  Functionality.
+  Purposes: App Functionality, Analytics.
+- Data collected: Purchase History (Touchward Full, through RevenueCat). Not
+  linked to the user. Not used for tracking. Purpose: App Functionality.
 - Data collected: Product Interaction and Other Usage Data (Google Analytics
   for Firebase). Not linked to the user. Not used for tracking. Purpose:
   Analytics.
-- Data collected, since 1.2.1, by the Google Mobile Ads SDK in the free app:
-  Device ID (the advertising identifier, when the person allows tracking in
-  the App Tracking Transparency prompt) and Advertising Data. Not linked to
-  the user. Used for tracking: yes, when consent is given. Purpose:
-  Third-Party Advertising. Google's current list for the SDK is at
-  developers.google.com/admob/ios/data-disclosure; check it before each
-  submission and match the questionnaire to it.
-- Tracking: yes. The app asks the App Tracking Transparency permission itself
-  (src/ads/ads.ts, after Google's consent form and before the ads SDK starts),
-  so leave the IDFA explainer message off in AdMob's Privacy and messaging or
-  people see two prompts. The app's own privacy manifest in app.json declares
-  NSPrivacyTracking false (App Store Connect rejects true with no tracking
-  domains, ITMS-91064, November 3rd 2026); the Google Mobile Ads SDK's own
-  manifest declares its tracking, which is what the questionnaire answers.
-- Published in App Store Connect on November 5th 2026, matching the above
-  and Google's AdMob list:
+- Data collected: Device ID (the random RevenueCat app user id and the
+  Firebase app instance id, neither a hardware or advertising identifier).
+  Not linked to the user. Not used for tracking. Purposes: App Functionality,
+  Analytics.
+- Data collected: Customer Support (the support form), Performance Data and
+  Other Diagnostic Data (Firebase), as published before. Not linked. Not used
+  for tracking. No Third-Party Advertising purpose anywhere.
+- Removed with the ads: Coarse Location and Advertising Data, and the
+  Third-Party Advertising purpose on every remaining row.
 
   | Data type | Purposes | Linked | Tracking |
   | --- | --- | --- | --- |
-  | Coarse Location | Third-Party Advertising, Analytics | No | Yes |
   | Customer Support | App Functionality | No | No |
-  | Device ID | App Functionality, Analytics, Third-Party Advertising | No | Yes |
+  | Device ID | App Functionality, Analytics | No | No |
   | Purchase History | App Functionality | No | No |
-  | Product Interaction | Analytics, Third-Party Advertising | No | Yes |
-  | Advertising Data | Third-Party Advertising, Analytics | No | Yes |
+  | Product Interaction | Analytics | No | No |
   | Other Usage Data | Analytics | No | No |
-  | Crash Data | App Functionality, Analytics, Third-Party Advertising | No | No |
-  | Performance Data | App Functionality, Analytics, Third-Party Advertising | No | Yes |
+  | Crash Data | App Functionality, Analytics | No | No |
+  | Performance Data | App Functionality, Analytics | No | No |
   | Other Diagnostic Data | App Functionality, Analytics | No | No |
 
   Privacy Policy URL https://touchward-dopamine.com/privacy, User Privacy
-  Choices URL https://touchward-dopamine.com/support#privacy. Until
-  November 5th both read "https://touchward-dopamine/support", without .com,
-  which does not resolve.
-- Everything else: not collected. The purchase turns the ad SDK off
-  entirely, so an ad-free phone sends none of the advertising rows.
+  Choices URL https://touchward-dopamine.com/support#privacy.
+- Everything else: not collected.
 
 Google Play Data safety form. Google counts data as "collected" only when
 it leaves the device, so calendar events, the counter, and the settings are
@@ -294,19 +314,16 @@ RevenueCat, Expo's push service) is "collected", not "shared".
 - App interactions (App activity): collected, not shared, optional
   ("Share usage analytics"), purpose Analytics. Google Analytics for
   Firebase events: rewards, unlocks, review prompts, sessions, screens.
-- Device or other IDs: collected, shared, required, purposes App
-  functionality, Analytics and Advertising or marketing. The RevenueCat app
-  user id (random, created at launch for the ad-free purchase), the Firebase
-  app instance id (reset when analytics is turned off), the device push token
-  sent to Expo's push service only with push turned on, and, in the free app,
-  the Android advertising ID sent to Google AdMob to pick and measure an ad
-  ("shared", because AdMob uses it for its own purposes). The AD_ID
-  permission is declared by the ads SDK.
-- Advertising or marketing is also the purpose to tick for App interactions,
-  since AdMob measures ad views and taps.
+- Device or other IDs: collected, not shared, required, purposes App
+  functionality and Analytics. The RevenueCat app user id (random, created at
+  launch for the purchase), the Firebase app instance id (reset when
+  analytics is turned off), and the device push token sent to Expo's push
+  service only with push turned on. "Does your app use advertising ID?": no.
+  The AD_ID permission is not declared; it came with the ads SDK and went
+  with it.
 - Purchase history (Financial info): collected, not shared, required,
   purpose App functionality. The App Store or Play receipt, through
-  RevenueCat, which confirms and restores the unlock.
+  RevenueCat, which confirms and restores the purchase.
 - Other in-app messages (Messages): collected, not shared, optional,
   purpose App functionality. What is typed into the support form, with the
   device model and app version.
@@ -314,77 +331,76 @@ RevenueCat, Expo's push service) is "collected", not "shared".
   files, health data. Google Play Games sign-in is run by Google Play
   services; the app shows the player name and avatar on the device and
   sends neither anywhere.
+- No Advertising or marketing purpose anywhere on the form, and in App
+  content, Ads: "No, my app does not contain ads".
 
-## RevenueCat: products, entitlement and offering (owner, November 3rd 2026)
+## RevenueCat and the stores: Touchward Full at 0.49 USD
 
-Dashboard state as of November 3rd 2026, done by the owner: App Store
-Connect `touchward_full` is $0.99, renamed "Remove ads" (in review with iOS
-1.2.1, which still needs a build and the renewed developer agreement). Play
-`touchward_full` renamed "Remove ads"; about fifty regions are $0.99, the US
-and about 120 others stay $1.99 until the Play price experiment is ended and
-they are repriced. RevenueCat: the Play product is attached to `full` and
-sits in the Lifetime package beside the iOS product. Still open: RevenueCat
-cannot check the Play product ("Could not check") until the Touchward Play
-app has Google service account credentials in RevenueCat, so Play purchases
-are not validated until then; and the product descriptions still describe
-the old unlock (copy below).
-
-Product description, for both stores and the RevenueCat package (under 80
-characters): "Turns the ads off for good. Every feature is already free."
-
-
-What the 1.2.1 code depends on (`src/purchases/config.ts`,
-`src/purchases/purchases.ts`) and what to change for the 0.99 price:
+What the code depends on (`src/purchases/config.ts`,
+`src/purchases/purchases.ts`):
 
 - **Entitlement `full`**: keep the identifier exactly; the app checks it by
-  name and nothing else unlocks ad-free. Attach every Remove ads product to
-  it, old and new.
-- **Products**: the non-consumable unlock on each store, retitled "Remove
-  ads" and repriced to 0.99 US in App Store Connect and Play Console (prices
-  are never set in RevenueCat). If a store will not reprice the existing
-  product the way you want, create a new non-consumable at 0.99, attach it to
-  `full`, and keep the old one attached so earlier buyers still restore.
+  name and nothing else unlocks Full. Every product ever sold stays attached
+  to it, so the earlier 1.99 unlock and the 0.99 ad-free purchase keep
+  restoring as Full.
 - **Offering `touchward_full`**, marked Current: one Lifetime package
-  (`$rc_lifetime`) holding the Remove ads product on both stores. The app
-  reads that package, shows the store's price in its own alert, and buys it
-  through the store sheet; a Lifetime package pointing at the old product
-  sells the old price.
-- **Dashboard paywall**: no longer opened by the app except as a fallback
-  when the offering cannot be read; if you keep one, its copy is "Remove
-  ads", the price, "once", no feature list.
+  (`$rc_lifetime`) holding `touchward_full` on both stores. The app passes
+  this offering to the paywall and falls back to the current offering.
+- **Store product `touchward_full`** on each store, non consumable, display
+  name "Touchward Full", 0.49 USD. Prices are set in the stores, never in
+  RevenueCat; the paywall shows the store's own price string.
+- **Dashboard paywall** for the offering: the app's purchase screen is this
+  paywall (`react-native-purchases-ui`), opened from Customize, More, from
+  any locked choice, from Random, and on the first attempt past the day's
+  100th reward. Its copy lives in the RevenueCat dashboard, not in this
+  repository, so rewrite it by hand: title "Touchward Full", one line "No
+  daily limit. Every shape, color, mode and haptic.", the price variable,
+  "once", a Restore button, and nothing about ads.
 
-## Google Play Console: ads setup (do this with the 1.2.1 upload)
+Product description, for both stores and the RevenueCat package (under 80
+characters): "No daily limit, and every shape, color, mode and haptic."
 
-The 1.2.1 build is the first one with ads, so the Play listing has to say so
-before it goes out. In Play Console, for Touchward:
+App Store Connect, for 1.2.3:
 
-1. Policy and programs, App content, Ads: "Yes, my app contains ads." Play
-   shows the "Contains ads" label on the listing from then on.
-2. App content, Data safety: add Advertising or marketing as a purpose, mark
-   Device or other IDs as shared with Google AdMob, and keep the rows above
-   in step with this file. The ads SDK declares the
-   com.google.android.gms.permission.AD_ID permission, which the form asks
-   about ("Does your app use advertising ID?": yes).
-3. App content, Target audience and content: 18 and over or 13 and over, not
-   children, because the ad requests are not child-directed and the UMP
-   consent form is for adults. Keep the app out of the Families program.
-4. Store listing, Store settings: the developer website must be
-   https://touchward-dopamine.com, where app-ads.txt lives. AdMob reads the
-   file from that address; a different domain in the listing means AdMob
-   never verifies it and serving stays "limited".
-5. AdMob, Apps, Touchward (Android), App settings: link the app to the Play
-   listing once 1.2.1 is live, then App settings, app-ads.txt, Check for
-   updates. Do the same for the iOS app record against the App Store
-   listing.
-6. Release notes: the 1.2.1 notes above mention the ads and the purchase, so
-   a person reading "What's new" is not surprised.
+1. Monetization, In-App Purchases, `touchward_full`: Reference Name and the
+   English (U.S.) Display Name "Touchward Full", Description as above, price
+   0.49 USD (Apple has a 0.49 price point; the other storefronts follow its
+   automatic equivalents). Submit the in-app purchase with the build, since a
+   renamed and repriced product goes through review again.
+2. App Privacy: republish as itemised above. Tracking: No; no Advertising
+   Data, no Coarse Location, no Third-Party Advertising purpose.
+3. Version 1.2.3: the "What's New" above, and the review notes from
+   `store/app-review-notes.md`.
 
-App Store Connect, for the same build: App Privacy answers as in the
-questionnaire above (Tracking: yes; Device ID and Advertising Data for
-third-party advertising), and the in-app purchase renamed from "Unlock
-everything" to "Remove ads" with the same product id and repriced to 0.99 US
-(owner, November 3rd 2026), so the receipt keeps restoring for people who
-bought it earlier.
+Play Console, for 1.2.3:
+
+1. Monetize, Products, In-app products, `touchward_full`: name "Touchward
+   Full", description as above, price 0.49 USD for the United States, then
+   convert for the other countries (or set each by hand). Play's floors are
+   below this everywhere the app sells; see the price check below.
+2. Policy and programs, App content, Ads: "No, my app does not contain ads".
+   Play drops the "Contains ads" label.
+3. App content, Data safety: remove Advertising or marketing from every
+   purpose, mark Device or other IDs as not shared, answer "Does your app use
+   advertising ID?" with no, as itemised above. Send the changes for review
+   with the 1.2.3 bundle.
+4. Store listing: the 1.2.3 release notes above and the full description
+   below.
+5. App content, Target audience and content: unchanged.
+
+Price check (Google's "Supported locations for distribution to Google Play
+users", version 2026/01, read November 8th 2026): the lowest price Play
+allows is USD 0.05 in the United States and in every country billed in USD
+or EUR (EUR 0.05), and the local floors elsewhere are of the same order
+(GBP 0.05, CAD 0.10, AUD 0.10, BRL 0.30, MXN 1.20, INR 4.00, JPY 7, KRW 70,
+IDR 1,000, VND 1,300). None is above 0.49 USD, so 0.49 is allowed in every
+region the app sells in and there is no price to choose here. Apple's price
+points include 0.49 USD as well.
+
+Outside this repository, once the ad-free build is live: archive the ad
+network's app records for Touchward, and have the site's privacy page drop
+its ad and tracking sentences. The ads.txt and app-ads.txt files on
+touchward-dopamine.com can stay.
 
 ## Age rating
 
@@ -475,15 +491,12 @@ only to schedule nudges and are never stored or sent anywhere. The app never
 asks for your name or email. If the app crashes, an anonymous report helps us
 fix it, and you can turn that off in settings.
 
-FREE, WITH ADS YOU CAN TURN OFF
-Everything in Touchward is free: every shape and reward mode, every strength
-and haptic preset, custom backgrounds, calendar nudges, volume button taps, and
-an unlimited library. A full-screen ad shows now and then between rewards,
-never in the first minute and a half and never more than one every five
-minutes. One in-app purchase of 0.99 turns the ads off, once, forever. No
-subscription. Ads come through Google AdMob; where the law requires it, the
-app asks before showing personalised ads, and you can change your answer under
-Customize, More, Ad privacy choices.
+FREE, WITH ONE PURCHASE
+Touchward is free: 100 rewards a day with the default look, and no ads.
+Touchward Full is one in-app purchase of 0.49, once: no daily limit, and every
+shape, ripple, reward mode, vibration strength and preset, color and background
+in Customize. No subscription. If you bought the earlier unlock, you already
+have Full.
 
 OPEN SOURCE
 The complete source code is public, so every claim above can be checked:

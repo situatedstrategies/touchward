@@ -16,7 +16,7 @@ import { body, bodySemibold, heading } from "../design/typography";
 import { presetLabel } from "../haptics";
 import { sameLook, type LookSettings, type SavedLook } from "../looks/looks";
 import { PRESETS, type Preset } from "../looks/presets";
-import { FREE_COUNT, FREE_SAVED_LOOKS, isFreeLook } from "../purchases/gates";
+import { isFreeLook } from "../purchases/gates";
 import { useLooks } from "../store/looks";
 import { useUnlock } from "../store/unlock";
 import { LockIcon } from "../components/LockIcon";
@@ -48,8 +48,7 @@ export function LibraryScreen({ visible, current, theme, onApply, onClose }: Pro
   const { unlocked, presentPaywall } = useUnlock();
   const [page, setPage] = useState<Page>("saved");
 
-  // Presets past the first few, and any look that uses a locked choice, need the unlock.
-  const presetLocked = (index: number) => !unlocked && index >= FREE_COUNT;
+  // Any look past the default needs Touchward Full; every preset does.
   const lookLocked = (look: LookSettings) => !unlocked && !isFreeLook(look);
   const wear = (look: LookSettings, locked: boolean) => {
     if (!locked) {
@@ -83,14 +82,6 @@ export function LibraryScreen({ visible, current, theme, onApply, onClose }: Pro
   };
 
   const keepPreset = (preset: Preset) => {
-    if (!unlocked && looks.length >= FREE_SAVED_LOOKS) {
-      presentPaywall()
-        .then((ok) => {
-          if (ok) keepPreset(preset);
-        })
-        .catch(() => {});
-      return;
-    }
     save(preset.name, preset.look);
     Alert.alert("Saved", `"${preset.name}" is now in your saved looks.`);
   };
@@ -115,14 +106,14 @@ export function LibraryScreen({ visible, current, theme, onApply, onClose }: Pro
           onPress={() => wear(look, locked)}
           accessibilityRole="button"
           accessibilityLabel={`Use ${label}`}
-          accessibilityHint={locked ? "Needs the unlock" : undefined}
+          accessibilityHint={locked ? "Needs Touchward Full" : undefined}
           style={({ pressed }) => [styles.itemMain, { opacity: pressed ? 0.7 : 1 }]}
         >
           <LookPreview look={look} size={84} />
           <View style={styles.itemText}>
             {name}
             <Text style={[styles.meta, { color: theme.muted }]}>
-              {active ? "Wearing now" : locked ? "Needs the unlock" : meta}
+              {active ? "Wearing now" : locked ? "Needs Touchward Full" : meta}
             </Text>
             {locked && (
               <View style={styles.lockRow}>
@@ -177,8 +168,8 @@ export function LibraryScreen({ visible, current, theme, onApply, onClose }: Pro
     );
   };
 
-  const renderPreset = ({ item, index }: { item: Preset; index: number }) => {
-    const locked = presetLocked(index) || lookLocked(item.look);
+  const renderPreset = ({ item }: { item: Preset }) => {
+    const locked = lookLocked(item.look);
     const shape = SHAPES.find((s) => s.id === item.look.shape)?.label ?? "";
     const mode = REWARD_MODES.find((m) => m.id === item.look.rewardMode)?.label ?? "";
     const haptic = item.look.tapPreset ? presetLabel(item.look.tapPreset) : "";
@@ -198,7 +189,7 @@ export function LibraryScreen({ visible, current, theme, onApply, onClose }: Pro
           accessibilityRole="button"
         >
           <Text style={[styles.action, { color: theme.accent }]}>
-            {locked ? "Unlock" : "Save a copy"}
+            {locked ? "Get Full" : "Save a copy"}
           </Text>
         </Pressable>
       </>,

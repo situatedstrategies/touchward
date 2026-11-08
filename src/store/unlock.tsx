@@ -11,20 +11,17 @@ import {
 import { Alert } from "react-native";
 import { logUnlock } from "../analytics/analytics";
 import {
-  fetchRemoveAdsPackage,
   fetchUnlocked,
   isPurchasingAvailable,
   onUnlockedChange,
-  presentUnlockPaywall,
-  purchaseRemoveAds,
+  presentFullPaywall,
   restorePurchases,
-  type PaywallOutcome,
 } from "../purchases/purchases";
 
 const UNLOCK_KEY = "touchward.unlock.v1";
 
 interface UnlockContextValue {
-  /** Everything is unlocked. Until the store has answered this is the cached value. */
+  /** Touchward Full is owned. Until the store has answered this is the cached value. */
   unlocked: boolean;
   /** The store has answered at least once this launch (or is unavailable in this build). */
   known: boolean;
@@ -37,6 +34,12 @@ interface UnlockContextValue {
 }
 
 const UnlockContext = createContext<UnlockContextValue | null>(null);
+
+const UNAVAILABLE_TITLE = "Not available in this build";
+const UNAVAILABLE_BODY =
+  "Purchases work in the App Store and Google Play versions of Touchward.";
+const STORE_ERROR_TITLE = "Something went wrong";
+const STORE_ERROR_BODY = "The store did not respond. Please try again.";
 
 export function UnlockProvider({ children }: { children: ReactNode }) {
   const available = useMemo(() => isPurchasingAvailable(), []);
@@ -83,56 +86,34 @@ export function UnlockProvider({ children }: { children: ReactNode }) {
     };
   }, [available, apply]);
 
-  // The paywall is the app's own words plus the store's own sheet: one
-  // product, one price, no feature list, because every feature is free and
-  // the purchase only turns the ads off. The dashboard paywall is a fallback
-  // for a build that cannot read the offering.
+  // The purchase screen is RevenueCat's paywall for the touchward_full
+  // offering: one product, the store's price, and its own Restore button. A
+  // purchase or a restore there unlocks at once, here and through the
+  // customer info listener above.
   const presentPaywall = useCallback(async () => {
     if (unlocked) return true;
-    const pkg = available ? await fetchRemoveAdsPackage() : null;
-    const outcome: PaywallOutcome = pkg
-      ? await new Promise<PaywallOutcome>((resolve) => {
-          Alert.alert(
-            "Remove ads",
-            `Everything in Touchward is free. ${pkg.product.priceString}, once, turns the ads off for good on every phone signed in to this store account. No subscription.`,
-            [
-              { text: "Not now", style: "cancel", onPress: () => resolve("cancelled") },
-              {
-                text: `Remove ads for ${pkg.product.priceString}`,
-                onPress: () => void purchaseRemoveAds(pkg).then(resolve),
-              },
-            ],
-            { cancelable: true, onDismiss: () => resolve("cancelled") },
-          );
-        })
-      : await presentUnlockPaywall();
+    const outcome = available ? await presentFullPaywall() : "unavailable";
     if (outcome === "unlocked") {
       apply(true);
       logUnlock("paywall");
       return true;
     }
     if (outcome === "unavailable") {
-      Alert.alert(
-        "Not available in this build",
-        "Purchases work in the App Store and Google Play versions of Touchward.",
-      );
+      Alert.alert(UNAVAILABLE_TITLE, UNAVAILABLE_BODY);
     } else if (outcome === "error") {
-      Alert.alert("Something went wrong", "The store did not respond. Please try again.");
+      Alert.alert(STORE_ERROR_TITLE, STORE_ERROR_BODY);
     }
     return false;
   }, [unlocked, available, apply]);
 
   const restore = useCallback(async () => {
     if (!available) {
-      Alert.alert(
-        "Not available in this build",
-        "Purchases work in the App Store and Google Play versions of Touchward.",
-      );
+      Alert.alert(UNAVAILABLE_TITLE, UNAVAILABLE_BODY);
       return;
     }
     const value = await restorePurchases();
     if (value === null) {
-      Alert.alert("Something went wrong", "The store did not respond. Please try again.");
+      Alert.alert(STORE_ERROR_TITLE, STORE_ERROR_BODY);
       return;
     }
     apply(value);
@@ -140,7 +121,7 @@ export function UnlockProvider({ children }: { children: ReactNode }) {
     Alert.alert(
       value ? "Restored" : "Nothing to restore",
       value
-        ? "Ads are off on this phone."
+        ? "Touchward Full is on this phone."
         : "No Touchward purchase was found on this store account.",
     );
   }, [available, apply]);
@@ -160,14 +141,24 @@ export function useUnlock(): UnlockContextValue {
 }
 
 /**
- * For settings controls. This used to show the paywall for a locked choice
- * and apply the change only if the purchase went through. Since November 2026
- * every choice is free (ads pay for the app; the purchase only removes them),
- * so the change always runs. The shape is kept so the call sites, which pass
- * the old "is this free" answer, did not all have to move at once.
+ * For settings controls. A free choice, or any choice once Touchward Full is
+ * owned, is applied straight away. A locked choice opens the paywall first and
+ * is applied only if the person comes out of it unlocked.
  */
 export function useGate(): (free: boolean, change: () => void) => void {
-  return useCallback((_free, change) => {
-    change();
-  }, []);
+  const { unlocked, presentPaywall } = useUnlock();
+  return useCallback(
+    (free: boolean, change: () => void) => {
+      if (free || unlocked) {
+        change();
+        return;
+      }
+      presentPaywall()
+        .then((ok) => {
+          if (ok) change();
+        })
+        .catch(() => {});
+    },
+    [unlocked, presentPaywall],
+  );
 }

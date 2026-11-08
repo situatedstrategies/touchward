@@ -14,9 +14,8 @@ import { registerForPush } from "../notifications/push";
 import { configureNotifications, syncReminders } from "../notifications/reminders";
 import { pickLook, randomLook, suggestName, type LookSettings } from "../looks/looks";
 import { useLooks } from "../store/looks";
-import { lockedToFree, lookToFree, FREE_SAVED_LOOKS } from "../purchases/gates";
+import { lockedToFree } from "../purchases/gates";
 import { logReward } from "../analytics/analytics";
-import { noteForeground, noteRewardForAds } from "../ads/ads";
 import { unlockAchievement } from "../games/achievements";
 import { BERSERK_EVERY, berserkMilestone, rewardsToNextBerserk } from "../games/milestones";
 import { BERSERK_MS } from "../haptics/engine";
@@ -28,6 +27,12 @@ import {
   setOtherAudioAllowed,
 } from "../listening/audioSession";
 import { MusicAppsButton } from "../listening/MusicAppsButton";
+import {
+  FREE_REWARDS_PER_DAY,
+  countForDay,
+  isRewardAllowed,
+  localDayKey,
+} from "../store/dailyCap";
 import { useSettings } from "../store/settings";
 import { useUnlock } from "../store/unlock";
 import { onWatchReward, sendSettingsToWatch } from "../../modules/watch-sync";
@@ -94,22 +99,21 @@ export function HomeScreen() {
 
   const currentLook = pickLook(settings);
   const applyLook = useCallback((look: LookSettings) => update(look), [update]);
-  // The free app shuffles within what it includes.
+  // A random look is every choice at once, so it is a Full feature: the free
+  // app opens the paywall and wears the look only if the purchase goes through.
   const shuffleLook = useCallback(() => {
     const look = randomLook(pickLook(settings));
-    update(unlocked ? look : lookToFree(look));
-  }, [update, settings, unlocked]);
-  const openSave = useCallback(() => {
-    if (unlocked || looks.length < FREE_SAVED_LOOKS) {
-      setSaveOpen(true);
+    if (unlocked) {
+      update(look);
       return;
     }
     presentPaywall()
       .then((ok) => {
-        if (ok) setSaveOpen(true);
+        if (ok) update(look);
       })
       .catch(() => {});
-  }, [unlocked, looks.length, presentPaywall]);
+  }, [update, settings, unlocked, presentPaywall]);
+  const openSave = useCallback(() => setSaveOpen(true), []);
   const saveLook = useCallback(
     (name: string) => {
       save(name, pickLook(settings));
@@ -126,13 +130,56 @@ export function HomeScreen() {
     if (Object.keys(patch).length > 0) update(patch);
   }, [loaded, known, unlocked, settings, update]);
 
-  // The rate-and-review sheet keys on a reward from the phone (not the watch:
-  // nobody is looking at the phone then). Refs, so onReward stays stable and
-  // the check reads what is true when the delay runs out, not at the tap.
-  const rewardsAllTime = useRef(stats.rewardsAllTime);
+  // The counter and the unlock state in refs, so the reward path stays stable
+  // and reads what is true at the moment of the tap, not at the last render.
+  const statsRef = useRef(stats);
   useEffect(() => {
-    rewardsAllTime.current = stats.rewardsAllTime;
-  }, [stats.rewardsAllTime]);
+    statsRef.current = stats;
+  }, [stats]);
+  const unlockedRef = useRef(unlocked);
+  useEffect(() => {
+    unlockedRef.current = unlocked;
+  }, [unlocked]);
+
+  // The free app's daily limit (store/dailyCap.ts). Every reward source goes
+  // through canReward: the button and its hold timer, and with them the volume
+  // buttons, the link and the notification button that trigger it, plus the
+  // watch below. countReward bumps the ref at once so two taps in one frame
+  // cannot both pass at 99.
+  const canReward = useCallback(
+    () => isRewardAllowed(countForDay(statsRef.current, localDayKey()), unlockedRef.current),
+    [],
+  );
+  const countReward = useCallback(() => {
+    recordReward();
+    const day = localDayKey();
+    const s = statsRef.current;
+    statsRef.current = {
+      day,
+      rewardsToday: countForDay(s, day) + 1,
+      rewardsAllTime: s.rewardsAllTime + 1,
+    };
+  }, [recordReward]);
+  // The first blocked attempt opens the paywall itself and leaves a line with
+  // a button under the button; later blocked attempts only keep the line. Both
+  // go when the day turns or Touchward Full is bought, and the next time the
+  // limit is hit the paywall opens again once.
+  const [capHit, setCapHit] = useState(false);
+  const capHitRef = useRef(false);
+  const onBlocked = useCallback(() => {
+    if (capHitRef.current) return;
+    capHitRef.current = true;
+    setCapHit(true);
+    presentPaywall().catch(() => {});
+  }, [presentPaywall]);
+  const allowedNow = isRewardAllowed(countForDay(stats, localDayKey()), unlocked);
+  useEffect(() => {
+    if (capHit && allowedNow) {
+      capHitRef.current = false;
+      setCapHit(false);
+    }
+  }, [capHit, allowedNow]);
+  const capped = capHit && !allowedNow;
   const sheetOpen = useRef(false);
   useEffect(() => {
     sheetOpen.current = settingsOpen || saveOpen || libraryOpen;
@@ -179,20 +226,17 @@ export function HomeScreen() {
 
   const onReward = useCallback(
     (kind: "tap" | "hold") => {
-      recordReward();
+      countReward();
       logReward(kind);
       onTouchSound();
-      // The free app's interstitial, when the policy in ads/policy.ts says
-      // the moment is right; nothing happens while ad-free.
-      noteRewardForAds({ unlocked, sheetOpen: sheetOpen.current });
       requestReviewAfterReward({
         source: kind,
-        // The counter has not re-rendered yet, so count this reward by hand.
-        rewardsAllTime: rewardsAllTime.current + 1,
+        // countReward has already counted this reward in the ref.
+        rewardsAllTime: statsRef.current.rewardsAllTime,
         isSheetOpen: () => sheetOpen.current,
       });
     },
-    [recordReward, unlocked],
+    [countReward],
   );
 
   // Touch sounds and other apps' music for everyone.
@@ -203,10 +247,7 @@ export function HomeScreen() {
   useEffect(() => {
     setOtherAudioAllowed(otherAudioAllowed);
     const sub = AppState.addEventListener("change", (state) => {
-      if (state === "active") {
-        onForeground();
-        noteForeground();
-      }
+      if (state === "active") onForeground();
     });
     return () => sub.remove();
   }, [otherAudioAllowed]);
@@ -263,13 +304,19 @@ export function HomeScreen() {
     }, WATCH_SYNC_DELAY_MS);
     return () => clearTimeout(timer);
   }, [loaded, settings]);
+  // A watch tap counts here too, under the same daily limit. The watch has
+  // already played its click, so a blocked one only leaves the count where it is.
   useEffect(
     () =>
       onWatchReward(() => {
-        recordReward();
+        if (!canReward()) {
+          onBlocked();
+          return;
+        }
+        countReward();
         logReward("watch");
       }),
-    [recordReward],
+    [canReward, onBlocked, countReward],
   );
   // Push tokens can rotate, so re-register on every launch while push is on.
   useEffect(() => {
@@ -367,7 +414,14 @@ export function HomeScreen() {
 
       <View style={styles.middle}>
         {loaded && (
-          <RewardButton ref={button} settings={settings} size={size} onReward={onReward} />
+          <RewardButton
+            ref={button}
+            settings={settings}
+            size={size}
+            onReward={onReward}
+            canReward={canReward}
+            onBlocked={onBlocked}
+          />
         )}
         {berserkBanner !== null && (
           <View style={styles.banner} pointerEvents="none" accessibilityLiveRegion="polite">
@@ -385,9 +439,24 @@ export function HomeScreen() {
       </View>
 
       <Hidden hidden={cleared} style={styles.bottom}>
-        <Text style={[styles.prompt, { color: theme.text, fontSize: 16 * scale }]}>
-          {PROMPTS[settings.mode]}
-        </Text>
+        {capped ? (
+          <>
+            <Text style={[styles.prompt, { color: theme.text, fontSize: 16 * scale }]}>
+              That's {FREE_REWARDS_PER_DAY} for today. Touchward Full has no limit.
+            </Text>
+            <View style={styles.capAction}>
+              <Pill
+                label="Get Touchward Full"
+                onPress={() => void presentPaywall()}
+                scale={scale}
+              />
+            </View>
+          </>
+        ) : (
+          <Text style={[styles.prompt, { color: theme.text, fontSize: 16 * scale }]}>
+            {PROMPTS[settings.mode]}
+          </Text>
+        )}
         <View style={styles.toolbar}>
           <Pill label="Random" onPress={shuffleLook} scale={scale} />
           <Pill label="Save" onPress={openSave} scale={scale} />
@@ -542,6 +611,7 @@ const styles = StyleSheet.create({
   bannerLabel: { ...bodySemibold(18), marginTop: 2 },
   bannerHint: { ...body(13), marginTop: 4 },
   prompt: { ...body(16), marginBottom: 16, textAlign: "center" },
+  capAction: { marginBottom: 16 },
   bottom: { alignItems: "center" },
   toolbar: { flexDirection: "row", flexWrap: "wrap", justifyContent: "center", gap: 8 },
   pill: {

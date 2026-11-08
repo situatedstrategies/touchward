@@ -57,6 +57,14 @@ interface Props {
   settings: Settings;
   size: number;
   onReward: (kind: "tap" | "hold") => void;
+  /**
+   * Asked before every reward, from a finger or from outside. False means the
+   * press earns nothing: no haptic, no color, no ripple. The screen uses it
+   * for the free app's daily limit.
+   */
+  canReward?: () => boolean;
+  /** Called in place of onReward when canReward said no. */
+  onBlocked?: (kind: "tap" | "hold") => void;
   ref?: Ref<RewardButtonHandle>;
 }
 
@@ -67,7 +75,7 @@ interface Props {
  * rings that a wave rolls through. The reward mode sets how the ripples move
  * and what the tap feels like.
  */
-export function RewardButton({ settings, size, onReward, ref }: Props) {
+export function RewardButton({ settings, size, onReward, canReward, onBlocked, ref }: Props) {
   const {
     mode,
     shape,
@@ -347,6 +355,10 @@ export function RewardButton({ settings, size, onReward, ref }: Props) {
 
   const reward = useCallback(
     (kind: "tap" | "hold") => {
+      if (canReward && !canReward()) {
+        onBlocked?.(kind);
+        return;
+      }
       // Taps follow the reward mode (Pulsar pattern, else built in pulses); a chosen
       // Pulsar preset wins. Holds play their own pattern or preset.
       if (kind === "hold") {
@@ -381,6 +393,8 @@ export function RewardButton({ settings, size, onReward, ref }: Props) {
       emitRipples,
       rewardMode,
       onReward,
+      canReward,
+      onBlocked,
       settings.returnToIdle,
       settings.tapPreset,
       settings.holdPreset,

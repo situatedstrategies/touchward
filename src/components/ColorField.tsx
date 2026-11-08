@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import type { Theme } from "../design/theme";
 import { body, bodySemibold } from "../design/typography";
 import { ColorWheel } from "./ColorWheel";
+import { LockIcon } from "./LockIcon";
 
 interface Props {
   label: string;
@@ -17,33 +18,51 @@ interface Props {
     onSave: (hex: string) => void;
     onRemove: (hex: string) => void;
   };
+  /** Needs Touchward Full. Drawn muted with a padlock; pressing the row calls onLockedPress. */
+  locked?: boolean;
+  onLockedPress?: () => void;
 }
 
 /** A labeled color row: swatch and hex, tap to open the picker underneath. */
-export function ColorField({ label, value, onChange, theme, action, library }: Props) {
+export function ColorField({
+  label,
+  value,
+  onChange,
+  theme,
+  action,
+  library,
+  locked = false,
+  onLockedPress,
+}: Props) {
   const [open, setOpen] = useState(false);
   const saved = library?.colors.includes(value.toUpperCase()) ?? false;
   return (
     <View style={[styles.field, { borderColor: theme.border }]}>
       <Pressable
-        onPress={() => setOpen((v) => !v)}
+        onPress={locked ? onLockedPress : () => setOpen((v) => !v)}
         accessibilityRole="button"
         accessibilityLabel={`${label}, ${value}. ${open ? "Close" : "Open"} color picker`}
+        accessibilityHint={locked ? "Needs Touchward Full" : undefined}
         style={({ pressed }) => [styles.row, { opacity: pressed ? 0.7 : 1 }]}
       >
         <View style={[styles.swatch, { backgroundColor: value, borderColor: theme.border }]} />
         <View style={styles.text}>
-          <Text style={[styles.label, { color: theme.text }]}>{label}</Text>
+          <View style={styles.labelRow}>
+            {locked && <LockIcon color={theme.muted} />}
+            <Text style={[styles.label, { color: locked ? theme.muted : theme.text }]}>
+              {label}
+            </Text>
+          </View>
           <Text style={[styles.hex, { color: theme.muted }]}>{value.toUpperCase()}</Text>
         </View>
-        {action && (
+        {action && !locked && (
           <Pressable onPress={action.onPress} hitSlop={10} accessibilityRole="button">
             <Text style={[styles.action, { color: theme.accent }]}>{action.label}</Text>
           </Pressable>
         )}
         <Text style={[styles.chevron, { color: theme.muted }]}>{open ? "Hide" : "Edit"}</Text>
       </Pressable>
-      {open && (
+      {open && !locked && (
         <>
           <ColorWheel value={value} onChange={onChange} theme={theme} />
           {library && (
@@ -105,6 +124,7 @@ const styles = StyleSheet.create({
   row: { flexDirection: "row", alignItems: "center", paddingVertical: 8, gap: 12 },
   swatch: { width: 36, height: 36, borderRadius: 18, borderWidth: StyleSheet.hairlineWidth },
   text: { flex: 1 },
+  labelRow: { flexDirection: "row", alignItems: "center", gap: 6 },
   label: body(16),
   hex: { ...body(13), fontVariant: ["tabular-nums"], marginTop: 2 },
   action: bodySemibold(14),

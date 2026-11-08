@@ -35,6 +35,8 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+# compiled unit tests (npm test)
+.tests-build/
 
 # native projects are committed; build output, Pods, and local files are ignored inside them
 

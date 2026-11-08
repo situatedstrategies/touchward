@@ -2,7 +2,7 @@
   "expo": {
     "name": "Touchward",
     "slug": "touchward",
-    "version": "1.2.2",
+    "version": "1.2.3",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "scheme": "touchward",
@@ -75,78 +75,12 @@
           }
         }
       ],
-      [
-        "react-native-google-mobile-ads",
-        {
-          "androidAppId": "ca-app-pub-2443535982979230~6375631181",
-          "iosAppId": "ca-app-pub-2443535982979230~5889330814",
-          "userTrackingUsageDescription": "Touchward is free because of ads. Allowing tracking lets the ads be more relevant; saying no keeps them, just less relevant.",
-          "skAdNetworkItems": [
-            "22mmun2rn5.skadnetwork",
-            "2fnua5tdw4.skadnetwork",
-            "2u9pt9hc89.skadnetwork",
-            "3qcr597p9d.skadnetwork",
-            "3qy4746246.skadnetwork",
-            "3rd42ekr43.skadnetwork",
-            "3sh42y64q3.skadnetwork",
-            "4468km3ulz.skadnetwork",
-            "44jx6755aq.skadnetwork",
-            "47vhws6wlr.skadnetwork",
-            "4dzt52r2t5.skadnetwork",
-            "4fzdc2evr5.skadnetwork",
-            "578prtvx9j.skadnetwork",
-            "7ug5zh24hu.skadnetwork",
-            "8c4e2ghe7u.skadnetwork",
-            "8s468mfl3y.skadnetwork",
-            "97r2b46745.skadnetwork",
-            "9t245vhmpl.skadnetwork",
-            "a2p9lx4jpn.skadnetwork",
-            "c3frkrj4fj.skadnetwork",
-            "c6k4g5qg8m.skadnetwork",
-            "cp8zw746q7.skadnetwork",
-            "cstr6suwn9.skadnetwork",
-            "e5fvkxwrpn.skadnetwork",
-            "f38h382jlk.skadnetwork",
-            "gta9lk7p23.skadnetwork",
-            "hs6bdukanm.skadnetwork",
-            "k674qkevps.skadnetwork",
-            "kbd757ywx3.skadnetwork",
-            "kbmxgpxpgc.skadnetwork",
-            "klf5c3l5u5.skadnetwork",
-            "ludvb6z3bs.skadnetwork",
-            "mlmmfzh3r3.skadnetwork",
-            "n38lu8286q.skadnetwork",
-            "p78axxw29g.skadnetwork",
-            "ppxm28t8ap.skadnetwork",
-            "s39g8k73mm.skadnetwork",
-            "su67r6k2v3.skadnetwork",
-            "t38b2kh725.skadnetwork",
-            "tl55sbb4fm.skadnetwork",
-            "uw77j35x4d.skadnetwork",
-            "v4nxqhlyqp.skadnetwork",
-            "v72qych5uu.skadnetwork",
-            "v9wttpbfk9.skadnetwork",
-            "vutu7akeur.skadnetwork",
-            "wg4vff78zm.skadnetwork",
-            "wzmmz9fp6w.skadnetwork",
-            "y5ghdn5j9k.skadnetwork",
-            "yclnxrl5pm.skadnetwork",
-            "ydx93a7ass.skadnetwork"
-          ]
-        }
-      ],
       "./plugins/withQuietPods.js",
       "./plugins/withHapticsOnlyPulsar.js",
       "./plugins/withoutDeprecatedSystemBarColors.js",
       "./plugins/withAndroidSigning.js",
       "./plugins/withR8Optimize.js",
-      "./plugins/withNoEmptyTrackingDomains.js",
-      [
-        "expo-tracking-transparency",
-        {
-          "userTrackingPermission": "Touchward is free because of ads. Allowing tracking lets the ads be more relevant; saying no keeps them, just less relevant."
-        }
-      ]
+      "./plugins/withNoEmptyTrackingDomains.js"
     ],
     "ios": {
       "supportsTablet": true,
@@ -161,10 +95,10 @@
         "ITSAppUsesNonExemptEncryption": false,
         "UIStatusBarHidden": true,
         "NSCalendarsFullAccessUsageDescription": "Touchward reads your calendar only to schedule a nudge when each event ends. Event details are used at that moment on this phone and are never stored, copied, or transmitted by the app.",
-        "TouchwardDataAccessNote": "Touchward requests access to calendar events and notifications solely to provide its features on this device. Calendar data is read at runtime to schedule local notifications and is not retained. The app stores locally: its own settings; the reward counter (today's and all-time tap counts, which drive the milestone countdown and the berserk burst every 500 taps, a few seconds of stronger haptics, shaking, and random colors on the button); and the dates it last asked for a rating. Counts can be reset in Customize and are never uploaded. The rating request is Apple's own SKStoreReviewController sheet, asked for only after real use (an install at least a week old, opened on three days, twenty or more rewards, never within thirty days of a crash or support message, at most once per 120 days), and the Rate link in Customize opens the App Store listing; the app sends nothing for either. Five things can leave the device, none with a name, email or account: while ads are on, ad requests to Google AdMob, which receives the advertising identifier only if you allow tracking in Apple's prompt, plus a rough location from the IP address and basic device information; messages you send through the support form (what you type, plus device model and app version) and, unless turned off in the app, crash reports (the error, app version, device model, OS version, and the app's settings), both to the Touchward support inbox; unless turned off in the app, usage analytics through Google Analytics for Firebase (rewards given, purchases, rating prompts requested, session counts, app version, device model, OS version, language, and country, tied to a random app instance identifier; Firebase Analytics itself reads no advertising identifier); and, for the optional Remove ads purchase, the App Store purchase receipt and a random app generated identifier to RevenueCat, which confirms and restores the purchase. The iOS app has no sign in of any kind; the Google Play Games sign in exists only in the Android build. No name, email, or account exists to link any of it to.",
+        "TouchwardDataAccessNote": "Touchward requests access to calendar events and notifications solely to provide its features on this device. Calendar data is read at runtime to schedule local notifications and is not retained. The app stores locally: its own settings; the reward counter (today's and all-time tap counts, which drive the daily count, the milestone countdown and the berserk burst every 500 taps, a few seconds of stronger haptics, shaking, and random colors on the button); and the dates it last asked for a rating. Counts can be reset in Customize and are never uploaded. The rating request is Apple's own SKStoreReviewController sheet, asked for only after real use (an install at least a week old, opened on three days, twenty or more rewards, never within thirty days of a crash or support message, at most once per 120 days), and the Rate link in Customize opens the App Store listing; the app sends nothing for either. Four things can leave the device, none with a name, email or account: messages you send through the support form (what you type, plus device model and app version) and, unless turned off in the app, crash reports (the error, app version, device model, OS version, and the app's settings), both to the Touchward support inbox; unless turned off in the app, usage analytics through Google Analytics for Firebase (rewards given, purchases, rating prompts requested, session counts, app version, device model, OS version, language, and country, tied to a random app instance identifier; Firebase Analytics reads no advertising identifier); and, for the optional Touchward Full purchase, the App Store purchase receipt and a random app generated identifier to RevenueCat, which confirms and restores the purchase. The app shows no ads and contains no advertising or tracking SDK. The iOS app has no sign in of any kind; the Google Play Games sign in exists only in the Android build. No name, email, or account exists to link any of it to.",
         "TouchwardEncryptionNote": "Touchward contains no custom or proprietary encryption. Network requests (the optional support form, push token registration, crash reports, purchases, usage analytics, and opening App Store or music links) use HTTPS through the operating system's standard networking stack, which is exempt encryption under U.S. export rules. ITSAppUsesNonExemptEncryption is therefore false."
       },
-      "buildNumber": "12",
+      "buildNumber": "13",
       "privacyManifests": {
         "NSPrivacyTracking": false,
         "NSPrivacyCollectedDataTypes": [
@@ -188,33 +122,13 @@
             "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeProductInteraction",
             "NSPrivacyCollectedDataTypeLinked": false,
             "NSPrivacyCollectedDataTypeTracking": false,
-            "NSPrivacyCollectedDataTypePurposes": [
-              "NSPrivacyCollectedDataTypePurposeAnalytics"
-            ]
+            "NSPrivacyCollectedDataTypePurposes": ["NSPrivacyCollectedDataTypePurposeAnalytics"]
           },
           {
             "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeOtherUsageData",
             "NSPrivacyCollectedDataTypeLinked": false,
             "NSPrivacyCollectedDataTypeTracking": false,
-            "NSPrivacyCollectedDataTypePurposes": [
-              "NSPrivacyCollectedDataTypePurposeAnalytics"
-            ]
-          },
-          {
-            "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeDeviceID",
-            "NSPrivacyCollectedDataTypeLinked": false,
-            "NSPrivacyCollectedDataTypeTracking": false,
-            "NSPrivacyCollectedDataTypePurposes": [
-              "NSPrivacyCollectedDataTypePurposeThirdPartyAdvertising"
-            ]
-          },
-          {
-            "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeAdvertisingData",
-            "NSPrivacyCollectedDataTypeLinked": false,
-            "NSPrivacyCollectedDataTypeTracking": false,
-            "NSPrivacyCollectedDataTypePurposes": [
-              "NSPrivacyCollectedDataTypePurposeThirdPartyAdvertising"
-            ]
+            "NSPrivacyCollectedDataTypePurposes": ["NSPrivacyCollectedDataTypePurposeAnalytics"]
           }
         ]
       },
@@ -235,7 +149,7 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "versionCode": 18,
+      "versionCode": 19,
       "blockedPermissions": [
         "android.permission.WRITE_CALENDAR",
         "android.permission.READ_EXTERNAL_STORAGE",
@@ -253,9 +167,6 @@
     "owner": "omaas",
     "description": "A sensory reward button: tap it when you did the thing.",
     "primaryColor": "#2C66FF",
-    "platforms": [
-      "ios",
-      "android"
-    ]
+    "platforms": ["ios", "android"]
   }
 }
