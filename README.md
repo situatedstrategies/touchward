@@ -301,9 +301,14 @@ without it the events have nowhere to land.
 On iOS the Firebase SDK is installed through CocoaPods with static frameworks
 (`expo-build-properties` sets `ios.useFrameworks` to `static`, the
 `@react-native-firebase/app` plugin sets `disableSPM`) and Analytics is built
-without the advertising identifier (`withoutAdIdSupport`): nothing in the app
-reads it, there is no advertising SDK, and the app asks no tracking
-permission, so both store forms answer "no tracking". The Google Ads install
+without the advertising identifier (`withoutAdIdSupport`). On Android,
+Firebase Analytics declares the `AD_ID` permission in its own manifest and
+collects the advertising ID by default, so `app.json` blocks that permission
+(and `ACCESS_ADSERVICES_AD_ID`) and `plugins/withNoAdvertisingId.js` writes
+the `google_analytics_adid_collection_enabled` meta-data that turns the
+collection off. Nothing in the app reads the identifier, there is no
+advertising SDK, and the app asks no tracking permission, so both store forms
+answer "no tracking" and Play's "Does your app use advertising ID?" is No. The Google Ads install
 conversion is the `first_open` event imported into Google Ads from this
 Firebase project; nothing in the app is specific to it. After changing native
 dependencies run `npx pod-install` (or `npx expo run:ios`) to refresh

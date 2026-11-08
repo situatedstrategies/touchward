@@ -80,7 +80,8 @@
       "./plugins/withoutDeprecatedSystemBarColors.js",
       "./plugins/withAndroidSigning.js",
       "./plugins/withR8Optimize.js",
-      "./plugins/withNoEmptyTrackingDomains.js"
+      "./plugins/withNoEmptyTrackingDomains.js",
+      "./plugins/withNoAdvertisingId.js"
     ],
     "ios": {
       "supportsTablet": true,
@@ -122,13 +123,17 @@
             "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeProductInteraction",
             "NSPrivacyCollectedDataTypeLinked": false,
             "NSPrivacyCollectedDataTypeTracking": false,
-            "NSPrivacyCollectedDataTypePurposes": ["NSPrivacyCollectedDataTypePurposeAnalytics"]
+            "NSPrivacyCollectedDataTypePurposes": [
+              "NSPrivacyCollectedDataTypePurposeAnalytics"
+            ]
           },
           {
             "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeOtherUsageData",
             "NSPrivacyCollectedDataTypeLinked": false,
             "NSPrivacyCollectedDataTypeTracking": false,
-            "NSPrivacyCollectedDataTypePurposes": ["NSPrivacyCollectedDataTypePurposeAnalytics"]
+            "NSPrivacyCollectedDataTypePurposes": [
+              "NSPrivacyCollectedDataTypePurposeAnalytics"
+            ]
           }
         ]
       },
@@ -153,7 +158,9 @@
       "blockedPermissions": [
         "android.permission.WRITE_CALENDAR",
         "android.permission.READ_EXTERNAL_STORAGE",
-        "android.permission.WRITE_EXTERNAL_STORAGE"
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "com.google.android.gms.permission.AD_ID",
+        "android.permission.ACCESS_ADSERVICES_AD_ID"
       ]
     },
     "web": {
@@ -167,6 +174,9 @@
     "owner": "omaas",
     "description": "A sensory reward button: tap it when you did the thing.",
     "primaryColor": "#2C66FF",
-    "platforms": ["ios", "android"]
+    "platforms": [
+      "ios",
+      "android"
+    ]
   }
 }

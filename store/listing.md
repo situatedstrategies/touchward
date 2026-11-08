@@ -319,8 +319,9 @@ RevenueCat, Expo's push service) is "collected", not "shared".
   launch for the purchase), the Firebase app instance id (reset when
   analytics is turned off), and the device push token sent to Expo's push
   service only with push turned on. "Does your app use advertising ID?": no.
-  The AD_ID permission is not declared; it came with the ads SDK and went
-  with it.
+  The AD_ID permission is blocked in app.json and the Firebase Analytics
+  advertising ID collection is turned off by manifest meta-data
+  (plugins/withNoAdvertisingId.js), so no SDK in the build reads it.
 - Purchase history (Financial info): collected, not shared, required,
   purpose App functionality. The App Store or Play receipt, through
   RevenueCat, which confirms and restores the purchase.
