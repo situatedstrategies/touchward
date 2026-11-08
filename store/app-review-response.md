@@ -59,13 +59,13 @@ step with `app-review-notes.md` and `listing.md` if the app changes.
 - User generated content and reporting or blocking: there is no content
   from other people. Nothing is shared or published. Saved looks are private
   settings on the device.
-- Accessing paid content or features: every feature is free. The one non
-  consumable in-app purchase, "Remove ads" (from 1.2.1; it was "Unlock
-  everything" before, same product id), only turns the ads off. Show it in
-  the recording: Customize, More, Ads, Remove ads, complete the purchase
-  with a sandbox tester account, and show the Ads section reading "Ads are
-  off". Then show Restore purchase on the same screen. There are no
-  subscriptions and no consumables.
+- Accessing paid content or features: the one non consumable in-app
+  purchase, "Touchward Full" (same product id as the earlier unlock), lifts
+  the free app's limit of 100 rewards a day and opens every customization.
+  Show it in the recording: Customize, More, Touchward Full, Get Touchward
+  Full, complete the purchase with a sandbox tester account, and show the
+  section reading "Yours". Then show Restore purchase on the same screen.
+  There are no subscriptions and no consumables.
 
 State the first two facts in the reply so the reviewer does not go looking
 for them, and name the sandbox purchase step so they can find it.

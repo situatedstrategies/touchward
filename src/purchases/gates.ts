@@ -1,14 +1,6 @@
-import { pulsarPresetNames } from "../haptics";
 import type { LookSettings } from "../looks/looks";
 import {
   DEFAULT_SETTINGS,
-  PATTERN_IDS,
-  REWARD_MODES,
-  RIPPLE_LINGERS,
-  RIPPLE_SHAPES,
-  RIPPLE_WIDTHS,
-  SHAPES,
-  STRENGTHS,
   type PatternId,
   type RewardMode,
   type Settings,
@@ -16,44 +8,49 @@ import {
 } from "../types";
 
 /**
- * What the free app includes: everything. Since November 2026 Touchward is
- * ad-supported, and the one purchase (entitlement "full") only turns the ads
- * off. The free-tier rule used to be "the first three of everything"; these
- * helpers stay so the call sites keep reading the same way, and all of them
- * now answer "free". The thresholds are infinite rather than removed so that
- * a future change of mind is one number, not an archaeology dig.
+ * What the free app includes: the default look, and nothing past it. One
+ * purchase, Touchward Full (entitlement "full"), opens every other choice in
+ * Customize, Reward and Colors, and lifts the daily limit (store/dailyCap.ts).
+ *
+ * Press style, the hold timer length, notifications, triggers, touch sounds,
+ * the counter and support are not look settings and stay free, as do the
+ * saved color libraries (data, not a look).
+ *
+ * Pure: no React and no native module, so the rules are unit tested.
  */
-export const FREE_COUNT = Number.POSITIVE_INFINITY;
-/** How many looks the free app keeps in the library. */
-export const FREE_SAVED_LOOKS = Number.POSITIVE_INFINITY;
+const d = DEFAULT_SETTINGS;
 
-function firstFree<T>(list: readonly T[], match: (item: T) => boolean): boolean {
-  const index = list.findIndex(match);
-  return index === -1 || index < FREE_COUNT;
-}
+const sameHex = (a: string, b: string) => a.toUpperCase() === b.toUpperCase();
+const sameHexList = (a: readonly string[], b: readonly string[]) =>
+  a.length === b.length && a.every((hex, i) => sameHex(hex, b[i]));
+const near = (a: number, b: number) => Math.abs(a - b) < 0.01;
 
-export const isFreeShape = (id: Shape) => firstFree(SHAPES, (s) => s.id === id);
-export const isFreeRewardMode = (id: RewardMode) => firstFree(REWARD_MODES, (m) => m.id === id);
-export const isFreePattern = (id: PatternId) => firstFree(PATTERN_IDS, (p) => p === id);
-export const isFreeStrength = (value: number) =>
-  firstFree(STRENGTHS, (s) => Math.abs(s.value - value) < 0.01);
-export const isFreeRippleShape = (id: Settings["rippleShape"]) =>
-  firstFree(RIPPLE_SHAPES, (s) => s.id === id);
-export const isFreeRippleWidth = (id: Settings["rippleWidth"]) =>
-  firstFree(RIPPLE_WIDTHS, (w) => w.id === id);
-export const isFreeLinger = (value: number) =>
-  firstFree(RIPPLE_LINGERS, (l) => l.value === value);
-export const isFreeRippleMax = (n: number) => n <= FREE_COUNT;
-/** Every backdrop, custom colors included. */
-export const isFreeBackdrop = (_backdrop: string) => true;
+export const isFreeShape = (id: Shape) => id === d.shape;
+export const isFreeRewardMode = (id: RewardMode) => id === d.rewardMode;
+export const isFreePattern = (id: PatternId) => id === d.holdPattern;
+export const isFreeStrength = (value: number) => near(value, d.hapticStrength);
+export const isFreeRippleShape = (id: Settings["rippleShape"]) => id === d.rippleShape;
+export const isFreeRippleWidth = (id: Settings["rippleWidth"]) => id === d.rippleWidth;
+export const isFreeLinger = (value: number) => value === d.rippleLinger;
+export const isFreeRippleMax = (n: number) => n === d.rippleMax;
+export const isFreeBackdrop = (backdrop: string) => backdrop === d.backdrop;
+/** The mode's own haptic (null) is the default; every Pulsar preset is Full. */
+export const isFreePreset = (name: string | null) => name === null;
+export const isFreeIdleColor = (hex: string) => sameHex(hex, d.idleColor);
+export const isFreeTapColors = (colors: readonly string[]) => sameHexList(colors, d.tapColors);
+export const isFreeRippleColors = (colors: readonly string[]) =>
+  sameHexList(colors, d.rippleColors);
+/** Shuffle, snap back and follow-the-button are off in the default look. */
+export const isFreeColorBehavior = (look: {
+  randomColors: boolean;
+  returnToIdle: boolean;
+  rippleFollowButton: boolean;
+}) =>
+  look.randomColors === d.randomColors &&
+  look.returnToIdle === d.returnToIdle &&
+  look.rippleFollowButton === d.rippleFollowButton;
 
-/** The first three Pulsar presets in the picker's order. Null (the mode's own haptic) is free. */
-export function isFreePreset(name: string | null): boolean {
-  if (name === null) return true;
-  return firstFree(pulsarPresetNames(), (n) => n === name);
-}
-
-/** Every setting in a look is one the free app allows. */
+/** Every setting in a look is one the free app allows: the default look. */
 export function isFreeLook(look: LookSettings): boolean {
   return (
     isFreeShape(look.shape) &&
@@ -64,53 +61,38 @@ export function isFreeLook(look: LookSettings): boolean {
     isFreeRippleMax(look.rippleMax) &&
     isFreeBackdrop(look.backdrop) &&
     isFreeStrength(look.hapticStrength) &&
-    isFreePreset(look.tapPreset)
+    isFreePreset(look.tapPreset) &&
+    isFreeIdleColor(look.idleColor) &&
+    isFreeTapColors(look.tapColors) &&
+    isFreeRippleColors(look.rippleColors) &&
+    isFreeColorBehavior(look)
   );
 }
 
 /**
  * The parts of the settings the free app must not keep: each locked value is
- * replaced with a free one. Returns only the keys that change, so an empty
+ * replaced with the default. Returns only the keys that change, so an empty
  * object means nothing had to move.
  */
 export function lockedToFree(settings: Settings): Partial<Settings> {
-  const d = DEFAULT_SETTINGS;
   const patch: Partial<Settings> = {};
   if (!isFreeShape(settings.shape)) patch.shape = d.shape;
   if (!isFreeRewardMode(settings.rewardMode)) patch.rewardMode = d.rewardMode;
-  if (!isFreePattern(settings.holdPattern)) patch.holdPattern = PATTERN_IDS[0];
-  if (!isFreeStrength(settings.hapticStrength))
-    patch.hapticStrength = STRENGTHS[STRENGTHS.length - 1].value;
+  if (!isFreePattern(settings.holdPattern)) patch.holdPattern = d.holdPattern;
+  if (!isFreeStrength(settings.hapticStrength)) patch.hapticStrength = d.hapticStrength;
   if (!isFreeRippleShape(settings.rippleShape)) patch.rippleShape = d.rippleShape;
   if (!isFreeRippleWidth(settings.rippleWidth)) patch.rippleWidth = d.rippleWidth;
-  if (!isFreeLinger(settings.rippleLinger))
-    patch.rippleLinger = RIPPLE_LINGERS[RIPPLE_LINGERS.length - 1].value;
+  if (!isFreeLinger(settings.rippleLinger)) patch.rippleLinger = d.rippleLinger;
+  if (!isFreeRippleMax(settings.rippleMax)) patch.rippleMax = d.rippleMax;
   if (!isFreeBackdrop(settings.backdrop)) patch.backdrop = d.backdrop;
   if (!isFreePreset(settings.tapPreset)) patch.tapPreset = null;
   if (!isFreePreset(settings.holdPreset)) patch.holdPreset = null;
+  if (!isFreeIdleColor(settings.idleColor)) patch.idleColor = d.idleColor;
+  if (!isFreeTapColors(settings.tapColors)) patch.tapColors = [...d.tapColors];
+  if (!isFreeRippleColors(settings.rippleColors)) patch.rippleColors = [...d.rippleColors];
+  if (settings.randomColors !== d.randomColors) patch.randomColors = d.randomColors;
+  if (settings.returnToIdle !== d.returnToIdle) patch.returnToIdle = d.returnToIdle;
+  if (settings.rippleFollowButton !== d.rippleFollowButton)
+    patch.rippleFollowButton = d.rippleFollowButton;
   return patch;
-}
-
-/** A look with every locked choice swapped for a free one, for the free app's Random button. */
-export function lookToFree(look: LookSettings): LookSettings {
-  return {
-    ...look,
-    shape: isFreeShape(look.shape) ? look.shape : SHAPES[0].id,
-    rewardMode: isFreeRewardMode(look.rewardMode) ? look.rewardMode : REWARD_MODES[0].id,
-    rippleShape: isFreeRippleShape(look.rippleShape) ? look.rippleShape : RIPPLE_SHAPES[0].id,
-    rippleWidth: isFreeRippleWidth(look.rippleWidth) ? look.rippleWidth : RIPPLE_WIDTHS[0].id,
-    rippleLinger: isFreeLinger(look.rippleLinger)
-      ? look.rippleLinger
-      : RIPPLE_LINGERS[RIPPLE_LINGERS.length - 1].value,
-    rippleMax: look.rippleMax,
-    backdrop: isFreeBackdrop(look.backdrop)
-      ? look.backdrop
-      : Math.random() < 0.5
-        ? "navy"
-        : "system",
-    hapticStrength: isFreeStrength(look.hapticStrength)
-      ? look.hapticStrength
-      : STRENGTHS[STRENGTHS.length - 1].value,
-    tapPreset: isFreePreset(look.tapPreset) ? look.tapPreset : null,
-  };
 }

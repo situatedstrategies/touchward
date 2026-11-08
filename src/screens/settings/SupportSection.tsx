@@ -69,8 +69,9 @@ export function SupportSection({ theme }: { theme: Theme }) {
           {build ? ` (${build})` : ""}
         </Text>
         <Hint theme={theme}>
-          Free to use, with a one-time unlock for everything else. No subscription, no account:
-          if you paid once, it is yours on every device signed in to the same store account.
+          Free to use, with Touchward Full as a one-time purchase for unlimited rewards and
+          every customization. No subscription, no account: if you paid once, it is yours on
+          every device signed in to the same store account.
         </Hint>
         <Actions>
           {/* The store's own review page. The rating sheet appears on its own

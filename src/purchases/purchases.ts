@@ -65,12 +65,13 @@ export function configurePurchases(): boolean {
 }
 
 type CustomerInfo = import("react-native-purchases").CustomerInfo;
+type Offering = import("react-native-purchases").PurchasesOffering;
 
 function hasEntitlement(info: CustomerInfo): boolean {
   return info.entitlements.active[ENTITLEMENT_ID] !== undefined;
 }
 
-/** Whether the store says everything is unlocked, or null when the SDK is unavailable. */
+/** Whether the store says Touchward Full is owned, or null when the SDK is unavailable. */
 export async function fetchUnlocked(): Promise<boolean | null> {
   if (!configurePurchases()) return null;
   const mod = loadPurchases();
@@ -97,61 +98,32 @@ export function onUnlockedChange(listener: (unlocked: boolean) => void): () => v
 
 export type PaywallOutcome = "unlocked" | "cancelled" | "error" | "unavailable";
 
-type Package = import("react-native-purchases").PurchasesPackage;
-
-/**
- * The one product for sale: the non-subscription package of the offering
- * (the store's "Remove ads", entitlement "full"). Null when the SDK is
- * unavailable or the offering carries no such package.
- */
-export async function fetchRemoveAdsPackage(): Promise<Package | null> {
-  if (!configurePurchases()) return null;
-  const mod = loadPurchases();
-  if (!mod) return null;
+/** The offering the paywall sells: touchward_full, falling back to whatever is current. */
+async function fetchOffering(mod: PurchasesModule): Promise<Offering | undefined> {
   try {
     const offerings = await mod.default.getOfferings();
-    const offering = offerings.all[OFFERING_ID] ?? offerings.current;
-    const packages = offering?.availablePackages ?? [];
-    return (
-      packages.find((p) => p.packageType === mod.PACKAGE_TYPE.LIFETIME) ??
-      packages.find((p) => !p.product.subscriptionPeriod) ??
-      null
-    );
+    return offerings.all[OFFERING_ID] ?? offerings.current ?? undefined;
   } catch {
-    return null;
+    return undefined;
   }
 }
 
 /**
- * Buy the Remove ads package through the store's own sheet, which shows the
- * price and takes the confirmation. "cancelled" when the person backs out of
- * that sheet; "unlocked" once the entitlement is active.
+ * The purchase screen: RevenueCat's paywall for the offering, built in the
+ * dashboard, with the store's own price and a Restore button. Skipped when the
+ * entitlement is already active. "cancelled" when the person closes it;
+ * "unlocked" once the entitlement is active, bought or restored.
  */
-export async function purchaseRemoveAds(pkg: Package): Promise<PaywallOutcome> {
-  const mod = loadPurchases();
-  if (!mod) return "unavailable";
-  try {
-    const { customerInfo } = await mod.default.purchasePackage(pkg);
-    return hasEntitlement(customerInfo) ? "unlocked" : "error";
-  } catch (e) {
-    const err = e as { userCancelled?: boolean };
-    return err?.userCancelled ? "cancelled" : "error";
-  }
-}
-
-/**
- * Fallback only: RevenueCat's dashboard paywall for the offering. The app no
- * longer opens it on purpose (the copy there is outside the repository and
- * drifted from the ads model); unlock.tsx asks the store directly through
- * purchaseRemoveAds and comes here only when no package could be read.
- */
-export async function presentUnlockPaywall(): Promise<PaywallOutcome> {
+export async function presentFullPaywall(): Promise<PaywallOutcome> {
   if (!configurePurchases()) return "unavailable";
+  const mod = loadPurchases();
   const ui = loadPaywalls();
-  if (!ui) return "unavailable";
+  if (!mod || !ui) return "unavailable";
+  const offering = await fetchOffering(mod);
   try {
     const result = await ui.default.presentPaywallIfNeeded({
       requiredEntitlementIdentifier: ENTITLEMENT_ID,
+      offering,
       displayCloseButton: true,
     });
     const R = ui.PAYWALL_RESULT;

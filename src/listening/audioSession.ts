@@ -6,11 +6,10 @@ import { loadVolumeManager } from "../hardware/volumeButtons";
  * Touchward's own sound is Pulsar's tone for each haptic, on for everyone
  * unless switched off in Customize.
  * Other apps' music mixes with the tones for everyone: the session is
- * ambient, so Apple Music, YouTube Music or Spotify keeps playing under them
- * (since 1.2.1, when every feature became free and the one purchase came to
- * mean ad-free only). The solo-ambient path below, which takes the audio on
- * a tap, is kept for a build that passes `setOtherAudioAllowed(false)`; the
- * home screen passes true. Both follow the ringer switch.
+ * ambient, so Apple Music, YouTube Music or Spotify keeps playing under them.
+ * The solo-ambient path below, which takes the audio on a tap, is kept for a
+ * build that passes `setOtherAudioAllowed(false)`; the home screen passes
+ * true. Both follow the ringer switch.
  *
  * Launch and returning to the foreground only ever allow mixing, so nothing
  * here can cut off a person's music by surprise.

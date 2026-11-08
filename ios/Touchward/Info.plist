@@ -23,7 +23,7 @@
 	<key>CFBundlePackageType</key>
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.2.2</string>
+	<string>1.2.3</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -43,11 +43,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>12</string>
-	<key>GADApplicationIdentifier</key>
-	<string>ca-app-pub-2443535982979230~5889330814</string>
-	<key>GADDelayAppMeasurementInit</key>
-	<false/>
+	<string>13</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSMinimumSystemVersion</key>
@@ -77,217 +73,12 @@
 	<string>Allow $(PRODUCT_NAME) to access your reminders</string>
 	<key>NSUserNotificationsUsageDescription</key>
 	<string>Touchward schedules reminders and calendar nudges on this phone so you remember to tap. Notifications are created locally; nothing about them is stored by the app beyond your settings or sent anywhere.</string>
-	<key>NSUserTrackingUsageDescription</key>
-	<string>Touchward is free because of ads. Allowing tracking lets the ads be more relevant; saying no keeps them, just less relevant.</string>
 	<key>RCTMetroPort</key>
 	<string>$(RCT_METRO_PORT)</string>
 	<key>RCTNewArchEnabled</key>
 	<true/>
-	<key>SKAdNetworkItems</key>
-	<array>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>22mmun2rn5.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>2fnua5tdw4.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>2u9pt9hc89.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>3qcr597p9d.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>3qy4746246.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>3rd42ekr43.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>3sh42y64q3.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>4468km3ulz.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>44jx6755aq.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>47vhws6wlr.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>4dzt52r2t5.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>4fzdc2evr5.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>578prtvx9j.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>7ug5zh24hu.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>8c4e2ghe7u.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>8s468mfl3y.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>97r2b46745.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>9t245vhmpl.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>a2p9lx4jpn.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>c3frkrj4fj.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>c6k4g5qg8m.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>cp8zw746q7.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>cstr6suwn9.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>e5fvkxwrpn.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>f38h382jlk.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>gta9lk7p23.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>hs6bdukanm.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>k674qkevps.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>kbd757ywx3.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>kbmxgpxpgc.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>klf5c3l5u5.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>ludvb6z3bs.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>mlmmfzh3r3.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>n38lu8286q.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>p78axxw29g.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>ppxm28t8ap.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>s39g8k73mm.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>su67r6k2v3.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>t38b2kh725.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>tl55sbb4fm.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>uw77j35x4d.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>v4nxqhlyqp.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>v72qych5uu.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>v9wttpbfk9.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>vutu7akeur.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>wg4vff78zm.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>wzmmz9fp6w.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>y5ghdn5j9k.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>yclnxrl5pm.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>ydx93a7ass.skadnetwork</string>
-		</dict>
-	</array>
 	<key>TouchwardDataAccessNote</key>
-	<string>Touchward requests access to calendar events and notifications solely to provide its features on this device. Calendar data is read at runtime to schedule local notifications and is not retained. The app stores locally: its own settings; the reward counter (today's and all-time tap counts, which drive the milestone countdown and the berserk burst every 500 taps, a few seconds of stronger haptics, shaking, and random colors on the button); and the dates it last asked for a rating. Counts can be reset in Customize and are never uploaded. The rating request is Apple's own SKStoreReviewController sheet, asked for only after real use (an install at least a week old, opened on three days, twenty or more rewards, never within thirty days of a crash or support message, at most once per 120 days), and the Rate link in Customize opens the App Store listing; the app sends nothing for either. Five things can leave the device, none with a name, email or account: while ads are on, ad requests to Google AdMob, which receives the advertising identifier only if you allow tracking in Apple's prompt, plus a rough location from the IP address and basic device information; messages you send through the support form (what you type, plus device model and app version) and, unless turned off in the app, crash reports (the error, app version, device model, OS version, and the app's settings), both to the Touchward support inbox; unless turned off in the app, usage analytics through Google Analytics for Firebase (rewards given, purchases, rating prompts requested, session counts, app version, device model, OS version, language, and country, tied to a random app instance identifier; Firebase Analytics itself reads no advertising identifier); and, for the optional Remove ads purchase, the App Store purchase receipt and a random app generated identifier to RevenueCat, which confirms and restores the purchase. The iOS app has no sign in of any kind; the Google Play Games sign in exists only in the Android build. No name, email, or account exists to link any of it to.</string>
+	<string>Touchward requests access to calendar events and notifications solely to provide its features on this device. Calendar data is read at runtime to schedule local notifications and is not retained. The app stores locally: its own settings; the reward counter (today's and all-time tap counts, which drive the daily count, the milestone countdown and the berserk burst every 500 taps, a few seconds of stronger haptics, shaking, and random colors on the button); and the dates it last asked for a rating. Counts can be reset in Customize and are never uploaded. The rating request is Apple's own SKStoreReviewController sheet, asked for only after real use (an install at least a week old, opened on three days, twenty or more rewards, never within thirty days of a crash or support message, at most once per 120 days), and the Rate link in Customize opens the App Store listing; the app sends nothing for either. Four things can leave the device, none with a name, email or account: messages you send through the support form (what you type, plus device model and app version) and, unless turned off in the app, crash reports (the error, app version, device model, OS version, and the app's settings), both to the Touchward support inbox; unless turned off in the app, usage analytics through Google Analytics for Firebase (rewards given, purchases, rating prompts requested, session counts, app version, device model, OS version, language, and country, tied to a random app instance identifier; Firebase Analytics reads no advertising identifier); and, for the optional Touchward Full purchase, the App Store purchase receipt and a random app generated identifier to RevenueCat, which confirms and restores the purchase. The app shows no ads and contains no advertising or tracking SDK. The iOS app has no sign in of any kind; the Google Play Games sign in exists only in the Android build. No name, email, or account exists to link any of it to.</string>
 	<key>TouchwardEncryptionNote</key>
 	<string>Touchward contains no custom or proprietary encryption. Network requests (the optional support form, push token registration, crash reports, purchases, usage analytics, and opening App Store or music links) use HTTPS through the operating system's standard networking stack, which is exempt encryption under U.S. export rules. ITSAppUsesNonExemptEncryption is therefore false.</string>
 	<key>UIApplicationSceneManifest</key>
