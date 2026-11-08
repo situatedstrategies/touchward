@@ -180,6 +180,7 @@ export function HomeScreen() {
     }
   }, [capHit, allowedNow]);
   const capped = capHit && !allowedNow;
+
   const sheetOpen = useRef(false);
   useEffect(() => {
     sheetOpen.current = settingsOpen || saveOpen || libraryOpen;

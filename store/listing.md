@@ -84,6 +84,8 @@ Touchward is free to download: 100 rewards a day with the default look, and
 no ads. Touchward Full is one in-app purchase of 0.49, once: no daily limit
 and every shape, color, mode and haptic. No subscription.
 
+Hi, I'm Olivia. I built this app for my partner Robert and me. I hope you are having as enjoyable a time tap tap tapping away as we are.
+
 ## Keywords (100)
 
 reward,dopamine,haptic,habit,motivation,button,tap,ADHD,focus,ritual,vibrate,celebrate,game
@@ -94,18 +96,22 @@ reward,dopamine,haptic,habit,motivation,button,tap,ADHD,focus,ritual,vibrate,cel
 
 Touchward 1.2.3
 
-- No more ads. I tried them for two weeks and they did not belong in a button you tap to feel good.
+Hi, I'm Olivia. I built this app for my partner Robert and me. I hope you are having as enjoyable a time tap tap tapping away as we are.
+
+- No more ads. They did not belong in a button you tap to feel good.
 - Free with a daily limit: 100 rewards a day with the default look.
-- Touchward Full, one purchase of 0.49: no daily limit and every shape, color, mode and haptic. If you bought the earlier unlock or the ad-free purchase, you already have it.
+- Touchward Full, one purchase of 0.49: no daily limit and every shape, color, mode and haptic. If you bought the earlier unlock, you already have it.
 - Your music keeps playing under the button.
 
 ### App Store "What's New" (4000)
 
 Touchward 1.2.3
 
+Hi, I'm Olivia. I built this app for my partner Robert and me. I hope you are having as enjoyable a time tap tap tapping away as we are.
+
 - No more ads. I tried them for two weeks and they did not belong in a button you tap to feel good. The app no longer asks to track you, either.
 - Touchward is free with a daily limit: 100 rewards a day, counted on your phone's calendar day, with the default look. When you reach it, the button rests until tomorrow.
-- Touchward Full is one purchase of 0.49, once: no daily limit, and every shape, ripple, reward mode, haptic preset, color and backdrop in Customize. If you bought the earlier unlock or the ad-free purchase, you already have Full, on every phone signed in to your account. Restore purchase is in Customize, More.
+- Touchward Full is one purchase of 0.49, once: no daily limit, and every shape, ripple, reward mode, haptic preset, color and backdrop in Customize. If you bought the earlier unlock, you already have Full, on every phone signed in to your account. Restore purchase is in Customize, More.
 - Your music keeps playing under the button.
 
 Questions or ideas: Customize, More, Contact support, or touchward-dopamine.com/support.
@@ -342,8 +348,8 @@ What the code depends on (`src/purchases/config.ts`,
 
 - **Entitlement `full`**: keep the identifier exactly; the app checks it by
   name and nothing else unlocks Full. Every product ever sold stays attached
-  to it, so the earlier 1.99 unlock and the 0.99 ad-free purchase keep
-  restoring as Full.
+  to it, so the earlier 1.99 unlock and the 0.99 purchase sold while the app
+  had ads keep restoring as Full.
 - **Offering `touchward_full`**, marked Current: one Lifetime package
   (`$rc_lifetime`) holding `touchward_full` on both stores. The app passes
   this offering to the paywall and falls back to the current offering.
@@ -398,7 +404,7 @@ IDR 1,000, VND 1,300). None is above 0.49 USD, so 0.49 is allowed in every
 region the app sells in and there is no price to choose here. Apple's price
 points include 0.49 USD as well.
 
-Outside this repository, once the ad-free build is live: archive the ad
+Outside this repository, once the 1.2.3 build is live: archive the ad
 network's app records for Touchward, and have the site's privacy page drop
 its ad and tracking sentences. The ads.txt and app-ads.txt files on
 touchward-dopamine.com can stay.
@@ -498,6 +504,9 @@ Touchward Full is one in-app purchase of 0.49, once: no daily limit, and every
 shape, ripple, reward mode, vibration strength and preset, color and background
 in Customize. No subscription. If you bought the earlier unlock, you already
 have Full.
+
+A NOTE FROM THE MAKER
+Hi, I'm Olivia. I built this app for my partner Robert and me. I hope you are having as enjoyable a time tap tap tapping away as we are.
 
 OPEN SOURCE
 The complete source code is public, so every claim above can be checked:

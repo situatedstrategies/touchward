@@ -2,7 +2,6 @@ import { Chip } from "../../components/Chip";
 import { ColorField } from "../../components/ColorField";
 import { BACKDROP_COLORS, isHexColor } from "../../design/palette";
 import type { Theme } from "../../design/theme";
-import { isFreeBackdrop } from "../../purchases/gates";
 import { useSettings } from "../../store/settings";
 import { useGate, useUnlock } from "../../store/unlock";
 import {
@@ -178,8 +177,8 @@ export function ColorSection({ theme }: { theme: Theme }) {
           <Chip
             label="Match phone"
             selected={settings.backdrop === "system"}
-            locked={!unlocked && !isFreeBackdrop("system")}
-            onPress={() => gate(isFreeBackdrop("system"), () => update({ backdrop: "system" }))}
+            locked={locked}
+            onPress={() => gate(false, () => update({ backdrop: "system" }))}
             theme={theme}
           />
           <Chip
