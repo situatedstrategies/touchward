@@ -508,10 +508,6 @@ have Full.
 A NOTE FROM THE MAKER
 Hi, I'm Olivia. I built this app for my partner Robert and me. I hope you are having as enjoyable a time tap tap tapping away as we are.
 
-OPEN SOURCE
-The complete source code is public, so every claim above can be checked:
-github.com/situatedstrategies/touchward
-
 Touchward is a small pleasure, not a medical device, and it makes no health
 claims. It is for anyone who wants a little buzz for having done the thing:
 people building habits, people with ADHD who find finishing anticlimactic,
