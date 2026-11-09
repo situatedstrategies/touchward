@@ -80,6 +80,7 @@
         {
           "androidAppId": "ca-app-pub-2443535982979230~6375631181",
           "iosAppId": "ca-app-pub-2443535982979230~5889330814",
+          "delayAppMeasurementInit": true,
           "userTrackingUsageDescription": "Touchward is free because of ads. Allowing tracking lets the ads be more relevant; saying no keeps them, just less relevant.",
           "skAdNetworkItems": [
             "22mmun2rn5.skadnetwork",

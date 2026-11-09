@@ -8,6 +8,10 @@ needed: the app has no sign in.
 
 Touchward is a reward button: tap or hold it for a haptic, a short tone, and a ripple. Free, with a full-screen ad now and then between rewards (Google AdMob) and one in-app purchase that turns the ads off. No account; works offline except the purchase check and the ads.
 
+TRACKING PROMPT (5.1.2(i))
+
+On a fresh install, tap the button once. Apple's App Tracking Transparency prompt appears right after that first reward. The Google Mobile Ads SDK starts only after it is answered, so nothing used for tracking is collected before. In the EEA and UK, Google's consent form comes first, then Apple's prompt. Please look for it before testing Remove ads: after that purchase the ads SDK never starts, so the prompt never appears. iOS shows it only while Settings, Privacy & Security, Tracking, Allow Apps to Request to Track is on.
+
 TEST
 
 1. Tap the button. Hold it 5 seconds for a bigger reward.
@@ -30,7 +34,7 @@ WATCH: a companion with the button, mirroring reminders over WatchConnectivity.
 
 PRIVACY
 
-- Ads (free app only): Google Mobile Ads SDK, an interstitial between rewards, never in the first 90 seconds and never more than one every 5 minutes. The App Tracking Transparency prompt appears before the first ad; declining keeps the ads non personalised. Nothing is linked to identity. After the purchase the SDK never starts.
+- Ads (free app only): Google Mobile Ads SDK, an interstitial between rewards, never in the first 90 seconds and never more than one every 5 minutes. The App Tracking Transparency prompt appears after the first tap (see TRACKING PROMPT); declining keeps the ads, without the advertising identifier. Nothing is linked to identity. After the purchase the SDK never starts.
 - Google Analytics for Firebase (feature use, sessions, device, OS), opt out in More, Support.
 - Crash reports to our inbox, opt out in More, Support.
 - Support form: message, device model, app version.

@@ -182,9 +182,10 @@ export function HomeScreen() {
       recordReward();
       logReward(kind);
       onTouchSound();
-      // The free app's interstitial, when the policy in ads/policy.ts says
-      // the moment is right; nothing happens while ad-free.
-      noteRewardForAds({ unlocked, sheetOpen: sheetOpen.current });
+      // The free app's consent and tracking prompt at the first reward, and
+      // its interstitial when the policy in ads/policy.ts says the moment is
+      // right; nothing happens while ad-free.
+      noteRewardForAds({ unlocked, unlockKnown: known, sheetOpen: sheetOpen.current });
       requestReviewAfterReward({
         source: kind,
         // The counter has not re-rendered yet, so count this reward by hand.
@@ -192,7 +193,7 @@ export function HomeScreen() {
         isSheetOpen: () => sheetOpen.current,
       });
     },
-    [recordReward, unlocked],
+    [recordReward, unlocked, known],
   );
 
   // Touch sounds and other apps' music for everyone.

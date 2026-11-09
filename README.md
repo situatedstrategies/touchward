@@ -66,8 +66,14 @@ hold it down, watch the ring close, and get a bigger buzz when the timer is up.
   more than one every five minutes, and only after another 120 rewards
   (`src/ads/policy.ts`, pure and tested; `src/ads/ads.ts` is the adapter over
   `react-native-google-mobile-ads` with Google's User Messaging Platform
-  consent form where the law requires one). The one purchase turns the ads off
-  and the SDK never starts for an unlocked phone. See Pricing and ads below.
+  consent form where the law requires one). Consent and, on iOS, Apple's
+  tracking prompt come at the first reward once the store has confirmed the
+  phone is on the free app (`askAdPermissions`); the SDK itself, including
+  its own app measurement (`delayAppMeasurementInit` in `app.json`), starts
+  only when the first ad is about to load (`prepareAds`). Ad requests carry no
+  options, so personalisation follows those answers. The one purchase turns
+  the ads off, and an unlocked phone never sees the prompt or starts the SDK.
+  See Pricing and ads below.
 - A counter of rewards today, big at the top of the screen, with the taps left
   until the next milestone; the all time total is in Customize, More.
   Everything is stored on the device. No account, no server, and the

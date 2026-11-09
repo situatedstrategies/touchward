@@ -250,7 +250,9 @@ https://touchward-dopamine.com
   developers.google.com/admob/ios/data-disclosure; check it before each
   submission and match the questionnaire to it.
 - Tracking: yes. The app asks the App Tracking Transparency permission itself
-  (src/ads/ads.ts, after Google's consent form and before the ads SDK starts),
+  (src/ads/ads.ts, after Google's consent form and before the ads SDK starts;
+  from 1.2.3 at the first reward, because in 1.2.2 it waited for the hundredth
+  and App Review never saw it, Guideline 5.1.2(i), November 5th 2026),
   so leave the IDFA explainer message off in AdMob's Privacy and messaging or
   people see two prompts. The app's own privacy manifest in app.json declares
   NSPrivacyTracking false (App Store Connect rejects true with no tracking
